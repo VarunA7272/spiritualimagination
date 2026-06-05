@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spiritual Imagination 🎁 — Custom Gifts Jabalpur</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#FF6B35;--gold:#FFD700;--pink:#FF8FAB;--cream:#FFF8F0;--deep-orange:#E85A20;
+  --text-dark:#2D1B00;--text-mid:#6B3A1F;--text-light:#9B6040;
+  --card-shadow:0 8px 32px rgba(255,107,53,0.12);
+  --card-shadow-hover:0 16px 48px rgba(255,107,53,0.22);
+}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:'Poppins',sans-serif;background:var(--cream);color:var(--text-dark);overflow-x:hidden}
+
+/* NAVBAR */
+nav{position:sticky;top:0;z-index:1000;background:rgba(255,248,240,0.92);backdrop-filter:blur(12px);border-bottom:1.5px solid rgba(255,107,53,0.15);padding:0 1.5rem}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-logo{font-size:1.25rem;font-weight:800;color:var(--orange);text-decoration:none;letter-spacing:-0.5px}
+.nav-links{display:flex;gap:1.75rem;list-style:none}
+.nav-links a{font-size:0.875rem;font-weight:500;color:var(--text-mid);text-decoration:none;transition:color 0.2s;padding:4px 0;border-bottom:2px solid transparent}
+.nav-links a:hover,.nav-links a.active{color:var(--orange);border-bottom-color:var(--orange)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:24px;height:2px;background:var(--orange);border-radius:2px;transition:all 0.3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{display:none;position:fixed;top:68px;left:0;right:0;background:rgba(255,248,240,0.98);backdrop-filter:blur(16px);padding:1.5rem;border-bottom:1px solid rgba(255,107,53,0.15);z-index:999}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:0.75rem 0;font-size:1rem;font-weight:600;color:var(--text-dark);text-decoration:none;border-bottom:1px solid rgba(255,107,53,0.1)}
+.mobile-menu a:hover{color:var(--orange)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#FF6B35 0%,#FF8FAB 40%,#FFD700 100%);padding:6rem 1.5rem 4rem}
+.hero-blobs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.3;animation:blobFloat 8s ease-in-out infinite}
+.blob1{width:400px;height:400px;background:#fff;top:-100px;left:-100px;animation-delay:0s}
+.blob2{width:300px;height:300px;background:#FFD700;bottom:-50px;right:-80px;animation-delay:3s}
+.blob3{width:250px;height:250px;background:#FF8FAB;top:50%;right:10%;animation-delay:5s}
+@keyframes blobFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-20px) scale(1.05)}}
+.confetti-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.4) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,0.4);padding:6px 18px;border-radius:100px;font-size:0.8rem;font-weight:600;color:#fff;margin-bottom:1.5rem}
+.hero h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:1.25rem;text-shadow:0 2px 16px rgba(0,0,0,0.15)}
+.hero-typing{font-size:clamp(1.1rem,3vw,1.6rem);font-weight:600;color:rgba(255,255,255,0.9);margin-bottom:2rem;min-height:2.2rem}
+.typing-word{border-right:3px solid rgba(255,255,255,0.8);padding-right:4px;animation:blink 0.8s step-end infinite}
+@keyframes blink{0%,100%{border-color:rgba(255,255,255,0.8)}50%{border-color:transparent}}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:100px;font-family:'Poppins',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;text-decoration:none;border:none;transition:all 0.25s;letter-spacing:0.3px}
+.btn-wa{background:#25D366;color:#fff;box-shadow:0 4px 20px rgba(37,211,102,0.4)}
+.btn-wa:hover{background:#20B958;transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,0.5)}
+.btn-call{background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);color:#fff;border:2px solid rgba(255,255,255,0.6)}
+.btn-call:hover{background:rgba(255,255,255,0.35);transform:translateY(-2px)}
+.rating-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.2);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,0.35);padding:10px 22px;border-radius:100px;color:#fff;font-size:0.875rem;font-weight:600}
+.stars{color:#FFD700;font-size:1.1rem;letter-spacing:2px}
+
+/* SECTIONS */
+section{padding:5rem 1.5rem}
+.container{max-width:1200px;margin:0 auto}
+.section-tag{display:inline-block;background:rgba(255,107,53,0.1);color:var(--orange);font-size:0.75rem;font-weight:700;padding:4px 14px;border-radius:100px;margin-bottom:0.75rem;letter-spacing:1px;text-transform:uppercase}
+.section-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text-dark);margin-bottom:0.75rem;line-height:1.2}
+.section-sub{font-size:1rem;color:var(--text-light);max-width:560px;margin:0 auto 3rem;line-height:1.7}
+.text-center{text-align:center}
+
+/* ABOUT */
+.about-card{background:#fff;border-radius:24px;padding:3rem;box-shadow:var(--card-shadow);border:1.5px solid rgba(255,107,53,0.08)}
+.about-text{font-size:1.05rem;color:var(--text-mid);line-height:1.8;max-width:700px;margin:0 auto 2.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem}
+.stat-pill{background:linear-gradient(135deg,#FFF3EE,#FFF8F0);border:1.5px solid rgba(255,107,53,0.15);border-radius:100px;padding:14px 20px;text-align:center;font-size:0.9rem;font-weight:700;color:var(--text-dark)}
+.stat-pill span{font-size:1.1rem;margin-right:6px}
+
+/* PRODUCTS */
+.products-bg{background:linear-gradient(180deg,#FFF8F0 0%,#FFF0E8 100%)}
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.product-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:var(--card-shadow);border:1.5px solid rgba(255,107,53,0.07);transition:all 0.3s}
+.product-card:hover{transform:translateY(-6px);box-shadow:var(--card-shadow-hover)}
+.product-img{height:160px;background:linear-gradient(135deg,#FFF3EE,#FFE8D6);display:flex;flex-direction:column;align-items:center;justify-content:center;border-bottom:1.5px dashed rgba(255,107,53,0.2);gap:8px}
+.product-img .cam-icon{font-size:2.5rem;opacity:0.5}
+.product-img .img-label{font-size:0.75rem;font-weight:600;color:var(--text-light);background:rgba(255,107,53,0.08);padding:4px 12px;border-radius:100px}
+.product-info{padding:1.25rem}
+.product-name{font-size:1.05rem;font-weight:700;color:var(--text-dark);margin-bottom:4px}
+.product-desc{font-size:0.82rem;color:var(--text-light);line-height:1.6;margin-bottom:1rem}
+.btn-quote{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--orange),#FF8F5A);color:#fff;border:none;padding:8px 18px;border-radius:100px;font-family:'Poppins',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.2s}
+.btn-quote:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(255,107,53,0.35)}
+
+/* WHY US */
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.feature-card{background:#fff;border-radius:20px;padding:2rem 1.5rem;text-align:center;box-shadow:var(--card-shadow);border:1.5px solid rgba(255,107,53,0.07);transition:all 0.3s}
+.feature-card:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-hover)}
+.feat-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.feature-card h3{font-size:1rem;font-weight:700;color:var(--text-dark);margin-bottom:6px}
+.feature-card p{font-size:0.85rem;color:var(--text-light);line-height:1.6}
+
+/* REVIEWS */
+.reviews-bg{background:linear-gradient(135deg,#FFF0E8,#FFF8F0)}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:2.5rem}
+.review-card{background:#fff;border-radius:20px;padding:1.75rem;box-shadow:var(--card-shadow);border:1.5px solid rgba(255,107,53,0.08);position:relative}
+.review-card::before{content:'"';position:absolute;top:1rem;right:1.25rem;font-size:4rem;color:rgba(255,107,53,0.1);font-family:Georgia,serif;line-height:1}
+.review-stars{color:#FFD700;font-size:1rem;letter-spacing:2px;margin-bottom:0.75rem}
+.review-text{font-size:0.9rem;color:var(--text-mid);line-height:1.7;margin-bottom:1rem}
+.review-author{font-size:0.85rem;font-weight:700;color:var(--orange)}
+.google-badge{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1.5px solid rgba(255,107,53,0.15);border-radius:100px;padding:12px 24px;box-shadow:var(--card-shadow)}
+.google-badge .g-logo{width:20px;height:20px;background:linear-gradient(135deg,#4285F4,#34A853,#FBBC05,#EA4335);border-radius:50%}
+.google-badge-text{font-size:0.9rem;font-weight:600;color:var(--text-dark)}
+.btn-google{display:inline-flex;align-items:center;gap:6px;margin-left:1rem;color:var(--orange);font-size:0.875rem;font-weight:700;text-decoration:none;transition:opacity 0.2s}
+.btn-google:hover{opacity:0.75}
+
+/* HOW TO ORDER */
+.order-steps{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:0.5rem;margin-bottom:3rem}
+.step{background:#fff;border-radius:20px;padding:2rem 1.5rem;text-align:center;box-shadow:var(--card-shadow);border:1.5px solid rgba(255,107,53,0.08)}
+.step-num{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#FF8F5A);color:#fff;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.step-icon{font-size:2rem;margin-bottom:0.75rem;display:block}
+.step h3{font-size:1rem;font-weight:700;color:var(--text-dark);margin-bottom:6px}
+.step p{font-size:0.83rem;color:var(--text-light);line-height:1.6}
+.step-arrow{font-size:1.75rem;color:var(--orange);flex-shrink:0}
+.btn-cta-big{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#25D366,#20B958);color:#fff;padding:18px 36px;border-radius:100px;font-family:'Poppins',sans-serif;font-size:1.05rem;font-weight:700;text-decoration:none;box-shadow:0 8px 28px rgba(37,211,102,0.35);transition:all 0.3s}
+.btn-cta-big:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(37,211,102,0.45)}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
+.contact-card{background:#fff;border-radius:24px;padding:2.5rem;box-shadow:var(--card-shadow);border:1.5px solid rgba(255,107,53,0.08)}
+.contact-item{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem}
+.contact-icon{width:44px;height:44px;min-width:44px;border-radius:12px;background:linear-gradient(135deg,#FFF0E8,#FFE0D0);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.contact-label{font-size:0.75rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:2px}
+.contact-value{font-size:0.95rem;font-weight:600;color:var(--text-dark)}
+.contact-value a{color:var(--orange);text-decoration:none}
+.contact-value a:hover{text-decoration:underline}
+.map-container{border-radius:20px;overflow:hidden;box-shadow:var(--card-shadow);height:350px}
+.map-container iframe{width:100%;height:100%;border:none}
+
+/* FOOTER */
+footer{background:linear-gradient(135deg,#FF6B35,#FF8FAB,#FFD700);padding:3.5rem 1.5rem 2rem;color:#fff}
+.footer-inner{max-width:1200px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:2rem;margin-bottom:2rem}
+.footer-brand h3{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+.footer-brand p{font-size:0.875rem;opacity:0.85}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.875rem;font-weight:600;transition:opacity 0.2s}
+.footer-links a:hover{opacity:0.6}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.25);padding-top:1.5rem;text-align:center;font-size:0.8rem;opacity:0.75}
+
+/* WHATSAPP FLOAT */
+.wa-float{position:fixed;bottom:1.75rem;right:1.75rem;z-index:2000;width:58px;height:58px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 24px rgba(37,211,102,0.5);animation:waPulse 2.5s ease-in-out infinite}
+.wa-float svg{width:30px;height:30px;fill:#fff}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 24px rgba(37,211,102,0.5),0 0 0 0 rgba(37,211,102,0.35)}50%{box-shadow:0 4px 24px rgba(37,211,102,0.5),0 0 0 12px rgba(37,211,102,0)}}
+.wa-tooltip{position:fixed;bottom:5.5rem;right:1.75rem;background:#fff;color:var(--text-dark);font-size:0.78rem;font-weight:600;padding:6px 14px;border-radius:100px;box-shadow:0 4px 16px rgba(0,0,0,0.1);opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:2001;white-space:nowrap}
+.wa-float:hover + .wa-tooltip{opacity:1}
+
+/* ANIMATIONS */
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .products-grid{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .reviews-grid{grid-template-columns:1fr}
+  .order-steps{grid-template-columns:1fr;grid-template-rows:auto}
+  .step-arrow{transform:rotate(90deg)}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-top{flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .products-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  section{padding:3.5rem 1.25rem}
+  .contact-card{padding:1.75rem}
+  .about-card{padding:1.75rem}
+}
+@media(max-width:400px){
+  .features-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo">Spiritual Imagination 🎁</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="closeMobileMenu()">Home</a>
+  <a href="#products" onclick="closeMobileMenu()">Products</a>
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#reviews" onclick="closeMobileMenu()">Reviews</a>
+  <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="hero-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+  <div class="confetti-dots"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🎉 Jabalpur's #1 Custom Gift Studio</div>
+    <h1>Make Every Moment<br>Memorable 🎁</h1>
+    <div class="hero-typing">We craft <span class="typing-word" id="typingWord">Custom Mugs</span></div>
+    <div class="hero-btns">
+      <a href="https://wa.me/919300545485?text=Hi!%20I%20want%20to%20place%20an%20order.%20Please%20share%20details." class="btn btn-wa" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Order on WhatsApp
+      </a>
+      <a href="tel:+919300545485" class="btn btn-call">
+        📞 Call Us Now
+      </a>
+    </div>
+    <div class="rating-badge">
+      <span class="stars">⭐⭐⭐⭐⭐</span>
+      <span>4.9 Rating | 22 Google Reviews</span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-card fade-up">
+      <div class="text-center" style="margin-bottom:1.5rem">
+        <span class="section-tag">Who We Are</span>
+        <h2 class="section-title">Crafting Memories,<br>One Gift at a Time 💛</h2>
+      </div>
+      <p class="about-text text-center">Spiritual Imagination is Jabalpur's trusted custom gifting studio. We turn your ideas into beautiful, personalized keepsakes for every occasion — birthdays, weddings, corporate events, and more. Every item is crafted with love and attention to detail, because your memories deserve nothing less.</p>
+      <div class="stats-grid">
+        <div class="stat-pill"><span>🎁</span>500+ Happy Customers</div>
+        <div class="stat-pill"><span>⭐</span>4.9 Google Rating</div>
+        <div class="stat-pill"><span>🏙️</span>Based in Jabalpur, MP</div>
+        <div class="stat-pill"><span>🕘</span>Open till 9 PM Daily</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products" class="products-bg">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Our Creations</span>
+      <h2 class="section-title">What We Create 🎨</h2>
+      <p class="section-sub">From photo mugs to corporate trophies — we personalize everything with your love and our craft.</p>
+    </div>
+    <div class="products-grid">
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">Mug Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🖼️ Custom Mugs</div>
+          <div class="product-desc">Photo & text printed mugs for every occasion</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20Custom%20Mugs.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">Keychain Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🔑 Keychains</div>
+          <div class="product-desc">Personalized keychains, perfect little keepsakes</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20Keychains.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">Cushion Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🛋️ Cushions & Pillows</div>
+          <div class="product-desc">Printed cushions for home & gifting</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20Cushions%20%26%20Pillows.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">Trophy Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🏆 Trophies & Awards</div>
+          <div class="product-desc">Custom trophies for events, schools & corporates</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20Trophies%20%26%20Awards.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">MDF Art Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🪵 MDF Cutting & Engraving</div>
+          <div class="product-desc">Laser-cut name plates, frames & standees</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20MDF%20Cutting%20%26%20Engraving.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">T-Shirt Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">👕 T-Shirt Printing</div>
+          <div class="product-desc">Custom logo & photo printing on apparel</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20T-Shirt%20Printing.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">Gift Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🎂 Birthday & Anniversary Gifts</div>
+          <div class="product-desc">Make special days unforgettable</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20ordering%20Birthday%20%26%20Anniversary%20Gifts.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+      <div class="product-card fade-up">
+        <div class="product-img">
+          <div class="cam-icon">📷</div>
+          <div class="img-label">Corporate Gift Photo</div>
+        </div>
+        <div class="product-info">
+          <div class="product-name">🏢 Corporate Gifting</div>
+          <div class="product-desc">Bulk personalized gifts for your team & clients</div>
+          <a href="https://wa.me/919300545485?text=Hi!%20I'm%20interested%20in%20Corporate%20Gifting.%20Please%20share%20details." class="btn-quote" target="_blank">💬 Get Quote</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Why Us</span>
+      <h2 class="section-title">Why Spiritual Imagination? 💛</h2>
+      <p class="section-sub">We don't just make gifts — we craft experiences that people remember forever.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <span class="feat-icon">🎨</span>
+        <h3>100% Customized</h3>
+        <p>Your design, your way. We bring your vision to life exactly as you imagine it.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <span class="feat-icon">⚡</span>
+        <h3>Fast Delivery</h3>
+        <p>Quick turnaround on all orders. Because your special moments can't wait.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <span class="feat-icon">💰</span>
+        <h3>Affordable Pricing</h3>
+        <p>Premium quality at budget-friendly prices. Great gifts don't have to cost a fortune.</p>
+      </div>
+      <div class="feature-card fade-up">
+        <span class="feat-icon">❤️</span>
+        <h3>Made with Love</h3>
+        <p>Every piece is crafted with genuine care and passion for the art of gifting.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews" class="reviews-bg">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Customer Love</span>
+      <h2 class="section-title">What Our Customers Say ⭐</h2>
+      <p class="section-sub">Real stories from real customers who made their moments unforgettable.</p>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card fade-up">
+        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">Amazing quality mugs! Got them for my office team and everyone loved it. The printing was crystal clear and the delivery was super fast. Will definitely order again!</p>
+        <div class="review-author">— Rahul S.</div>
+      </div>
+      <div class="review-card fade-up">
+        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">Best custom gifts in Jabalpur! Fast delivery and beautiful packaging. Ordered a personalized cushion for my sister's birthday and she absolutely loved it.</p>
+        <div class="review-author">— Priya M.</div>
+      </div>
+      <div class="review-card fade-up">
+        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+        <p class="review-text">Ordered trophies for our school's annual event. Superb finish and very affordable. The team was very responsive on WhatsApp and delivered on time!</p>
+        <div class="review-author">— Ankit T.</div>
+      </div>
+    </div>
+    <div class="text-center fade-up">
+      <div style="display:inline-flex;align-items:center;flex-wrap:wrap;gap:0.5rem;justify-content:center">
+        <div class="google-badge">
+          <div class="g-logo"></div>
+          <span class="google-badge-text">4.9 ⭐ on Google | 22 Reviews</span>
+        </div>
+        <a href="https://www.google.com/maps/search/Spiritual+Imagination+Jabalpur" target="_blank" class="btn-google">See All Reviews on Google →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO ORDER -->
+<section id="order">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Getting Started</span>
+      <h2 class="section-title">Ordering is Easy! 🛒</h2>
+      <p class="section-sub">Three simple steps and your personalized gift is on its way.</p>
+    </div>
+    <div class="order-steps fade-up">
+      <div class="step">
+        <div class="step-num">1</div>
+        <span class="step-icon">💬</span>
+        <h3>Contact Us</h3>
+        <p>WhatsApp or call us with your idea. We're available till 9 PM daily.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <span class="step-icon">🎨</span>
+        <h3>Share Your Design</h3>
+        <p>Send your photo, text, or let our team design something beautiful for you.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <span class="step-icon">🚀</span>
+        <h3>Receive Your Gift</h3>
+        <p>We craft and deliver your personalized item with love and care.</p>
+      </div>
+    </div>
+    <div class="text-center fade-up">
+      <a href="https://wa.me/919300545485?text=Hi!%20I'd%20like%20to%20place%20an%20order.%20Please%20help%20me%20get%20started!" class="btn-cta-big" target="_blank">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Start Your Order on WhatsApp 🟢
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="background:linear-gradient(180deg,#FFF0E8,#FFF8F0)">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Find Us</span>
+      <h2 class="section-title">Find Us & Get in Touch 📍</h2>
+      <p class="section-sub">Visit us in Jabalpur or reach out on WhatsApp — we're always happy to help!</p>
+    </div>
+    <div class="contact-grid fade-up">
+      <div class="contact-card">
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Address</div>
+            <div class="contact-value">805, Jabalpur, Madhya Pradesh 482002</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div>
+            <div class="contact-label">Phone</div>
+            <div class="contact-value"><a href="tel:+919300545485">093005 45485</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">💬</div>
+          <div>
+            <div class="contact-label">WhatsApp</div>
+            <div class="contact-value"><a href="https://wa.me/919300545485" target="_blank">Chat with us on WhatsApp →</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🕘</div>
+          <div>
+            <div class="contact-label">Business Hours</div>
+            <div class="contact-value">Open Daily — Closes at 9 PM</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-container">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3666.1693849764835!2d79.9382!3d23.1815!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3981b1d3a68e5f25%3A0x9c6d1a9aebd1e5c5!2sJabalpur%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h3>Spiritual Imagination 🎁</h3>
+        <p>Crafting Memories, One Gift at a Time</p>
+      </div>
+      <nav class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#products">Products</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Spiritual Imagination. All rights reserved. | Jabalpur, Madhya Pradesh
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/919300545485?text=Hi!%20I'd%20like%20to%20know%20more%20about%20your%20custom%20gifts." class="wa-float" target="_blank" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+<div class="wa-tooltip">Chat with us! 💬</div>
+
+<script>
+// Typing animation
+const words=['Custom Mugs','Personalized Gifts','T-Shirt Printing','Trophies & Awards','MDF Art'];
+let wi=0,ci=0,deleting=false;
+const el=document.getElementById('typingWord');
+function type(){
+  const w=words[wi];
+  if(!deleting){
+    el.textContent=w.slice(0,++ci);
+    if(ci===w.length){deleting=true;setTimeout(type,2000);return}
+  }else{
+    el.textContent=w.slice(0,--ci);
+    if(ci===0){deleting=false;wi=(wi+1)%words.length;setTimeout(type,400);return}
+  }
+  setTimeout(type,deleting?60:90);
+}
+setTimeout(type,800);
+
+// Scroll animations
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible')}});
+},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.fade-up').forEach((el,i)=>{
+  el.style.transitionDelay=(i%4)*0.08+'s';
+  obs.observe(el);
+});
+
+// Active nav highlight
+const sections=document.querySelectorAll('section[id]');
+const navAs=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id});
+  navAs.forEach(a=>{
+    a.classList.toggle('active',a.getAttribute('href')==='#'+cur);
+  });
+},{passive:true});
+
+// Mobile menu
+function toggleMenu(){
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMobileMenu(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+</script>
+</body>
+</html>
