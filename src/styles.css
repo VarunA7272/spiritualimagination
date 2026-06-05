@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* HSL Color System - Warm Sunset Theme */
+  --primary-hue: 18;
+  --secondary-hue: 340;
+  --gold-hue: 45;
+  
+  --primary: hsl(var(--primary-hue), 100%, 61%); /* Vibrant Warm Orange */
+  --primary-hover: hsl(var(--primary-hue), 100%, 55%);
+  --primary-light: rgba(255, 107, 53, 0.12);
+  --primary-glow: rgba(255, 107, 53, 0.28);
+  
+  --secondary: hsl(var(--secondary-hue), 100%, 78%); /* Soft Rose Pink */
+  --gold: hsl(var(--gold-hue), 100%, 60%); /* Warm Golden Amber */
+  --cream: hsl(36, 100%, 98%); /* Cozy Alabaster Cream */
+  
+  --text-dark: hsl(30, 25%, 12%); /* Deep Roasted Wood */
+  --text-mid: hsl(25, 20%, 32%); /* Soft Terracotta */
+  --text-light: hsl(24, 15%, 52%); /* Warm Sand */
+  
+  /* Shadows & Glassmorphic Variables */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 12px 40px -10px rgba(45, 27, 0, 0.08);
+  
+  --shadow-sm: 0 4px 12px rgba(45, 27, 0, 0.04);
+  --shadow-md: 0 12px 32px -4px rgba(255, 107, 53, 0.08);
+  --shadow-lg: 0 24px 64px -12px rgba(255, 107, 53, 0.16);
+  --shadow-hover: 0 32px 80px -16px rgba(255, 107, 53, 0.28);
+  
+  /* Animation Speeds */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 86px;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Scrollbar override */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary-hue), 30%, 82%);
+  border-radius: 100px;
+  border: 2px solid var(--cream);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Global Section Utility styling */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-tag {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 107, 53, 0.15);
+}
+
+.section-title {
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-weight: 900;
+  color: var(--text-dark);
+  margin-bottom: 0.75rem;
+  line-height: 1.15;
+}
+
+.section-sub {
+  font-size: 1.05rem;
+  color: var(--text-mid);
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+}
+
+.text-center {
+  text-align: center;
+}

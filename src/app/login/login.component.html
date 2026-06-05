@@ -1,0 +1,68 @@
+<div class="login-page">
+  <!-- Dynamic Background Blobs -->
+  <div class="hero-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+  <div class="confetti-dots"></div>
+
+  <!-- Login Card Container -->
+  <div class="login-container">
+    <div class="auth-card">
+      <div class="brand-header">
+        <h1 class="brand-logo">Spiritual Imagination 🎁</h1>
+        <p class="brand-tagline">Jabalpur's #1 Custom Gift Studio</p>
+      </div>
+
+      <form (submit)="onSubmit()" #loginForm="ngForm" novalidate>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-box">
+            <span class="input-icon">✉️</span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              [(ngModel)]="email"
+              autocomplete="username"
+              placeholder="Enter your email"
+              required
+              [disabled]="loading"
+              enterkeyhint="next"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="current-password">Password</label>
+          <div class="input-box">
+            <span class="input-icon">🔒</span>
+            <input
+              type="password"
+              id="current-password"
+              name="password"
+              [(ngModel)]="password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              required
+              [disabled]="loading"
+              enterkeyhint="done"
+            />
+          </div>
+        </div>
+
+        <!-- Error message display -->
+        <div class="error-msg" *ngIf="errorMessage">
+          <span>⚠️</span> {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-login" [disabled]="loading">
+          <span class="btn-text" *ngIf="!loading">Sign In</span>
+          <span class="spinner" *ngIf="loading"></span>
+          <span class="loading-text" *ngIf="loading">Signing in...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

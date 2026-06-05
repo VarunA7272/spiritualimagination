@@ -1,0 +1,27 @@
+<section id="reviews" class="reviews-bg">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Customer Love</span>
+      <h2 class="section-title">What Our Customers Say ⭐</h2>
+      <p class="section-sub">Real stories from real customers who made their moments unforgettable.</p>
+    </div>
+    
+    <div class="reviews-grid">
+      <div class="review-card fade-up" *ngFor="let rev of reviews">
+        <div class="review-stars">{{ rev.stars }}</div>
+        <p class="review-text">{{ rev.text }}</p>
+        <div class="review-author">— {{ rev.author }}</div>
+      </div>
+    </div>
+
+    <div class="text-center fade-up">
+      <div class="badge-container">
+        <div class="google-badge">
+          <div class="g-logo"></div>
+          <span class="google-badge-text">4.9 ⭐ on Google | 22 Reviews</span>
+        </div>
+        <a href="https://www.google.com/maps/search/Spiritual+Imagination+Jabalpur" target="_blank" class="btn-google">See All Reviews on Google →</a>
+      </div>
+    </div>
+  </div>
+</section>
