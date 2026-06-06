@@ -1,0 +1,95 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h2>Upload & Manage Products 🎨</h2>
+    <p>Add new custom items to the Spiritual Imagination public catalog.</p>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- UPLOAD FORM COLUMN -->
+    <div class="form-card">
+      <h3>New Product Upload Form</h3>
+      
+      <form (submit)="onSubmit()" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="p-name">Product Name *</label>
+            <input type="text" id="p-name" name="name" [(ngModel)]="name" placeholder="e.g. Acrylic Golden Name Plate" required />
+          </div>
+          <div class="form-group">
+            <label for="p-code">Product Code *</label>
+            <input type="text" id="p-code" name="code" [(ngModel)]="code" placeholder="e.g. JZZ4501" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="p-price">Price *</label>
+            <input type="text" id="p-price" name="price" [(ngModel)]="price" placeholder="e.g. 1800" required />
+          </div>
+          <div class="form-group">
+            <label for="p-size">Size / Dimensions *</label>
+            <input type="text" id="p-size" name="size" [(ngModel)]="size" placeholder="e.g. 15x24 Inch" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="p-category">Category *</label>
+            <select id="p-category" name="category" [(ngModel)]="category">
+              <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Select Icon Representation</label>
+            <div class="icon-selector-wrapper">
+              <select name="selectedIcon" [(ngModel)]="selectedIcon">
+                <option *ngFor="let icon of icons" [value]="icon.value">{{ icon.value }} ({{ icon.label }})</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="p-desc">Description</label>
+          <textarea id="p-desc" name="desc" [(ngModel)]="desc" placeholder="Describe materials, details, and personalization features..." rows="3"></textarea>
+        </div>
+
+        <!-- Messages -->
+        <div class="success-message animate-fade" *ngIf="successMessage">
+          {{ successMessage }}
+        </div>
+        <div class="error-message animate-fade" *ngIf="errorMessage">
+          ⚠️ {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-upload">🚀 List Product to Public Catalog</button>
+      </form>
+    </div>
+
+    <!-- LISTING MANAGER COLUMN -->
+    <div class="list-card">
+      <div class="list-card-header">
+        <h3>Currently Listed Products ({{ products.length }})</h3>
+        <button class="btn-reset-list" (click)="loadDefaultProducts()">Reset to Default Items</button>
+      </div>
+
+      <div class="product-list-scroll">
+        <div class="product-item-row" *ngFor="let p of products">
+          <div class="item-icon-box">{{ p.icon }}</div>
+          <div class="item-details">
+            <div class="item-title-row">
+              <h4>{{ p.name }}</h4>
+              <span class="item-code">{{ p.code }}</span>
+            </div>
+            <div class="item-sub-row">
+              <span class="item-cat">{{ p.category }}</span>
+              <span class="item-meta">Size: {{ p.size }}</span>
+              <span class="item-price">{{ p.price }}</span>
+            </div>
+          </div>
+          <button class="btn-delete-item" (click)="deleteProduct(p.code)" title="Delete listing">🗑️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

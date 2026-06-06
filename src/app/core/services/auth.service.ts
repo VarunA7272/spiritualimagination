@@ -29,7 +29,7 @@ export class AuthService {
       this.ngZone.run(() => {
         this.sessionSubject.next(session);
         if (!session) {
-          this.router.navigate(['login']);
+          this.router.navigate(['/login']);
         }
       });
     });
@@ -60,7 +60,7 @@ export class AuthService {
       throw error;
     }
     this.ngZone.run(() => {
-      this.router.navigate(['login']);
+      this.router.navigate(['/login']);
     });
   }
 }

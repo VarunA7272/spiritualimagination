@@ -18,9 +18,8 @@ export class LoginComponent {
   loading = false;
 
   constructor(private authService: AuthService, private router: Router) {
-    // Redirect if already logged in
     if (this.authService.isAuthenticated) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/admin/upload']);
     }
   }
 
@@ -35,7 +34,7 @@ export class LoginComponent {
 
     try {
       await this.authService.login(this.email, this.password);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/admin/upload']);
     } catch (error: any) {
       this.errorMessage = error.message || 'An error occurred during sign in. Please try again.';
     } finally {

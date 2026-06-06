@@ -94,7 +94,6 @@
   animation: swing 7s ease-in-out infinite alternate;
 }
 
-/* Red Pin / Nail holding the string */
 .nail {
   width: 10px;
   height: 10px;
@@ -130,7 +129,6 @@
   position: relative;
 }
 
-/* Tape/Clip at the top of the card */
 .hanging-card::before {
   content: '';
   width: 24px;
@@ -428,7 +426,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: pulseArrow 2s infinite alternate;
+  animation: pulseArrow.2s infinite alternate;
 }
 
 @keyframes pulseArrow {

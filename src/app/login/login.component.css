@@ -257,3 +257,18 @@ form {
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
+
+.public-home-link {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  margin-top: 0.5rem;
+}
+
+.public-home-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}

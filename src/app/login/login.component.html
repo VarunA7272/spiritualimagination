@@ -11,13 +11,13 @@
   <div class="login-container">
     <div class="auth-card">
       <div class="brand-header">
-        <h1 class="brand-logo">Spiritual Imagination 🎁</h1>
-        <p class="brand-tagline">Jabalpur's #1 Custom Gift Studio</p>
+        <h1 class="brand-logo">Spiritual Imagination 🛠️</h1>
+        <p class="brand-tagline">Admin Gifting Portal</p>
       </div>
 
       <form (submit)="onSubmit()" #loginForm="ngForm" novalidate>
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email">Admin Email</label>
           <div class="input-box">
             <span class="input-icon">✉️</span>
             <input
@@ -26,7 +26,7 @@
               name="email"
               [(ngModel)]="email"
               autocomplete="username"
-              placeholder="Enter your email"
+              placeholder="Enter admin email"
               required
               [disabled]="loading"
               enterkeyhint="next"
@@ -44,7 +44,7 @@
               name="password"
               [(ngModel)]="password"
               autocomplete="current-password"
-              placeholder="Enter your password"
+              placeholder="Enter password"
               required
               [disabled]="loading"
               enterkeyhint="done"
@@ -58,11 +58,14 @@
         </div>
 
         <button type="submit" class="btn-login" [disabled]="loading">
-          <span class="btn-text" *ngIf="!loading">Sign In</span>
+          <span class="btn-text" *ngIf="!loading">Log In</span>
           <span class="spinner" *ngIf="loading"></span>
           <span class="loading-text" *ngIf="loading">Signing in...</span>
         </button>
       </form>
+
+      <!-- Public home redirect -->
+      <a routerLink="/home" class="public-home-link">← Return to Public Website</a>
     </div>
   </div>
 </div>

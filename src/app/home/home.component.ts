@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, HostListener, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +16,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   private isDeleting = false;
   private typingTimer: any;
 
-  // Swinging cards positioned at various lengths and offsets
   hangingCards = [
     { name: 'Name Plates', icon: '🏷️', left: 8, delay: '0s', length: 160 },
     { name: 'LED Frames', icon: '🖼️', left: 24, delay: '0.6s', length: 230 },
@@ -26,7 +24,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   constructor(
-    private router: Router,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
