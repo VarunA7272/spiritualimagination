@@ -1,0 +1,145 @@
+<section id="products" class="products-bg">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Our Creations</span>
+      <h2 class="section-title">What We Create 🎨</h2>
+      <p class="section-sub">From photo mugs to custom-cut name plates — click any item to view maximized pictures and details.</p>
+    </div>
+
+    <!-- Main Category Filter Tabs -->
+    <div class="category-tabs fade-up">
+      <button 
+        *ngFor="let cat of categories" 
+        [class.active]="selectedCategory === cat" 
+        (click)="filterByCategory(cat)">
+        {{ cat }}
+      </button>
+    </div>
+
+    <!-- Subcategory Pills Row -->
+    <div class="subcategory-tabs fade-up" *ngIf="subcategories.length > 0">
+      <button 
+        [class.active]="selectedSubcategory === 'All'" 
+        (click)="filterBySubcategory('All')">
+        All {{ selectedCategory }}
+      </button>
+      <button 
+        *ngFor="let sub of subcategories" 
+        [class.active]="selectedSubcategory === sub" 
+        (click)="filterBySubcategory(sub)">
+        {{ sub }}
+      </button>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+      <div class="product-card fade-up" *ngFor="let p of filteredProducts" (click)="openProductModal(p)">
+        <div class="product-img">
+          <!-- Multi-image logic: show first index or single image -->
+          <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0]" [alt]="p.name" class="product-actual-img" />
+          <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image" [alt]="p.name" class="product-actual-img" />
+          <div *ngIf="(!p.images || p.images.length === 0) && !p.image" class="cam-icon">{{ p.icon }}</div>
+          
+          <div class="img-label">Code: {{ p.code }}</div>
+          <span class="multi-photos-indicator" *ngIf="p.images && p.images.length > 1" title="Multiple photos available">
+            📸 {{ p.images.length }}
+          </span>
+        </div>
+        <div class="product-info">
+          <div class="product-header-row">
+            <span class="product-category-tag">
+              {{ p.category }}<span *ngIf="p.subcategory" class="subcat-connector"> / {{ p.subcategory }}</span>
+            </span>
+            <span class="product-price">{{ p.price }}</span>
+          </div>
+          <div class="product-name">{{ p.name }}</div>
+          <div class="product-desc">{{ p.desc }}</div>
+          <div class="product-meta">Size: {{ p.size }}</div>
+          <a [href]="getWhatsAppLink(p.name, p.code)" class="btn-quote" target="_blank" (click)="$event.stopPropagation()">
+            💬 Order on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-products-state fade-up" *ngIf="filteredProducts.length === 0">
+      <div class="empty-icon">🎨</div>
+      <h4>No Creations listed here yet</h4>
+      <p>Please check back soon, or check another category!</p>
+    </div>
+  </div>
+
+  <!-- Dynamic Detail Modal -->
+  <div class="product-modal-backdrop animate-fade-in" *ngIf="selectedProduct" (click)="closeProductModal()">
+    <div class="product-modal-card animate-scale-up" (click)="$event.stopPropagation()">
+      <button class="btn-close-modal" (click)="closeProductModal($event)" title="Close modal">×</button>
+      
+      <div class="modal-grid">
+        <!-- Carousel Gallery Section -->
+        <div class="modal-gallery">
+          <!-- Fallback Icon if no images exist -->
+          <div class="modal-fallback-icon" *ngIf="getProductImages().length === 0">
+            {{ selectedProduct.icon }}
+          </div>
+
+          <!-- Single or Multiple Images Carousel -->
+          <div class="modal-carousel" *ngIf="getProductImages().length > 0">
+            <div class="carousel-images-wrapper">
+              <img 
+                *ngFor="let imgUrl of getProductImages(); let idx = index" 
+                [src]="imgUrl" 
+                [alt]="selectedProduct.name" 
+                class="carousel-image" 
+                [class.active]="idx === activeImageIndex" 
+              />
+            </div>
+
+            <!-- Carousel Navigation Arrows (only if >1 image) -->
+            <ng-container *ngIf="getProductImages().length > 1">
+              <button class="carousel-control prev" (click)="prevImage($event)" aria-label="Previous image">‹</button>
+              <button class="carousel-control next" (click)="nextImage($event)" aria-label="Next image">›</button>
+              
+              <!-- Indicator Dots -->
+              <div class="carousel-indicators">
+                <button 
+                  *ngFor="let imgUrl of getProductImages(); let idx = index" 
+                  class="indicator-dot" 
+                  [class.active]="idx === activeImageIndex"
+                  (click)="setCurrentImage(idx, $event)"
+                  aria-label="View slide">
+                </button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Details Info Section -->
+        <div class="modal-details">
+          <div class="modal-header-row">
+            <span class="modal-category">
+              {{ selectedProduct.category }}<span *ngIf="selectedProduct.subcategory"> / {{ selectedProduct.subcategory }}</span>
+            </span>
+            <span class="modal-code">Code: <b>{{ selectedProduct.code }}</b></span>
+          </div>
+          
+          <h3 class="modal-title">{{ selectedProduct.name }}</h3>
+          <div class="modal-price">{{ selectedProduct.price }}</div>
+          
+          <div class="modal-meta-row">
+            <span class="meta-badge">📏 Size: {{ selectedProduct.size }}</span>
+          </div>
+          
+          <div class="modal-desc-section">
+            <h5>Product Description</h5>
+            <p>{{ selectedProduct.desc || 'No description provided.' }}</p>
+          </div>
+
+          <a [href]="getWhatsAppLink(selectedProduct.name, selectedProduct.code)" class="modal-btn-order" target="_blank" (click)="closeProductModal($event)">
+            💬 Personalize & Order on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

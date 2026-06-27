@@ -1,0 +1,270 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header-bar">
+    <div class="dashboard-header">
+      <h2>SI Admin Portal 🛠️</h2>
+      <p>Configure dynamic categories, manage subcategories, and customize the products catalog.</p>
+    </div>
+    
+    <!-- Tab Controls -->
+    <div class="tab-controls">
+      <button class="tab-btn" [class.active]="activeTab === 'products'" (click)="activeTab = 'products'">
+        📦 Manage Products
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'categories'" (click)="activeTab = 'categories'">
+        🏷️ Manage Categories
+      </button>
+    </div>
+  </div>
+
+  <!-- PRODUCTS TAB -->
+  <div class="dashboard-grid" *ngIf="activeTab === 'products'">
+    <!-- LEFT COLUMN: MANUAL FORM & CSV BULK UPLOAD -->
+    <div class="form-column">
+      <!-- UPLOAD & EDIT FORM CARD -->
+      <div class="form-card">
+        <h3 *ngIf="!editingProductCode">List a New Product</h3>
+        <h3 *ngIf="editingProductCode" class="editing-header">
+          ✏️ Editing Product <span class="highlight-code">{{ editingProductCode }}</span>
+        </h3>
+        
+        <form (submit)="onSubmit()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="p-name">Product Name *</label>
+              <input type="text" id="p-name" name="name" [(ngModel)]="name" placeholder="e.g. Acrylic Golden Name Plate" required />
+            </div>
+            <div class="form-group">
+              <label for="p-code">Product Code *</label>
+              <input type="text" id="p-code" name="code" [(ngModel)]="code" placeholder="e.g. JZZ4501" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="p-price">Price *</label>
+              <input type="text" id="p-price" name="price" [(ngModel)]="price" placeholder="e.g. 1800" required />
+            </div>
+            <div class="form-group">
+              <label for="p-size">Size / Dimensions *</label>
+              <input type="text" id="p-size" name="size" [(ngModel)]="size" placeholder="e.g. 15x24 Inch" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="p-category">Category *</label>
+              <select id="p-category" name="category" [(ngModel)]="category" (change)="onCategoryChange()">
+                <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+              </select>
+            </div>
+            <div class="form-group" *ngIf="subcategories.length > 0">
+              <label for="p-subcategory">Subcategory</label>
+              <select id="p-subcategory" name="subcategory" [(ngModel)]="subcategory">
+                <option value="">None / Main</option>
+                <option *ngFor="let sub of subcategories" [value]="sub">{{ sub }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Multi-image Upload Row -->
+          <div class="form-group">
+            <label for="p-image">Upload Photo(s) (First image will be the primary cover)</label>
+            <input type="file" id="p-image" (change)="onFileSelected($event)" accept="image/*" class="file-input" multiple />
+            
+            <div class="image-previews-grid-wrapper" *ngIf="imagePreviewUrls.length > 0">
+              <div class="image-previews-grid">
+                <div class="preview-thumbnail-box" *ngFor="let url of imagePreviewUrls; let idx = index">
+                  <img [src]="url" alt="Preview" class="preview-thumbnail" />
+                  <button type="button" class="btn-remove-preview" (click)="removeUploadedImage(idx)" title="Remove image">×</button>
+                  <span class="preview-order-badge" *ngIf="idx === 0">Cover</span>
+                  <span class="preview-order-badge number" *ngIf="idx > 0">{{ idx + 1 }}</span>
+                </div>
+              </div>
+              <button type="button" class="btn-clear-all" (click)="clearAllImages()">🗑️ Clear All Photos</button>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="imagePreviewUrls.length === 0">
+            <label>Fallback Emoji Icon</label>
+            <select name="selectedIcon" [(ngModel)]="selectedIcon">
+              <option *ngFor="let icon of icons" [value]="icon.value">{{ icon.value }} ({{ icon.label }})</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="p-desc">Description</label>
+            <textarea id="p-desc" name="desc" [(ngModel)]="desc" placeholder="Describe materials, details, and personalization features..." rows="3"></textarea>
+          </div>
+
+          <!-- Messages -->
+          <div class="success-message animate-fade" *ngIf="successMessage">
+            {{ successMessage }}
+          </div>
+          <div class="error-message animate-fade" *ngIf="errorMessage">
+            ⚠️ {{ errorMessage }}
+          </div>
+
+          <div class="action-buttons">
+            <button type="submit" class="btn-upload" [class.btn-save]="editingProductCode">
+              {{ editingProductCode ? '💾 Save Product Changes' : '🚀 List Product to Public Catalog' }}
+            </button>
+            <button type="button" class="btn-cancel" *ngIf="editingProductCode" (click)="cancelEdit()">
+              ❌ Cancel Edit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- CSV BULK IMPORT CARD -->
+      <div class="add-category-card csv-import-card">
+        <h3>Bulk Import from Excel (CSV)</h3>
+        <p class="csv-hint">
+          Import multiple products at once. Save your Excel sheet as <strong>CSV (Comma delimited)</strong> format.
+          Ensure columns match exactly: 
+          <code>Code, Name, Category, Subcategory, Size, Price, Description, Icon, Image_URLs</code>
+          <button type="button" class="btn-download-template" (click)="downloadCSVTemplate()">
+            📥 Download Sample CSV Template
+          </button>
+        </p>
+        
+        <div class="csv-upload-wrapper">
+          <input type="file" id="csv-file-picker" (change)="onCSVFileSelected($event)" accept=".csv" class="file-input-hidden" />
+          <label for="csv-file-picker" class="btn-select-csv">
+            📁 Select CSV Spreadsheet
+          </label>
+          <span class="file-name-label" *ngIf="importFile">📄 {{ importFile.name }}</span>
+        </div>
+
+        <!-- Success & Error Alert Panels -->
+        <div class="success-message" *ngIf="csvSuccessMessage">
+          {{ csvSuccessMessage }}
+        </div>
+        <div class="error-message" *ngIf="csvErrorMessage">
+          ⚠️ {{ csvErrorMessage }}
+        </div>
+
+        <!-- Import Preview details -->
+        <div class="csv-preview-area animate-fade" *ngIf="csvProducts.length > 0">
+          <div class="csv-stats-summary">
+            <div class="stat-badge new">🆕 {{ csvNewCount }} New Products</div>
+            <div class="stat-badge conflict" [class.danger]="csvConflictCount > 0">
+              ⚠️ {{ csvConflictCount }} Overwrites
+            </div>
+            <div class="stat-badge errors" *ngIf="csvErrors.length > 0">
+              ❌ {{ csvErrors.length }} Log Warnings
+            </div>
+          </div>
+
+          <!-- Conflict Toggle Options -->
+          <div class="csv-conflict-toggles" *ngIf="csvConflictCount > 0">
+            <label class="conflict-action-title">Existing Code Resolution:</label>
+            <div class="toggles-row">
+              <label class="radio-label">
+                <input type="radio" name="conflictAction" [(ngModel)]="csvConflictAction" value="skip" />
+                <span>Skip Duplicates</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="conflictAction" [(ngModel)]="csvConflictAction" value="overwrite" />
+                <span>Overwrite Details</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="csv-action-buttons">
+            <button type="button" class="btn-confirm-import" (click)="commitImport()">
+              🚀 Commit Import ({{ csvProducts.length }} rows)
+            </button>
+            <button type="button" class="btn-cancel-import" (click)="cancelImport()">
+              Cancel
+            </button>
+          </div>
+
+          <!-- Parsed Row Warnings Logs -->
+          <div class="csv-errors-log" *ngIf="csvErrors.length > 0">
+            <h5>Import Verification Log</h5>
+            <ul class="error-list-scroll">
+              <li *ngFor="let err of csvErrors">{{ err }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: LISTING MANAGER -->
+    <div class="list-card">
+      <div class="list-card-header">
+        <h3>Currently Listed Products ({{ products.length }})</h3>
+        <button class="btn-reset-list" (click)="loadDefaultProducts()">Reset to Default Items</button>
+      </div>
+
+      <div class="product-list-scroll">
+        <div class="product-item-row" *ngFor="let p of products">
+          <div class="item-img-preview">
+            <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0]" alt="Product thumbnail" />
+            <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image" alt="Product thumbnail" />
+            <span *ngIf="(!p.images || p.images.length === 0) && !p.image">{{ p.icon }}</span>
+          </div>
+          <div class="item-details">
+            <div class="item-title-row">
+              <h4>{{ p.name }}</h4>
+              <span class="item-code">{{ p.code }}</span>
+            </div>
+            <div class="item-sub-row">
+              <span class="item-cat">{{ p.category }}<span *ngIf="p.subcategory"> &gt; {{ p.subcategory }}</span></span>
+              <span class="item-meta">Size: {{ p.size }}</span>
+              <span class="item-price">{{ p.price }}</span>
+              <span class="photos-count-badge" *ngIf="p.images && p.images.length > 1">📸 {{ p.images.length }} Photos</span>
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-edit-item" (click)="editProduct(p)" title="Edit listing">✏️</button>
+            <button class="btn-delete-item" (click)="deleteProduct(p.code)" title="Delete listing">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES TAB -->
+  <div class="categories-tab-content" *ngIf="activeTab === 'categories'">
+    <!-- Add Category Form -->
+    <div class="add-category-card">
+      <h3>Add New Main Category</h3>
+      <div class="add-cat-row">
+        <input type="text" [(ngModel)]="newCategoryName" placeholder="e.g. Handmade Cards" (keyup.enter)="addCategory()" />
+        <button class="btn-add-cat" (click)="addCategory()">➕ Add Category</button>
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="categories-list-grid">
+      <div class="category-manage-box animate-fade" *ngFor="let cat of categories">
+        <div class="cat-box-header">
+          <h4>{{ cat.name }}</h4>
+          <button class="btn-delete-cat" (click)="deleteCategory(cat.name)" title="Delete Category">🗑️ Delete</button>
+        </div>
+
+        <!-- Subcategories List -->
+        <div class="subcategory-manage-section">
+          <h5>Subcategories</h5>
+          <div class="subcategories-container">
+            <div class="no-subs-tag" *ngIf="cat.subcategories.length === 0">
+              No subcategories configured.
+            </div>
+            <div class="subcategory-pill" *ngFor="let sub of cat.subcategories">
+              <span>{{ sub }}</span>
+              <button class="btn-del-sub" (click)="deleteSubcategory(cat.name, sub)" title="Remove Subcategory">×</button>
+            </div>
+          </div>
+
+          <!-- Add Subcategory Input -->
+          <div class="add-sub-row">
+            <input type="text" [(ngModel)]="newSubcategoryNames[cat.name]" placeholder="New subcategory..." (keyup.enter)="addSubcategory(cat.name)" />
+            <button class="btn-add-sub" (click)="addSubcategory(cat.name)">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
