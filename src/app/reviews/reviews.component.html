@@ -6,21 +6,103 @@
       <p class="section-sub">Real stories from real customers who made their moments unforgettable.</p>
     </div>
     
+    <!-- Reviews Grid -->
     <div class="reviews-grid">
       <div class="review-card fade-up" *ngFor="let rev of reviews">
         <div class="review-stars">{{ rev.stars }}</div>
         <p class="review-text">{{ rev.text }}</p>
-        <div class="review-author">— {{ rev.author }}</div>
+        
+        <!-- Uploaded Customer Photos -->
+        <div class="review-attachments" *ngIf="rev.photos && rev.photos.length > 0">
+          <img *ngFor="let photo of rev.photos" [src]="photo" alt="Customer photo" class="review-attachment-img" />
+        </div>
+        
+        <div class="review-author-row">
+          <span class="review-author">— {{ rev.author }}</span>
+          <span class="review-date" *ngIf="rev.date">{{ rev.date }}</span>
+        </div>
       </div>
     </div>
 
+    <!-- Rating Badges & Writing Call-To-Actions -->
     <div class="text-center fade-up">
       <div class="badge-container">
         <div class="google-badge">
           <div class="g-logo"></div>
           <span class="google-badge-text">4.9 ⭐ on Google | 22 Reviews</span>
         </div>
-        <a href="https://www.google.com/maps/search/Spiritual+Imagination+Jabalpur" target="_blank" class="btn-google">See All Reviews on Google →</a>
+        <div *ngIf="false" class="reviews-cta-row">
+          <a href="https://www.google.com/maps/place/Spiritual+Imagination/@23.1652161,79.9156061,17z/data=!4m8!3m7!1s0x3981ae1767bebbd5:0x1b575791336beac3!8m2!3d23.1652161!4d79.9156061!9m1!1b1" target="_blank" class="btn-google">See All Google Reviews →</a>
+          <button class="btn-write-google-review" (click)="openWriteReviewModal()">✍️ Write a Google Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast Notice -->
+  <div class="reviews-toast-notice animate-fade-in" *ngIf="successToastMessage">
+    {{ successToastMessage }}
+  </div>
+
+  <!-- Google Review Simulated Modal -->
+  <div class="google-review-modal-backdrop animate-fade-in" *ngIf="writeReviewModalOpen" (click)="closeWriteReviewModal()">
+    <div class="google-review-modal animate-scale-up" (click)="$event.stopPropagation()">
+      <div class="google-modal-header">
+        <h4>Spiritual Imagination</h4>
+      </div>
+
+      <div class="google-user-row">
+        <div class="google-avatar-circle">G</div>
+        <div class="google-user-info">
+          <input type="text" [(ngModel)]="reviewAuthor" placeholder="Your Name" class="google-name-input" />
+          <span class="google-public-tag">Posting publicly across Google ℹ️</span>
+        </div>
+      </div>
+
+      <!-- Simulated Stars Picker -->
+      <div class="google-stars-picker-row">
+        <span 
+          *ngFor="let starNum of [1, 2, 3, 4, 5]" 
+          class="picker-star" 
+          [class.filled]="starNum <= (reviewHoverRating || reviewRating)" 
+          (click)="setRating(starNum)" 
+          (mouseenter)="setHoverRating(starNum)" 
+          (mouseleave)="clearHoverRating()">
+          ★
+        </span>
+      </div>
+
+      <!-- Experience input textarea -->
+      <div class="google-textarea-wrapper">
+        <textarea 
+          [(ngModel)]="reviewText" 
+          placeholder="Share details of your own experience at this place" 
+          rows="4">
+        </textarea>
+      </div>
+
+      <!-- Simulated Photo Selector -->
+      <div class="google-photo-uploader">
+        <input type="file" id="review-file" (change)="onPhotoSelected($event)" accept="image/*" class="file-input-hidden" multiple />
+        <label for="review-file" class="btn-add-photos-videos">
+          <span class="photo-icon">📷</span> Add photos & videos
+        </label>
+        
+        <!-- Upload Previews -->
+        <div class="review-previews-grid" *ngIf="uploadedPhotos.length > 0">
+          <div class="review-thumb-box" *ngFor="let photo of uploadedPhotos; let idx = index">
+            <img [src]="photo" alt="Preview" />
+            <button type="button" class="btn-remove-thumb" (click)="removeUploadedPhoto(idx)">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Control Actions -->
+      <div class="google-modal-footer">
+        <button type="button" class="btn-google-cancel" (click)="closeWriteReviewModal()">Cancel</button>
+        <button type="button" class="btn-google-post" [disabled]="reviewRating === 0" (click)="submitReview()">
+          Post
+        </button>
       </div>
     </div>
   </div>

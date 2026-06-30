@@ -1,29 +1,211 @@
-import { Component, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+interface Review {
+  stars: string;
+  ratingValue?: number;
+  text: string;
+  author: string;
+  photos?: string[];
+  date?: string;
+}
 
 @Component({
   selector: 'app-reviews',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './reviews.component.html',
   styleUrls: ['./reviews.component.css']
 })
-export class ReviewsComponent implements AfterViewInit {
-  reviews = [
-    { stars: '⭐⭐⭐⭐⭐', text: 'Amazing quality mugs! Got them for my office team and everyone loved it. The printing was crystal clear and the delivery was super fast. Will definitely order again!', author: 'Rahul S.' },
-    { stars: '⭐⭐⭐⭐⭐', text: 'Best custom gifts in Jabalpur! Fast delivery and beautiful packaging. Ordered a personalized cushion for my sister\'s birthday and she absolutely loved it.', author: 'Priya M.' },
-    { stars: '⭐⭐⭐⭐⭐', text: 'Ordered trophies for our school\'s annual event. Superb finish and very affordable. The team was very responsive on WhatsApp and delivered on time!', author: 'Ankit T.' }
+export class ReviewsComponent implements OnInit, AfterViewInit {
+  // Default static reviews
+  defaultReviews: Review[] = [
+    { stars: '⭐⭐⭐⭐⭐', ratingValue: 5, text: 'Amazing quality mugs! Got them for my office team and everyone loved it. The printing was crystal clear and the delivery was super fast. Will definitely order again!', author: 'Rahul S.', date: '3 weeks ago' },
+    { stars: '⭐⭐⭐⭐⭐', ratingValue: 5, text: 'Best custom gifts in Jabalpur! Fast delivery and beautiful packaging. Ordered a personalized cushion for my sister\'s birthday and she absolutely loved it.', author: 'Priya M.', date: '1 month ago' },
+    { stars: '⭐⭐⭐⭐⭐', ratingValue: 5, text: 'Ordered trophies for our school\'s annual event. Superb finish and very affordable. The team was very responsive on WhatsApp and delivered on time!', author: 'Ankit T.', date: '2 months ago' }
   ];
+
+  reviews: Review[] = [];
+
+  // Write Review Modal State
+  writeReviewModalOpen = false;
+  reviewRating = 0;
+  reviewHoverRating = 0;
+  reviewText = '';
+  reviewAuthor = '';
+  uploadedPhotos: string[] = [];
+
+  // Success Toast State
+  successToastMessage = '';
 
   constructor(
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
+  ngOnInit() {
+    this.loadReviews();
+  }
+
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.initScrollAnimations();
     }
+  }
+
+  loadReviews() {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.reviews = this.defaultReviews;
+      return;
+    }
+
+    const saved = localStorage.getItem('si_reviews');
+    if (saved) {
+      try {
+        const customReviews = JSON.parse(saved);
+        this.reviews = [...customReviews, ...this.defaultReviews];
+      } catch (err) {
+        console.error('Error parsing custom reviews', err);
+        this.reviews = this.defaultReviews;
+      }
+    } else {
+      this.reviews = this.defaultReviews;
+    }
+  }
+
+  openWriteReviewModal() {
+    this.writeReviewModalOpen = true;
+    this.reviewRating = 0;
+    this.reviewHoverRating = 0;
+    this.reviewText = '';
+    this.reviewAuthor = '';
+    this.uploadedPhotos = [];
+  }
+
+  closeWriteReviewModal(event?: Event) {
+    if (event) event.stopPropagation();
+    this.writeReviewModalOpen = false;
+  }
+
+  setRating(rating: number) {
+    this.reviewRating = rating;
+  }
+
+  setHoverRating(rating: number) {
+    this.reviewHoverRating = rating;
+  }
+
+  clearHoverRating() {
+    this.reviewHoverRating = 0;
+  }
+
+  async onPhotoSelected(event: any) {
+    const files: FileList = event.target.files;
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      try {
+        const compressedDataUrl = await this.compressImage(file);
+        this.uploadedPhotos.push(compressedDataUrl);
+      } catch (err) {
+        console.error('Error compressing file', file.name, err);
+      }
+    }
+    event.target.value = '';
+  }
+
+  compressImage(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 400; // slightly smaller limit for reviews to conserve space
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.65));
+          } else {
+            reject(new Error('Canvas context could not be created'));
+          }
+        };
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('File reading failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  removeUploadedPhoto(idx: number) {
+    this.uploadedPhotos.splice(idx, 1);
+  }
+
+  submitReview() {
+    if (this.reviewRating === 0) return;
+
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const starString = '⭐'.repeat(this.reviewRating);
+    const authorName = this.reviewAuthor.trim() || 'Spiritual Imagination Customer';
+
+    const newReview: Review = {
+      stars: starString,
+      ratingValue: this.reviewRating,
+      text: this.reviewText.trim(),
+      author: authorName,
+      photos: this.uploadedPhotos.length > 0 ? this.uploadedPhotos : undefined,
+      date: 'Just now'
+    };
+
+    // Save to local storage
+    const saved = localStorage.getItem('si_reviews');
+    let customReviews: Review[] = [];
+    if (saved) {
+      try {
+        customReviews = JSON.parse(saved);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    customReviews.unshift(newReview);
+    localStorage.setItem('si_reviews', JSON.stringify(customReviews));
+
+    // Reload list
+    this.loadReviews();
+
+    // Close Modal
+    this.writeReviewModalOpen = false;
+
+    // Trigger open maps writing review panel
+    const mapsReviewUrl = 'https://search.google.com/local/writereview?placeid=ChIJ1btuZxeuHTkRo6xrM5FXVxs';
+    window.open(mapsReviewUrl, '_blank');
+
+    // Show Toast
+    this.successToastMessage = '✓ Thank you! Opening Google Reviews in a new window to publish publicly.';
+    setTimeout(() => {
+      this.successToastMessage = '';
+    }, 6000);
   }
 
   initScrollAnimations() {
