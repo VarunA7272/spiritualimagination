@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "build:github": "ng build --base-href /spiritualimagination/ && cp dist/spiritual-imagination/browser/index.html dist/spiritual-imagination/browser/404.html",
+    "deploy": "npm run build:github && npx angular-cli-ghpages --dir=dist/spiritual-imagination/browser",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
