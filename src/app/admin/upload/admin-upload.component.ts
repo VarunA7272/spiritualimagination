@@ -1,24 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Category {
-  name: string;
-  subcategories: string[];
-}
-
-interface Product {
-  name: string;
-  category: string;
-  subcategory?: string;
-  size: string;
-  price: string;
-  desc: string;
-  code: string;
-  icon: string;
-  image?: string;
-  images?: string[];
-}
+import { SupabaseService, Product, Category } from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-admin-upload',
@@ -80,7 +63,10 @@ export class AdminUploadComponent implements OnInit {
   csvSuccessMessage = '';
   csvErrorMessage = '';
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
     this.loadCategories();
@@ -88,41 +74,18 @@ export class AdminUploadComponent implements OnInit {
   }
 
   loadCategories() {
-    if (!isPlatformBrowser(this.platformId)) return;
-
-    const saved = localStorage.getItem('si_categories');
-    if (saved) {
-      try {
-        this.categories = JSON.parse(saved);
-      } catch (err) {
-        console.error('Error parsing categories', err);
-        this.loadDefaultCategories();
+    this.supabaseService.getCategories().then(data => {
+      this.categories = data;
+      if (this.categories.length > 0) {
+        // Keep selection if still valid, otherwise default to first category
+        if (!this.category || !this.categories.some(c => c.name === this.category)) {
+          this.category = this.categories[0].name;
+        }
+        this.onCategoryChange();
       }
-    } else {
-      this.loadDefaultCategories();
-    }
-
-    if (this.categories.length > 0) {
-      this.category = this.categories[0].name;
-      this.onCategoryChange();
-    }
-  }
-
-  loadDefaultCategories() {
-    this.categories = [
-      { name: 'Name Plates', subcategories: ['Acrylic', 'LED Backlit', 'Wooden', 'MDF Board'] },
-      { name: 'LED & Photo Frames', subcategories: ['Magic Mirrors', 'Couple Standees', 'Collage Frames', 'Canvas Frames'] },
-      { name: 'Sketches & Paintings', subcategories: ['Pencil Sketches', 'Oil Paintings', 'Acrylic Canvas'] },
-      { name: 'Metal Rakhis', subcategories: ['Name Rakhis', 'Photo Rakhis'] },
-      { name: 'Mugs & Gifting', subcategories: ['Custom Mugs', 'Photo Cushions'] }
-    ];
-    this.saveCategoriesToStorage();
-  }
-
-  saveCategoriesToStorage() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('si_categories', JSON.stringify(this.categories));
-    }
+    }).catch(err => {
+      console.error('Error loading categories from Supabase', err);
+    });
   }
 
   onCategoryChange() {
@@ -132,37 +95,11 @@ export class AdminUploadComponent implements OnInit {
   }
 
   loadProducts() {
-    if (!isPlatformBrowser(this.platformId)) return;
-
-    const saved = localStorage.getItem('si_products');
-    if (saved) {
-      try {
-        this.products = JSON.parse(saved);
-      } catch (err) {
-        console.error('Error parsing saved products', err);
-        this.loadDefaultProducts();
-      }
-    } else {
-      this.loadDefaultProducts();
-    }
-  }
-
-  loadDefaultProducts() {
-    this.products = [
-      { name: 'Acrylic Golden Name Plate', category: 'Name Plates', subcategory: 'Acrylic', size: '15x24 Inch', price: '₹1,800', desc: 'Premium acrylic base with metallic golden letters.', code: 'JZZ4501', icon: '🏷️' },
-      { name: 'Basuri Vadak Name Plate', category: 'Name Plates', subcategory: 'Wooden', size: '8x15 Inch', price: '₹1,000', desc: 'Beautiful flute theme wooden-finish acrylic plate.', code: 'GZZ4801', icon: '🏷️' },
-      { name: 'Glowing LED Name Plate', category: 'Name Plates', subcategory: 'LED Backlit', size: '6x12 Inch', price: '₹1,000', desc: 'Warm backlit LED plate with custom engravings.', code: 'GZZ4802', icon: '💡' },
-      { name: 'LED Mirror Photo Frame', category: 'LED & Photo Frames', subcategory: 'Magic Mirrors', size: '12x18 Inch', price: '₹999', desc: 'Magic mirror with LED lights showing custom photo.', code: 'FZZ-2', icon: '🪞' },
-      { name: 'Handmade Pencil Sketch (Single)', category: 'Sketches & Paintings', subcategory: 'Pencil Sketches', size: '8x12 Inch', price: '₹500', desc: 'Realistic pencil drawing by our skilled artists.', code: 'SK-01', icon: '✏️' },
-      { name: 'Engraved Metal Name Rakhi', category: 'Metal Rakhis', subcategory: 'Name Rakhis', size: 'Standard', price: '₹130', desc: 'Premium metal rakhi personalized with name.', code: 'RK-01', icon: '📿' }
-    ];
-    this.saveToStorage();
-  }
-
-  saveToStorage() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('si_products', JSON.stringify(this.products));
-    }
+    this.supabaseService.getProducts().then(data => {
+      this.products = data;
+    }).catch(err => {
+      console.error('Error loading products from Supabase', err);
+    });
   }
 
   async onFileSelected(event: any) {
@@ -258,29 +195,22 @@ export class AdminUploadComponent implements OnInit {
       desc: this.desc.trim(),
       code: trimmedCode,
       icon: this.selectedIcon,
-      image: this.imagePreviewUrls.length > 0 ? this.imagePreviewUrls[0] : undefined,
       images: this.imagePreviewUrls.length > 0 ? this.imagePreviewUrls : undefined
     };
 
-    if (this.editingProductCode) {
-      // Update existing product
-      const idx = this.products.findIndex(p => p.code === this.editingProductCode);
-      if (idx !== -1) {
-        this.products[idx] = productData;
-      }
+    const isEdit = !!this.editingProductCode;
+    
+    // Save directly to Supabase
+    this.supabaseService.saveProduct(productData).then(() => {
+      this.loadProducts();
+      this.resetForm();
+      this.errorMessage = '';
       this.editingProductCode = null;
-      this.successMessage = '✓ Product updated successfully!';
-    } else {
-      // Add new product
-      this.products.unshift(productData);
-      this.successMessage = '✓ Product uploaded successfully!';
-    }
-
-    this.saveToStorage();
-    this.resetForm();
-    this.errorMessage = '';
-
-    setTimeout(() => (this.successMessage = ''), 3500);
+      this.successMessage = isEdit ? '✓ Product updated successfully!' : '✓ Product uploaded successfully!';
+      setTimeout(() => (this.successMessage = ''), 3500);
+    }).catch(err => {
+      this.errorMessage = err.message || 'Error listing product to database.';
+    });
   }
 
   editProduct(product: Product) {
@@ -336,11 +266,14 @@ export class AdminUploadComponent implements OnInit {
 
   deleteProduct(code: string) {
     if (confirm(`Are you sure you want to delete product "${code}"?`)) {
-      this.products = this.products.filter(p => p.code !== code);
-      this.saveToStorage();
-      if (this.editingProductCode === code) {
-        this.cancelEdit();
-      }
+      this.supabaseService.deleteProduct(code).then(() => {
+        this.loadProducts();
+        if (this.editingProductCode === code) {
+          this.cancelEdit();
+        }
+      }).catch(err => {
+        alert('Error deleting product: ' + err.message);
+      });
     }
   }
 
@@ -352,28 +285,23 @@ export class AdminUploadComponent implements OnInit {
       alert('Category already exists.');
       return;
     }
-    this.categories.push({ name, subcategories: [] });
-    this.saveCategoriesToStorage();
-    this.newCategoryName = '';
     
-    if (this.categories.length === 1) {
-      this.category = name;
-      this.onCategoryChange();
-    }
+    const newCat: Category = { name, subcategories: [] };
+    this.supabaseService.upsertCategory(newCat).then(() => {
+      this.loadCategories();
+      this.newCategoryName = '';
+    }).catch(err => {
+      alert('Error adding category: ' + err.message);
+    });
   }
 
   deleteCategory(name: string) {
     if (confirm(`Are you sure you want to delete category "${name}"? This will not delete products under this category, but they won't belong to any active category.`)) {
-      this.categories = this.categories.filter(c => c.name !== name);
-      this.saveCategoriesToStorage();
-      if (this.category === name) {
-        if (this.categories.length > 0) {
-          this.category = this.categories[0].name;
-        } else {
-          this.category = '';
-        }
-        this.onCategoryChange();
-      }
+      this.supabaseService.deleteCategory(name).then(() => {
+        this.loadCategories();
+      }).catch(err => {
+        alert('Error deleting category: ' + err.message);
+      });
     }
   }
 
@@ -387,12 +315,18 @@ export class AdminUploadComponent implements OnInit {
         alert('Subcategory already exists in this category.');
         return;
       }
-      catObj.subcategories.push(subName);
-      this.saveCategoriesToStorage();
-      this.newSubcategoryNames[categoryName] = '';
-      if (this.category === categoryName) {
-        this.onCategoryChange();
-      }
+      
+      const updatedCat: Category = {
+        name: catObj.name,
+        subcategories: [...catObj.subcategories, subName]
+      };
+
+      this.supabaseService.upsertCategory(updatedCat).then(() => {
+        this.newSubcategoryNames[categoryName] = '';
+        this.loadCategories();
+      }).catch(err => {
+        alert('Error adding subcategory: ' + err.message);
+      });
     }
   }
 
@@ -400,11 +334,16 @@ export class AdminUploadComponent implements OnInit {
     if (confirm(`Are you sure you want to delete subcategory "${subName}" from "${categoryName}"?`)) {
       const catObj = this.categories.find(c => c.name === categoryName);
       if (catObj) {
-        catObj.subcategories = catObj.subcategories.filter(s => s !== subName);
-        this.saveCategoriesToStorage();
-        if (this.category === categoryName) {
-          this.onCategoryChange();
-        }
+        const updatedCat: Category = {
+          name: catObj.name,
+          subcategories: catObj.subcategories.filter(s => s !== subName)
+        };
+
+        this.supabaseService.upsertCategory(updatedCat).then(() => {
+          this.loadCategories();
+        }).catch(err => {
+          alert('Error deleting subcategory: ' + err.message);
+        });
       }
     }
   }
@@ -432,7 +371,7 @@ export class AdminUploadComponent implements OnInit {
     event.target.value = '';
   }
 
-  processCSV(text: string) {
+  async processCSV(text: string) {
     const parsedRows = this.parseCSV(text);
     if (parsedRows.length <= 1) {
       this.csvErrorMessage = 'CSV file is empty or only contains headers.';
@@ -511,23 +450,30 @@ export class AdminUploadComponent implements OnInit {
       let categoryName = rawCategory;
       let subcategoryName = rawSubcategory || undefined;
 
-      // Automatically add category if it doesn't exist
-      const catExists = this.categories.find(c => c.name.toLowerCase() === categoryName.toLowerCase());
+      // Automatically add category if it doesn't exist in Supabase
+      let catExists = this.categories.find(c => c.name.toLowerCase() === categoryName.toLowerCase());
       if (!catExists) {
-        this.categories.push({
-          name: categoryName,
-          subcategories: subcategoryName ? [subcategoryName] : []
-        });
-        this.saveCategoriesToStorage();
+        const newCat: Category = { name: categoryName, subcategories: subcategoryName ? [subcategoryName] : [] };
+        try {
+          await this.supabaseService.upsertCategory(newCat);
+          this.categories.push(newCat);
+          catExists = newCat;
+        } catch (e) {
+          this.csvErrors.push(`Row ${rowNum}: Failed to register category "${categoryName}".`);
+        }
       } else if (subcategoryName) {
         const subExists = catExists.subcategories.some(s => s.toLowerCase() === subcategoryName!.toLowerCase());
         if (!subExists) {
           catExists.subcategories.push(subcategoryName);
-          this.saveCategoriesToStorage();
+          try {
+            await this.supabaseService.upsertCategory(catExists);
+          } catch (e) {
+            this.csvErrors.push(`Row ${rowNum}: Failed to append subcategory "${subcategoryName}" to "${categoryName}".`);
+          }
         }
       }
 
-      // Re-map to Correct casing from configurations
+      // Re-map to correct casing from configurations
       const matchCat = this.categories.find(c => c.name.toLowerCase() === categoryName.toLowerCase());
       if (matchCat) {
         categoryName = matchCat.name;
@@ -539,12 +485,8 @@ export class AdminUploadComponent implements OnInit {
 
       // Handle Image URL CSV listing
       let imagesList: string[] | undefined = undefined;
-      let primaryImage: string | undefined = undefined;
       if (rawImageUrls) {
         imagesList = rawImageUrls.split(',').map(url => url.trim()).filter(url => url !== '');
-        if (imagesList.length > 0) {
-          primaryImage = imagesList[0];
-        }
       }
 
       const product: Product = {
@@ -555,7 +497,6 @@ export class AdminUploadComponent implements OnInit {
         price: rawPrice.startsWith('₹') ? rawPrice : '₹' + rawPrice,
         desc: rawDesc,
         icon: rawIcon || '🏷️',
-        image: primaryImage,
         images: imagesList,
         code: formattedCode
       };
@@ -571,33 +512,38 @@ export class AdminUploadComponent implements OnInit {
     }
   }
 
-  commitImport() {
+  async commitImport() {
     if (this.csvProducts.length === 0) return;
 
     let addedCount = 0;
     let updatedCount = 0;
 
-    for (const p of this.csvProducts) {
-      const idx = this.products.findIndex(prod => prod.code === p.code);
-      if (idx !== -1) {
-        if (this.csvConflictAction === 'overwrite') {
-          this.products[idx] = p;
-          updatedCount++;
+    try {
+      for (const p of this.csvProducts) {
+        const exists = this.products.some(prod => prod.code === p.code);
+        if (exists) {
+          if (this.csvConflictAction === 'overwrite') {
+            await this.supabaseService.saveProduct(p);
+            updatedCount++;
+          }
+        } else {
+          await this.supabaseService.saveProduct(p);
+          addedCount++;
         }
-      } else {
-        this.products.unshift(p);
-        addedCount++;
       }
+
+      this.loadProducts();
+      this.loadCategories();
+
+      this.csvSuccessMessage = `✓ Successfully imported catalog data! Added: ${addedCount}, Overwritten/Updated: ${updatedCount}.`;
+      this.csvProducts = [];
+      this.csvErrors = [];
+      this.importFile = null;
+      this.csvConflictCount = 0;
+      this.csvNewCount = 0;
+    } catch (err: any) {
+      this.csvErrorMessage = 'Import aborted: ' + (err.message || 'Database error occurred.');
     }
-
-    this.saveToStorage();
-
-    this.csvSuccessMessage = `✓ Successfully imported catalog data! Added: ${addedCount}, Overwritten/Updated: ${updatedCount}.`;
-    this.csvProducts = [];
-    this.csvErrors = [];
-    this.importFile = null;
-    this.csvConflictCount = 0;
-    this.csvNewCount = 0;
 
     setTimeout(() => (this.csvSuccessMessage = ''), 5000);
   }

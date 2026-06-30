@@ -1,15 +1,7 @@
 import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Review {
-  stars: string;
-  ratingValue?: number;
-  text: string;
-  author: string;
-  photos?: string[];
-  date?: string;
-}
+import { SupabaseService, Review } from '../core/services/supabase.service';
 
 @Component({
   selector: 'app-reviews',
@@ -19,13 +11,6 @@ interface Review {
   styleUrls: ['./reviews.component.css']
 })
 export class ReviewsComponent implements OnInit, AfterViewInit {
-  // Default static reviews
-  defaultReviews: Review[] = [
-    { stars: '⭐⭐⭐⭐⭐', ratingValue: 5, text: 'Amazing quality mugs! Got them for my office team and everyone loved it. The printing was crystal clear and the delivery was super fast. Will definitely order again!', author: 'Rahul S.', date: '3 weeks ago' },
-    { stars: '⭐⭐⭐⭐⭐', ratingValue: 5, text: 'Best custom gifts in Jabalpur! Fast delivery and beautiful packaging. Ordered a personalized cushion for my sister\'s birthday and she absolutely loved it.', author: 'Priya M.', date: '1 month ago' },
-    { stars: '⭐⭐⭐⭐⭐', ratingValue: 5, text: 'Ordered trophies for our school\'s annual event. Superb finish and very affordable. The team was very responsive on WhatsApp and delivered on time!', author: 'Ankit T.', date: '2 months ago' }
-  ];
-
   reviews: Review[] = [];
 
   // Write Review Modal State
@@ -40,6 +25,7 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
   successToastMessage = '';
 
   constructor(
+    private supabaseService: SupabaseService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -55,23 +41,11 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
   }
 
   loadReviews() {
-    if (!isPlatformBrowser(this.platformId)) {
-      this.reviews = this.defaultReviews;
-      return;
-    }
-
-    const saved = localStorage.getItem('si_reviews');
-    if (saved) {
-      try {
-        const customReviews = JSON.parse(saved);
-        this.reviews = [...customReviews, ...this.defaultReviews];
-      } catch (err) {
-        console.error('Error parsing custom reviews', err);
-        this.reviews = this.defaultReviews;
-      }
-    } else {
-      this.reviews = this.defaultReviews;
-    }
+    this.supabaseService.getReviews().then(data => {
+      this.reviews = data;
+    }).catch(err => {
+      console.error('Error loading reviews from Supabase', err);
+    });
   }
 
   openWriteReviewModal() {
@@ -123,7 +97,7 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 400; // slightly smaller limit for reviews to conserve space
+          const maxDim = 400;
           let width = img.width;
           let height = img.height;
 
@@ -174,38 +148,29 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
       ratingValue: this.reviewRating,
       text: this.reviewText.trim(),
       author: authorName,
-      photos: this.uploadedPhotos.length > 0 ? this.uploadedPhotos : undefined,
-      date: 'Just now'
+      photos: this.uploadedPhotos
     };
 
-    // Save to local storage
-    const saved = localStorage.getItem('si_reviews');
-    let customReviews: Review[] = [];
-    if (saved) {
-      try {
-        customReviews = JSON.parse(saved);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    customReviews.unshift(newReview);
-    localStorage.setItem('si_reviews', JSON.stringify(customReviews));
+    // Insert into Supabase
+    this.supabaseService.insertReview(newReview).then(() => {
+      // Reload reviews from DB
+      this.loadReviews();
 
-    // Reload list
-    this.loadReviews();
+      // Close Modal
+      this.writeReviewModalOpen = false;
 
-    // Close Modal
-    this.writeReviewModalOpen = false;
+      // Trigger open maps writing review panel
+      const mapsReviewUrl = 'https://search.google.com/local/writereview?placeid=ChIJ1btuZxeuHTkRo6xrM5FXVxs';
+      window.open(mapsReviewUrl, '_blank');
 
-    // Trigger open maps writing review panel
-    const mapsReviewUrl = 'https://search.google.com/local/writereview?placeid=ChIJ1btuZxeuHTkRo6xrM5FXVxs';
-    window.open(mapsReviewUrl, '_blank');
-
-    // Show Toast
-    this.successToastMessage = '✓ Thank you! Opening Google Reviews in a new window to publish publicly.';
-    setTimeout(() => {
-      this.successToastMessage = '';
-    }, 6000);
+      // Show Toast
+      this.successToastMessage = '✓ Thank you! Opening Google Reviews in a new window to publish publicly.';
+      setTimeout(() => {
+        this.successToastMessage = '';
+      }, 6000);
+    }).catch(err => {
+      alert('Error submitting review to database: ' + err.message);
+    });
   }
 
   initScrollAnimations() {

@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  private supabaseUrl = 'https://fxhkvhsagcxylddtrnur.supabase.co';
-  private supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4aGt2aHNhZ2N4eWxkZHRybnVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODU0NjgsImV4cCI6MjA5NTM2MTQ2OH0.aNtXqrV573A7lXVJn0wAGxs6sIJby-LItZDqrhXmik8';
+  private supabaseUrl = 'https://yuytnexcomuscsbmtugv.supabase.co';
+  private supabaseKey = 'sb_publishable_sqYrrAblQGwDMw32kaUqyg_x887dtYl';
   private supabase: SupabaseClient;
 
   private sessionSubject = new BehaviorSubject<Session | null>(null);

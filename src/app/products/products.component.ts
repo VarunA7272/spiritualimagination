@@ -1,23 +1,6 @@
 import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-
-interface Category {
-  name: string;
-  subcategories: string[];
-}
-
-interface Product {
-  name: string;
-  category: string;
-  subcategory?: string;
-  size: string;
-  price: string;
-  desc: string;
-  code: string;
-  icon: string;
-  image?: string;
-  images?: string[];
-}
+import { SupabaseService, Product, Category } from '../core/services/supabase.service';
 
 @Component({
   selector: 'app-products',
@@ -42,6 +25,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   activeImageIndex = 0;
 
   constructor(
+    private supabaseService: SupabaseService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -49,7 +33,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.loadCategories();
     this.loadProducts();
-    this.filterByCategory('All');
   }
 
   ngAfterViewInit() {
@@ -59,73 +42,22 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   }
 
   loadCategories() {
-    if (!isPlatformBrowser(this.platformId)) return;
-
-    const saved = localStorage.getItem('si_categories');
-    if (saved) {
-      try {
-        this.categoriesData = JSON.parse(saved);
-        this.categories = ['All', ...this.categoriesData.map(c => c.name)];
-      } catch (err) {
-        console.error('Error parsing categories', err);
-        this.loadDefaultCategories();
-      }
-    } else {
-      this.loadDefaultCategories();
-    }
-  }
-
-  loadDefaultCategories() {
-    this.categoriesData = [
-      { name: 'Name Plates', subcategories: ['Acrylic', 'LED Backlit', 'Wooden', 'MDF Board'] },
-      { name: 'LED & Photo Frames', subcategories: ['Magic Mirrors', 'Couple Standees', 'Collage Frames', 'Canvas Frames'] },
-      { name: 'Sketches & Paintings', subcategories: ['Pencil Sketches', 'Oil Paintings', 'Acrylic Canvas'] },
-      { name: 'Metal Rakhis', subcategories: ['Name Rakhis', 'Photo Rakhis'] },
-      { name: 'Mugs & Gifting', subcategories: ['Custom Mugs', 'Photo Cushions'] }
-    ];
-    this.categories = ['All', ...this.categoriesData.map(c => c.name)];
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('si_categories', JSON.stringify(this.categoriesData));
-    }
+    this.supabaseService.getCategories().then(data => {
+      this.categoriesData = data;
+      this.categories = ['All', ...this.categoriesData.map(c => c.name)];
+      this.filterByCategory(this.selectedCategory);
+    }).catch(err => {
+      console.error('Error parsing categories from Supabase', err);
+    });
   }
 
   loadProducts() {
-    if (!isPlatformBrowser(this.platformId)) return;
-
-    const saved = localStorage.getItem('si_products');
-    if (saved) {
-      try {
-        this.products = JSON.parse(saved);
-      } catch (err) {
-        console.error('Error parsing saved products', err);
-        this.loadDefaultProducts();
-      }
-    } else {
-      this.loadDefaultProducts();
-    }
-  }
-
-  loadDefaultProducts() {
-    this.products = [
-      { name: 'Acrylic Golden Name Plate', category: 'Name Plates', subcategory: 'Acrylic', size: '15x24 Inch', price: '₹1,800', desc: 'Premium acrylic base with metallic golden letters.', code: 'JZZ4501', icon: '🏷️' },
-      { name: 'Basuri Vadak Name Plate', category: 'Name Plates', subcategory: 'Wooden', size: '8x15 Inch', price: '₹1,000', desc: 'Beautiful flute theme wooden-finish acrylic plate.', code: 'GZZ4801', icon: '🏷️' },
-      { name: 'Glowing LED Name Plate', category: 'Name Plates', subcategory: 'LED Backlit', size: '6x12 Inch', price: '₹1,000', desc: 'Warm backlit LED plate with custom engravings.', code: 'GZZ4802', icon: '💡' },
-      { name: 'MDF Family Name Plate', category: 'Name Plates', subcategory: 'MDF Board', size: '6x12 Inch', price: '₹400', desc: 'Elegant laser-cut MDF wooden name board.', code: 'BEZ4501', icon: '🪵' },
-      { name: 'LED Mirror Photo Frame', category: 'LED & Photo Frames', subcategory: 'Magic Mirrors', size: '12x18 Inch', price: '₹999', desc: 'Magic mirror with LED lights showing custom photo.', code: 'FZZ-2', icon: '🪞' },
-      { name: 'Acrylic Couple Standee Frame', category: 'LED & Photo Frames', subcategory: 'Couple Standees', size: '12x18 Inch', price: '₹900', desc: 'High gloss acrylic cutout frame with photo prints.', code: 'BZZ-12', icon: '🖼️' },
-      { name: 'Lamination Collage Frame', category: 'LED & Photo Frames', subcategory: 'Collage Frames', size: '8x12 Inch', price: '₹250', desc: 'Wooden collage lamination with multiple photos.', code: 'AZZ-1', icon: '🖼️' },
-      { name: 'Canvas Frame Set', category: 'LED & Photo Frames', subcategory: 'Canvas Frames', size: '8x12 Inch', price: '₹350', desc: 'Decorative canvas painting print setup.', code: 'BZZ-1', icon: '🖼️' },
-      { name: 'Handmade Pencil Sketch (Single)', category: 'Sketches & Paintings', subcategory: 'Pencil Sketches', size: '8x12 Inch', price: '₹500', desc: 'Realistic pencil drawing by our skilled artists.', code: 'SK-01', icon: '✏️' },
-      { name: 'Pencil Sketch (Couple)', category: 'Sketches & Paintings', subcategory: 'Pencil Sketches', size: '12x18 Inch', price: '₹1,500', desc: 'Beautiful couple portrait handmade sketch.', code: 'SK-02', icon: '✏️' },
-      { name: 'Canvas Oil Painting', category: 'Sketches & Paintings', subcategory: 'Oil Paintings', size: '12x18 Inch', price: '₹5,000', desc: 'Original acrylic/oil custom canvas painting.', code: 'SK-03', icon: '🎨' },
-      { name: 'Engraved Metal Name Rakhi', category: 'Metal Rakhis', subcategory: 'Name Rakhis', size: 'Standard', price: '₹130', desc: 'Premium metal rakhi personalized with name.', code: 'RK-01', icon: '📿' },
-      { name: 'Custom Photo Rakhi', category: 'Metal Rakhis', subcategory: 'Photo Rakhis', size: 'Standard', price: '₹120', desc: 'Photo printed rakhi with colorful threads.', code: 'RK-02', icon: '📿' },
-      { name: 'Custom Printed Mug', category: 'Mugs & Gifting', subcategory: 'Custom Mugs', size: 'Standard 330ml', price: '₹250', desc: 'Glossy ceramic photo mug with custom layout.', code: 'MG-01', icon: '☕' },
-      { name: 'Personalized Photo Cushion', category: 'Mugs & Gifting', subcategory: 'Photo Cushions', size: '12x12 Inch', price: '₹350', desc: 'Fluffy printed cushion for home and gifting.', code: 'CS-01', icon: '🛋️' }
-    ];
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('si_products', JSON.stringify(this.products));
-    }
+    this.supabaseService.getProducts().then(data => {
+      this.products = data;
+      this.applyFilters();
+    }).catch(err => {
+      console.error('Error parsing products from Supabase', err);
+    });
   }
 
   filterByCategory(category: string) {
