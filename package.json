@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:github": "ng build --base-href /spiritualimagination/ && cp dist/spiritual-imagination/browser/index.html dist/spiritual-imagination/browser/404.html",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
