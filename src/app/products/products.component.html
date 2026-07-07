@@ -55,7 +55,7 @@
           <div class="product-name">{{ p.name }}</div>
           <div class="product-desc">{{ p.desc }}</div>
           <div class="product-meta">Size: {{ p.size }}</div>
-          <a [href]="getWhatsAppLink(p.name, p.code)" class="btn-quote" target="_blank" (click)="$event.stopPropagation()">
+          <a [href]="getWhatsAppLink(p)" class="btn-quote" target="_blank" (click)="$event.stopPropagation()">
             💬 Order on WhatsApp
           </a>
         </div>
@@ -135,7 +135,7 @@
             <p>{{ selectedProduct.desc || 'No description provided.' }}</p>
           </div>
 
-          <a [href]="getWhatsAppLink(selectedProduct.name, selectedProduct.code)" class="modal-btn-order" target="_blank" (click)="closeProductModal($event)">
+          <a [href]="getWhatsAppLink(selectedProduct)" class="modal-btn-order" target="_blank" (click)="closeProductModal($event)">
             💬 Personalize & Order on WhatsApp
           </a>
         </div>

@@ -55,6 +55,18 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     this.supabaseService.getProducts().then(data => {
       this.products = data;
       this.applyFilters();
+      
+      // Auto-open modal if code param is present
+      if (isPlatformBrowser(this.platformId)) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const codeParam = urlParams.get('code');
+        if (codeParam) {
+          const matched = this.products.find(p => p.code.toLowerCase() === codeParam.toLowerCase());
+          if (matched) {
+            this.openProductModal(matched);
+          }
+        }
+      }
     }).catch(err => {
       console.error('Error parsing products from Supabase', err);
     });
@@ -165,8 +177,25 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     return [];
   }
 
-  getWhatsAppLink(productName: string, productCode: string) {
-    const message = `Hi! I'm interested in ordering the ${productName} (Code: ${productCode}). Please share details.`;
+  getWhatsAppLink(product: Product) {
+    const name = product.name;
+    const code = product.code;
+    const price = product.price;
+
+    let imagePart = '';
+    if (product.images && product.images.length > 0) {
+      const firstImg = product.images[0];
+      if (firstImg.startsWith('http')) {
+        imagePart = `\n🖼️ *Image Link:* ${firstImg}`;
+      }
+    } else if (product.image && product.image.startsWith('http')) {
+      imagePart = `\n🖼️ *Image Link:* ${product.image}`;
+    }
+
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://sidesigns.netlify.app';
+    const detailLink = `\n🔗 *View Details:* ${currentOrigin}/products?code=${code}`;
+
+    const message = `Hi! I'm interested in ordering:\n\n*Product:* ${name}\n*Code:* ${code}\n*Price:* ${price}${imagePart}${detailLink}\n\nPlease share personalization options and details.`;
     return `https://wa.me/919300545485?text=${encodeURIComponent(message)}`;
   }
 }
