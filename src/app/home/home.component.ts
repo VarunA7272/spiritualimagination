@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { SeoService } from '../core/services/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -24,11 +25,54 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   constructor(
+    private seoService: SeoService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
+    this.seoService.generateTags({
+      title: 'Spiritual Imagination 🎁 — Custom Gifts Jabalpur',
+      description: 'Crafting premium personalized gifts in Jabalpur. Custom backlit LED name plates, magic photo mirrors, handmade pencil sketches, personalized trophies, corporate mugs, and custom metallic rakhis.',
+      keywords: 'custom gifts jabalpur, personalized gifts, custom backlit name plates, trophies, awards, corporate gifting',
+      schema: {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://sidesigns.netlify.app/#organization",
+            "name": "Spiritual Imagination",
+            "url": "https://sidesigns.netlify.app",
+            "logo": "https://sidesigns.netlify.app/favicon.ico",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "805, Wright Town",
+              "addressLocality": "Jabalpur",
+              "addressRegion": "Madhya Pradesh",
+              "postalCode": "482002",
+              "addressCountry": "IN"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "telephone": "+919300545485",
+              "contactType": "sales",
+              "areaServed": "IN",
+              "availableLanguage": ["en", "hi"]
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://sidesigns.netlify.app/#website",
+            "url": "https://sidesigns.netlify.app/",
+            "name": "Spiritual Imagination",
+            "publisher": {
+              "@id": "https://sidesigns.netlify.app/#organization"
+            }
+          }
+        ]
+      }
+    });
+
     if (isPlatformBrowser(this.platformId)) {
       this.startTyping();
     }

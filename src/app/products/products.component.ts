@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SupabaseService, Product, Category } from '../core/services/supabase.service';
+import { SeoService } from '../core/services/seo.service';
 
 @Component({
   selector: 'app-products',
@@ -26,11 +27,29 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private supabaseService: SupabaseService,
+    private seoService: SeoService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
+    this.seoService.generateTags({
+      title: 'Creations Catalog & Custom Gifts',
+      description: 'Explore custom backlit LED name plates, wooden name boards, magic photo standees, magic mirrors, handmade sketches, customized metal rakhis, and glossy trophies in Jabalpur.',
+      keywords: 'name plates jabalpur, led name plates, photo standees, magic mirror jabalpur, customized gifts list',
+      schema: {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Custom Gift Creations Catalog - Spiritual Imagination",
+        "description": "Premium handcrafted name plates, LED photo standees, trophies, metal rakhis, and custom mugs in Jabalpur.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Spiritual Imagination",
+          "url": "https://sidesigns.netlify.app"
+        }
+      }
+    });
+
     this.loadCategories();
     this.loadProducts();
   }

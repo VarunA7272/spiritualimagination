@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } fro
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Review } from '../core/services/supabase.service';
+import { SeoService } from '../core/services/seo.service';
 
 @Component({
   selector: 'app-reviews',
@@ -26,11 +27,36 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private supabaseService: SupabaseService,
+    private seoService: SeoService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
+    this.seoService.generateTags({
+      title: 'Customer Reviews & Testimonials',
+      description: 'Read reviews from real customers who ordered customized name plates, magic backlit LED photo frames, trophies, metal rakhis, and custom mugs in Jabalpur.',
+      keywords: 'customer reviews jabalpur, gift store ratings, custom frames testimonials',
+      schema: {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Custom Gift Creations & Personalization Services",
+        "image": "https://sidesigns.netlify.app/favicon.ico",
+        "description": "Customized gift crafting services: LED backlit name plates, trophies, pencil sketches, and photo gifts.",
+        "brand": {
+          "@type": "Brand",
+          "name": "Spiritual Imagination"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "22",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      }
+    });
+
     this.loadReviews();
   }
 
