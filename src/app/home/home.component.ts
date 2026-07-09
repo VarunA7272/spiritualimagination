@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, Eleme
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SeoService } from '../core/services/seo.service';
-import { SupabaseService, Product } from '../core/services/supabase.service';
+import { SupabaseService, Product, FeaturedSlide } from '../core/services/supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   // Featured Carousel State
-  featuredProducts: Product[] = [];
+  featuredProducts: FeaturedSlide[] = [];
   activeSlideIndex = 0;
   private autoplayTimer: any;
 
@@ -102,20 +102,46 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadFeaturedProducts() {
-    this.supabaseService.getFeaturedProducts().then(data => {
-      this.featuredProducts = data || [];
-      
-      if (this.featuredProducts.length === 0) {
-        this.loadFallbackProducts();
-      }
-
-      if (this.featuredProducts.length > 0 && isPlatformBrowser(this.platformId)) {
-        this.startAutoplay();
+    this.supabaseService.getFeaturedSlides().then(slides => {
+      if (slides && slides.length > 0) {
+        this.featuredProducts = slides;
+        if (isPlatformBrowser(this.platformId)) {
+          this.startAutoplay();
+        }
+      } else {
+        // Fallback: Query products marked as featured
+        this.supabaseService.getFeaturedProducts().then(products => {
+          if (products && products.length > 0) {
+            this.featuredProducts = products.map(p => ({
+              title: p.name,
+              category: p.category + (p.subcategory ? ' / ' + p.subcategory : ''),
+              description: p.desc || 'Handcrafted customized gift matching your requirements.',
+              price: p.price,
+              product_code: p.code,
+              image_url: p.images?.[0] || p.image || ''
+            }));
+            if (isPlatformBrowser(this.platformId)) {
+              this.startAutoplay();
+            }
+          } else {
+            // Second Fallback: mock slides
+            this.loadFallbackProducts();
+            if (isPlatformBrowser(this.platformId)) {
+              this.startAutoplay();
+            }
+          }
+        }).catch(err => {
+          console.error('Error loading fallback products:', err);
+          this.loadFallbackProducts();
+          if (isPlatformBrowser(this.platformId)) {
+            this.startAutoplay();
+          }
+        });
       }
     }).catch(err => {
-      console.error('Error loading featured products, displaying fallbacks:', err);
+      console.error('Error loading featured slides, trying fallback:', err);
       this.loadFallbackProducts();
-      if (this.featuredProducts.length > 0 && isPlatformBrowser(this.platformId)) {
+      if (isPlatformBrowser(this.platformId)) {
         this.startAutoplay();
       }
     });
@@ -124,34 +150,28 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   loadFallbackProducts() {
     this.featuredProducts = [
       {
-        code: 'NP-01',
-        name: 'Premium Backlit LED Name Plate',
+        title: 'Premium Backlit LED Name Plate',
         category: 'Name Plates',
         price: '₹2,400',
-        size: '12x18 Inch',
-        desc: 'Indoors/Outdoors water-resistant personalized acrylic name plate with gold lettering and warm LED backlight.',
-        icon: '💡',
-        images: ['https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80']
+        description: 'Indoors/Outdoors water-resistant personalized acrylic name plate with gold lettering and warm LED backlight.',
+        product_code: 'NP-01',
+        image_url: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80'
       },
       {
-        code: 'MM-02',
-        name: 'Magic Photo Mirror Frame',
+        title: 'Magic Photo Mirror Frame',
         category: 'LED & Photo Frames',
         price: '₹1,200',
-        size: '8x8 Inch',
-        desc: 'Acts as a mirror, but lights up to show your photo when turned on. Touch control USB powered.',
-        icon: '🪞',
-        images: ['https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80']
+        description: 'Acts as a mirror, but lights up to show your photo when turned on. Touch control USB powered.',
+        product_code: 'MM-02',
+        image_url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80'
       },
       {
-        code: 'SK-03',
-        name: 'Handmade Realistic Pencil Sketch',
+        title: 'Handmade Realistic Pencil Sketch',
         category: 'Sketches & Paintings',
         price: '₹1,800',
-        size: 'A3 Size',
-        desc: '100% handmade realistic charcoal portrait from your photo. Includes premium black wooden frame.',
-        icon: '✏️',
-        images: ['https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80']
+        description: '100% handmade realistic charcoal portrait from your photo. Includes premium black wooden frame.',
+        product_code: 'SK-03',
+        image_url: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80'
       }
     ];
   }

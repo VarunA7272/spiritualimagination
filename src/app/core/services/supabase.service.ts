@@ -41,6 +41,17 @@ export interface Review {
   created_at?: string;
 }
 
+export interface FeaturedSlide {
+  id?: string;
+  title: string;
+  category?: string;
+  description?: string;
+  price?: string;
+  product_code: string;
+  image_url: string;
+  created_at?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -341,6 +352,42 @@ export class SupabaseService {
       .from('orders')
       .update({ status })
       .eq('id', orderId);
+
+    if (error) throw error;
+  }
+
+  // --- HOMEPAGE FEATURED SLIDES MANAGEMENT ---
+  async getFeaturedSlides(): Promise<FeaturedSlide[]> {
+    const { data, error } = await this.supabase
+      .from('featured_slides')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async saveFeaturedSlide(slide: FeaturedSlide): Promise<void> {
+    const { error } = await this.supabase
+      .from('featured_slides')
+      .upsert({
+        id: slide.id || undefined,
+        title: slide.title,
+        category: slide.category || null,
+        description: slide.description || null,
+        price: slide.price || null,
+        product_code: slide.product_code.toUpperCase(),
+        image_url: slide.image_url
+      });
+
+    if (error) throw error;
+  }
+
+  async deleteFeaturedSlide(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('featured_slides')
+      .delete()
+      .eq('id', id);
 
     if (error) throw error;
   }

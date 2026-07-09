@@ -16,6 +16,9 @@
       <button class="tab-btn" [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'; loadOrders()">
         📋 View Orders
       </button>
+      <button class="tab-btn" [class.active]="activeTab === 'slides'" (click)="activeTab = 'slides'; loadFeaturedSlides()">
+        🖼️ Homepage Banners
+      </button>
     </div>
   </div>
 
@@ -350,6 +353,106 @@
           <a href="https://wa.me/{{ order.customer_mobile }}" target="_blank" class="btn-contact-whatsapp">
             💬 Contact Client on WhatsApp
           </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOMEPAGE BANNERS TAB -->
+  <div class="slides-tab-content animate-fade" *ngIf="activeTab === 'slides'">
+    <div class="dashboard-grid">
+      <!-- Left Column: Form -->
+      <div class="form-column">
+        <div class="form-card">
+          <h3>🖼️ Create Homepage Banner Slide</h3>
+          <p class="form-helper-text">Add custom banner slides specifically styled for the homepage slider. Banners link directly to detail modals via product codes.</p>
+          
+          <form (submit)="onSubmitSlide(); $event.preventDefault();" #slideForm="ngForm" class="manual-upload-form">
+            <div class="form-group">
+              <label for="s-title">Slide Title / Headline *</label>
+              <input type="text" id="s-title" name="slideTitle" [(ngModel)]="slideTitle" placeholder="e.g. Handmade Pencil Sketch Art" required />
+            </div>
+
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="s-cat">Category / Badge</label>
+                <input type="text" id="s-cat" name="slideCategory" [(ngModel)]="slideCategory" placeholder="e.g. Sketches & Paintings" />
+              </div>
+              <div class="form-group">
+                <label for="s-price">Price Badge</label>
+                <input type="text" id="s-price" name="slidePrice" [(ngModel)]="slidePrice" placeholder="e.g. ₹1,800" />
+              </div>
+            </div>
+
+            <div class="form-group-row">
+              <div class="form-group">
+                <label for="s-code">Redirect Product Code *</label>
+                <input type="text" id="s-code" name="slideProductCode" [(ngModel)]="slideProductCode" placeholder="e.g. SK-03" required />
+              </div>
+              <div class="form-group">
+                <label for="slide-image">Banner Photo * (Max 3MB)</label>
+                <input type="file" id="slide-image" (change)="onSlideImageSelected($event)" accept="image/*" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="s-desc">Description / Subtitle</label>
+              <textarea id="s-desc" name="slideDescription" [(ngModel)]="slideDescription" placeholder="Provide a brief catchy description for this featured item..." rows="3"></textarea>
+            </div>
+
+            <!-- Image Preview Box -->
+            <div class="banner-preview-box" *ngIf="slideImagePreviewUrl">
+              <label>Slide Banner Preview:</label>
+              <div class="preview-banner-container">
+                <img [src]="slideImagePreviewUrl" alt="slide preview" />
+                <button type="button" class="btn-clear-preview" (click)="slideImagePreviewUrl = ''">×</button>
+              </div>
+            </div>
+
+            <!-- Messages -->
+            <div class="success-message animate-fade" *ngIf="successMessage">
+              {{ successMessage }}
+            </div>
+            <div class="error-message animate-fade" *ngIf="errorMessage">
+              ⚠️ {{ errorMessage }}
+            </div>
+
+            <div class="action-buttons">
+              <button type="submit" class="btn-submit">Upload & Set Live 🚀</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Banners List -->
+      <div class="list-card">
+        <h3>✨ Active Banners List ({{ slides.length }})</h3>
+        <p class="form-helper-text">Currently live slider banners on the landing page hero slider.</p>
+
+        <div class="empty-state-notice" *ngIf="slides.length === 0">
+          <div class="empty-state-icon">🖼️</div>
+          <h4>No custom banners uploaded</h4>
+          <p>Homepage is currently falling back to products marked as "featured" in the products list.</p>
+        </div>
+
+        <div class="banners-list-wrapper" *ngIf="slides.length > 0">
+          <div class="banner-list-card" *ngFor="let s of slides">
+            <div class="banner-thumbnail-preview">
+              <img [src]="s.image_url" alt="banner preview" />
+            </div>
+            <div class="banner-meta-details">
+              <h4>{{ s.title }}</h4>
+              <div class="meta-row-info">
+                <span class="badge-cat" *ngIf="s.category">{{ s.category }}</span>
+                <span class="badge-price" *ngIf="s.price">{{ s.price }}</span>
+                <span class="badge-code">Links to: {{ s.product_code }}</span>
+              </div>
+              <p *ngIf="s.description" class="banner-list-desc">{{ s.description }}</p>
+            </div>
+            <div class="banner-action-controls">
+              <button class="btn-delete-banner" (click)="deleteSlide(s.id || '')" title="Delete Banner Slide">🗑️</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

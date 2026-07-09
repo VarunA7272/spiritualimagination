@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService, Product, Category, Order } from '../../core/services/supabase.service';
+import { SupabaseService, Product, Category, Order, FeaturedSlide } from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-admin-upload',
@@ -11,7 +11,7 @@ import { SupabaseService, Product, Category, Order } from '../../core/services/s
   styleUrls: ['./admin-upload.component.css']
 })
 export class AdminUploadComponent implements OnInit {
-  activeTab: 'products' | 'categories' | 'orders' = 'products';
+  activeTab: 'products' | 'categories' | 'orders' | 'slides' = 'products';
 
   icons = [
     { label: 'Label/Tag', value: '🏷️' },
@@ -41,6 +41,15 @@ export class AdminUploadComponent implements OnInit {
   selectedIcon = '🏷️';
   imagePreviewUrls: string[] = [];
   featured = false;
+
+  // Banner Slide Model
+  slideTitle = '';
+  slideCategory = '';
+  slideDescription = '';
+  slidePrice = '';
+  slideProductCode = '';
+  slideImagePreviewUrl = '';
+  slides: FeaturedSlide[] = [];
 
   // Edit State
   editingProductCode: string | null = null;
@@ -73,6 +82,7 @@ export class AdminUploadComponent implements OnInit {
     this.loadCategories();
     this.loadProducts();
     this.loadOrders();
+    this.loadFeaturedSlides();
   }
 
   loadCategories() {
@@ -651,5 +661,125 @@ export class AdminUploadComponent implements OnInit {
       this.errorMessage = err.message || 'Failed to update order status.';
       setTimeout(() => (this.errorMessage = ''), 3500);
     });
+  }
+
+  // --- FEATURED BANNER SLIDES MANAGEMENT ---
+  loadFeaturedSlides() {
+    this.supabaseService.getFeaturedSlides().then(data => {
+      this.slides = data;
+    }).catch(err => {
+      console.error('Error loading featured slides', err);
+    });
+  }
+
+  onSlideImageSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      this.errorMessage = 'Banner image exceeds 3MB limit.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+      return;
+    }
+
+    this.compressBannerImage(file).then(base64 => {
+      this.slideImagePreviewUrl = base64;
+    }).catch(err => {
+      console.error('Error compressing banner image', err);
+      this.errorMessage = 'Failed to process banner image.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    });
+  }
+
+  compressBannerImage(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1200;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          } else {
+            reject(new Error('Canvas context could not be created'));
+          }
+        };
+        img.onerror = () => reject(new Error('Image load failed'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('File reading failed'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  onSubmitSlide() {
+    if (!this.slideTitle || !this.slideProductCode || !this.slideImagePreviewUrl) {
+      this.errorMessage = 'Slide Title, Product Code, and Banner Image are required.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+      return;
+    }
+
+    const slideData = {
+      title: this.slideTitle.trim(),
+      category: this.slideCategory.trim() || undefined,
+      description: this.slideDescription.trim() || undefined,
+      price: this.slidePrice.trim() || undefined,
+      product_code: this.slideProductCode.trim().toUpperCase(),
+      image_url: this.slideImagePreviewUrl
+    };
+
+    this.supabaseService.saveFeaturedSlide(slideData).then(() => {
+      this.successMessage = '✓ Homepage banner slide saved successfully!';
+      setTimeout(() => (this.successMessage = ''), 3500);
+      this.clearSlideForm();
+      this.loadFeaturedSlides();
+    }).catch(err => {
+      this.errorMessage = err.message || 'Error saving featured slide.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    });
+  }
+
+  deleteSlide(id: string) {
+    if (!confirm('Are you sure you want to delete this homepage banner slide?')) return;
+
+    this.supabaseService.deleteFeaturedSlide(id).then(() => {
+      this.successMessage = '✓ Banner slide deleted successfully!';
+      setTimeout(() => (this.successMessage = ''), 3500);
+      this.loadFeaturedSlides();
+    }).catch(err => {
+      this.errorMessage = err.message || 'Error deleting banner slide.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    });
+  }
+
+  clearSlideForm() {
+    this.slideTitle = '';
+    this.slideCategory = '';
+    this.slideDescription = '';
+    this.slidePrice = '';
+    this.slideProductCode = '';
+    this.slideImagePreviewUrl = '';
+    const fileInput = document.getElementById('slide-image') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   }
 }
