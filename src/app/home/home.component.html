@@ -109,14 +109,14 @@
 
 <!-- FEATURED PRODUCTS CAROUSEL -->
 <section id="featured-carousel" class="featured-section" *ngIf="featuredProducts.length > 0">
-  <div class="carousel-title-container text-center fade-up">
+  <div class="carousel-title-container text-center">
     <span class="section-tag">Best Sellers</span>
     <h2 class="section-title">Featured Creations ⭐</h2>
     <p class="section-sub">Explore our handpicked personalized designs. Click any slide to customize and order.</p>
   </div>
 
   <!-- Full Width Stretchy Carousel Container -->
-  <div class="carousel-container full-width-carousel fade-up" (mouseenter)="stopAutoplay()" (mouseleave)="startAutoplay()">
+  <div class="carousel-container full-width-carousel" (mouseenter)="stopAutoplay()" (mouseleave)="startAutoplay()">
     <div class="carousel-slides">
       <a 
         class="carousel-slide-link" 
