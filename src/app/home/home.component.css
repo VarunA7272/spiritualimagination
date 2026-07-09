@@ -571,14 +571,19 @@
 /* FEATURED CAROUSEL SECTION */
 .featured-section {
   background: var(--cream);
-  padding: 5rem 1.5rem;
+  padding: 5rem 0; /* Remove side padding to look sleek */
 }
 
-.carousel-container {
-  max-width: 1000px;
-  margin: 3rem auto 0;
+.carousel-title-container {
+  padding: 0 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.carousel-container.full-width-carousel {
+  max-width: 1200px;
+  margin: 0 auto;
   position: relative;
-  background: #ffffff;
+  background: #111111;
   border-radius: 36px;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
@@ -587,70 +592,55 @@
 
 .carousel-slides {
   position: relative;
-  height: 480px;
+  height: 520px;
   width: 100%;
 }
 
-.carousel-slide {
+.carousel-slide-link {
   position: absolute;
   inset: 0;
+  display: block;
+  text-decoration: none;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
   z-index: 1;
+  overflow: hidden;
 }
 
-.carousel-slide.active {
+.carousel-slide-link.active {
   opacity: 1;
   visibility: visible;
   z-index: 2;
 }
 
-.slide-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  height: 100%;
-}
-
-.slide-media {
-  position: relative;
-  height: 100%;
-  background: var(--primary-light);
-  overflow: hidden;
-}
-
-.slide-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 6s ease;
-}
-
-.carousel-slide.active .slide-img {
-  transform: scale(1.04);
-}
-
-.slide-badge {
+.slide-bg-image {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  background: rgba(18, 18, 18, 0.82);
-  backdrop-filter: blur(8px);
-  color: #ffffff;
-  font-family: 'Outfit', sans-serif;
-  font-weight: 800;
-  font-size: 0.8rem;
-  padding: 6px 14px;
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
 }
 
-.slide-info {
-  padding: 3.5rem 3rem;
+.carousel-slide-link.active .slide-bg-image {
+  transform: scale(1.05);
+}
+
+.slide-content-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(17, 17, 17, 0.9) 0%, rgba(17, 17, 17, 0.55) 45%, rgba(17, 17, 17, 0.15) 100%);
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: #ffffff;
+  align-items: center;
+  padding: 4rem 5rem;
+  z-index: 2;
+}
+
+.slide-info-box {
+  max-width: 520px;
+  color: #ffffff;
+  text-align: left;
 }
 
 .slide-cat {
@@ -659,61 +649,53 @@
   font-weight: 800;
   color: var(--primary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   margin-bottom: 0.75rem;
+  display: inline-block;
 }
 
 .slide-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 2.2rem;
+  font-size: 2.6rem;
   font-weight: 900;
-  color: var(--text-dark);
   line-height: 1.15;
+  color: #ffffff;
   margin-bottom: 0.75rem;
   letter-spacing: -0.02em;
-}
-
-.slide-price {
-  font-size: 1.65rem;
-  font-weight: 900;
-  color: var(--primary);
-  margin-bottom: 1.25rem;
 }
 
 .slide-desc {
   font-size: 0.95rem;
   line-height: 1.5;
-  color: var(--text-mid);
+  color: rgba(255, 255, 255, 0.82);
   margin-bottom: 1.5rem;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.slide-meta {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-light);
+.slide-price-tag {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ffffff;
   margin-bottom: 2rem;
 }
 
-.btn-slide-primary {
+.btn-slide-action {
   display: inline-block;
   background: linear-gradient(135deg, var(--primary) 0%, hsl(14, 90%, 55%) 100%);
   color: #ffffff;
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
-  font-size: 0.95rem;
-  padding: 12px 28px;
+  font-size: 0.85rem;
+  padding: 10px 24px;
   border-radius: 100px;
-  text-decoration: none;
   box-shadow: 0 6px 16px var(--primary-glow);
   transition: all var(--transition-fast);
-  text-align: center;
 }
 
-.btn-slide-primary:hover {
+.carousel-slide-link:hover .btn-slide-action {
   transform: translateY(-1.5px);
   box-shadow: 0 10px 24px var(--primary-glow);
 }
@@ -727,7 +709,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(255, 107, 53, 0.15);
   color: var(--text-dark);
   font-size: 1.75rem;
@@ -749,18 +731,18 @@
 }
 
 .carousel-nav-btn.prev {
-  left: 20px;
+  left: 24px;
 }
 
 .carousel-nav-btn.next {
-  right: 20px;
+  right: 24px;
 }
 
 /* Indicators */
 .carousel-indicators {
   position: absolute;
-  bottom: 24px;
-  right: 48px;
+  bottom: 32px;
+  right: 50px;
   z-index: 10;
   display: flex;
   gap: 8px;
@@ -771,7 +753,7 @@
   height: 8px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 107, 53, 0.25);
+  background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   padding: 0;
   transition: all 0.3s;
@@ -785,56 +767,53 @@
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
+  .carousel-container.full-width-carousel {
+    border-radius: 0;
+  }
   .carousel-slides {
-    height: auto;
+    height: 450px;
   }
-  .carousel-slide {
-    position: relative;
-    display: none;
-    height: auto;
+  .slide-content-overlay {
+    padding: 3rem 4rem;
+    background: rgba(17, 17, 17, 0.75);
   }
-  .carousel-slide.active {
-    display: block;
-  }
-  .slide-grid {
-    grid-template-columns: 1fr;
-  }
-  .slide-media {
-    height: 320px;
-  }
-  .slide-info {
-    padding: 2.5rem 2rem;
-  }
-  .carousel-nav-btn {
-    top: 160px;
-  }
-  .carousel-indicators {
-    bottom: inherit;
-    top: 280px;
-    right: 24px;
-  }
-  .indicator-dot {
-    background: rgba(255, 255, 255, 0.6);
-  }
-  .indicator-dot.active {
-    background: #ffffff;
+  .slide-title {
+    font-size: 2.1rem;
   }
 }
 
 @media (max-width: 640px) {
-  .slide-media {
-    height: 240px;
+  .carousel-slides {
+    height: 380px;
   }
-  .carousel-nav-btn {
-    top: 120px;
-  }
-  .carousel-indicators {
-    top: 200px;
+  .slide-content-overlay {
+    padding: 2rem 2.5rem;
   }
   .slide-title {
-    font-size: 1.75rem;
+    font-size: 1.65rem;
   }
-  .slide-price {
+  .slide-desc {
+    font-size: 0.88rem;
+    -webkit-line-clamp: 2;
+  }
+  .slide-price-tag {
+    font-size: 1.45rem;
+    margin-bottom: 1.25rem;
+  }
+  .carousel-nav-btn {
+    width: 36px;
+    height: 36px;
     font-size: 1.35rem;
+  }
+  .carousel-nav-btn.prev {
+    left: 12px;
+  }
+  .carousel-nav-btn.next {
+    right: 12px;
+  }
+  .carousel-indicators {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 20px;
   }
 }

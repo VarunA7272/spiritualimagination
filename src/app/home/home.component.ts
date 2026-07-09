@@ -104,6 +104,43 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   loadFeaturedProducts() {
     this.supabaseService.getFeaturedProducts().then(data => {
       this.featuredProducts = data;
+      
+      // Fallback to beautiful mock products if database featured list is empty
+      if (this.featuredProducts.length === 0) {
+        this.featuredProducts = [
+          {
+            code: 'NP-01',
+            name: 'Premium Backlit LED Name Plate',
+            category: 'Name Plates',
+            price: '₹2,400',
+            size: '12x18 Inch',
+            desc: 'Indoors/Outdoors water-resistant personalized acrylic name plate with gold lettering and warm LED backlight.',
+            icon: '💡',
+            images: ['https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80']
+          },
+          {
+            code: 'MM-02',
+            name: 'Magic Photo Mirror Frame',
+            category: 'LED & Photo Frames',
+            price: '₹1,200',
+            size: '8x8 Inch',
+            desc: 'Acts as a mirror, but lights up to show your photo when turned on. Touch control USB powered.',
+            icon: '🪞',
+            images: ['https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80']
+          },
+          {
+            code: 'SK-03',
+            name: 'Handmade Realistic Pencil Sketch',
+            category: 'Sketches & Paintings',
+            price: '₹1,800',
+            size: 'A3 Size',
+            desc: '100% handmade realistic charcoal portrait from your photo. Includes premium black wooden frame.',
+            icon: '✏️',
+            images: ['https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80']
+          }
+        ];
+      }
+
       if (this.featuredProducts.length > 0 && isPlatformBrowser(this.platformId)) {
         this.startAutoplay();
       }

@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { CartService, CartItem } from './core/services/cart.service';
 import { AuthOtpService } from './core/services/auth-otp.service';
 import { SupabaseService } from './core/services/supabase.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-public-layout',
@@ -165,19 +166,35 @@ import { SupabaseService } from './core/services/supabase.service';
             ⚠️ {{ otpVerificationError }}
           </div>
 
-          <!-- Send OTP Action -->
+          <!-- Dev Mode Notice -->
+          <div class="dev-otp-hint" *ngIf="!otpEnabled">
+            🔧 <b>Dev Mode:</b> OTP verification is disabled. Orders place directly.
+          </div>
+
+          <!-- Send OTP Action (production / otpEnabled = true) -->
           <button 
             type="button" 
             class="btn-send-otp" 
-            *ngIf="!otpSent" 
+            *ngIf="!otpSent && otpEnabled" 
             (click)="sendOtp()" 
             [disabled]="otpRequestLoading || !customerName || !customerMobile"
           >
             {{ otpRequestLoading ? 'Requesting OTP...' : 'Send Verification OTP' }}
           </button>
 
+          <!-- Place Order directly (dev mode / otpEnabled = false) -->
+          <button 
+            type="button" 
+            class="btn-send-otp" 
+            *ngIf="!otpEnabled" 
+            (click)="placeOrderWithoutOtp()" 
+            [disabled]="otpVerifyLoading || !customerName || !customerMobile"
+          >
+            {{ otpVerifyLoading ? 'Placing Order...' : 'Place Order' }}
+          </button>
+
           <!-- OTP Verify Segment -->
-          <div class="otp-verification-section" *ngIf="otpSent">
+          <div class="otp-verification-section" *ngIf="otpSent && otpEnabled">
             <div class="otp-sent-banner">
               📨 OTP verification code sent to <b>{{ customerMobile }}</b>
             </div>
@@ -876,6 +893,9 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
   // Dev OTP code hint
   devOtpHint = '';
 
+  // 🔧 Feature flag: when false, checkout skips OTP entirely (local dev only)
+  otpEnabled = environment.otpEnabled;
+
   constructor(
     private cartService: CartService,
     private authOtpService: AuthOtpService,
@@ -975,42 +995,67 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
     const verified = await this.authOtpService.verifyOtp(this.customerMobile, this.otpCode);
     
     if (verified) {
-      try {
-        const itemsPayload = this.cartItems.map(item => ({
-          code: item.product.code,
-          name: item.product.name,
-          price: item.product.price,
-          qty: item.quantity,
-          image: item.product.images?.[0] || item.product.image || ''
-        }));
-
-        const formattedTotal = '₹' + this.cartTotal.toLocaleString('en-IN');
-
-        // Store customer details and order records
-        await this.supabaseService.createCustomerAndOrder(
-          { name: this.customerName, mobile: this.customerMobile },
-          itemsPayload,
-          formattedTotal
-        );
-
-        // Clear local storage cart
-        const savedItemsForLink = [...this.cartItems];
-        this.cartService.clearCart();
-        this.checkoutModalOpen = false;
-
-        // Redirect to WhatsApp with order summary
-        const waLink = this.buildWhatsAppCartLink(savedItemsForLink, formattedTotal);
-        window.open(waLink, '_blank');
-
-      } catch (err: any) {
-        console.error('Order creation error:', err);
-        this.otpVerificationError = 'OTP verified, but order logging failed: ' + (err.message || err);
-      } finally {
-        this.otpVerifyLoading = false;
-      }
+      await this.placeOrder('OTP verified, but order logging failed: ');
     } else {
       this.otpVerifyLoading = false;
       this.otpVerificationError = 'Invalid or expired OTP. Please try again.';
+    }
+  }
+
+  /**
+   * 🔧 Dev-mode checkout path (otpEnabled = false): skips OTP entirely,
+   * still requires Full Name + Mobile so customer records stay consistent.
+   * Never reachable when environment.otpEnabled is true.
+   */
+  async placeOrderWithoutOtp() {
+    if (this.otpEnabled) return; // safety guard — dev path only
+    if (!this.customerName || !this.customerMobile) {
+      this.otpVerificationError = 'Please enter your name and mobile number.';
+      return;
+    }
+    this.otpVerifyLoading = true;
+    this.otpVerificationError = '';
+    console.warn('[SI] OTP verification is DISABLED (dev mode) — placing order without OTP.');
+    await this.placeOrder('Order logging failed: ');
+  }
+
+  /**
+   * Shared order-placement logic used by both the verified-OTP path
+   * and the dev-mode no-OTP path.
+   */
+  private async placeOrder(errorPrefix: string) {
+    try {
+      const itemsPayload = this.cartItems.map(item => ({
+        code: item.product.code,
+        name: item.product.name,
+        price: item.product.price,
+        qty: item.quantity,
+        image: item.product.images?.[0] || item.product.image || ''
+      }));
+
+      const formattedTotal = '₹' + this.cartTotal.toLocaleString('en-IN');
+
+      // Store customer details and order records
+      await this.supabaseService.createCustomerAndOrder(
+        { name: this.customerName, mobile: this.customerMobile },
+        itemsPayload,
+        formattedTotal
+      );
+
+      // Clear local storage cart
+      const savedItemsForLink = [...this.cartItems];
+      this.cartService.clearCart();
+      this.checkoutModalOpen = false;
+
+      // Redirect to WhatsApp with order summary
+      const waLink = this.buildWhatsAppCartLink(savedItemsForLink, formattedTotal);
+      window.open(waLink, '_blank');
+
+    } catch (err: any) {
+      console.error('Order creation error:', err);
+      this.otpVerificationError = errorPrefix + (err.message || err);
+    } finally {
+      this.otpVerifyLoading = false;
     }
   }
 

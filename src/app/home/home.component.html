@@ -109,59 +109,49 @@
 
 <!-- FEATURED PRODUCTS CAROUSEL -->
 <section id="featured-carousel" class="featured-section" *ngIf="featuredProducts.length > 0">
-  <div class="container">
-    <div class="text-center fade-up">
-      <span class="section-tag">Best Sellers</span>
-      <h2 class="section-title">Featured Creations ⭐</h2>
-      <p class="section-sub">Explore our handpicked personalized designs, crafted with passion and precision.</p>
-    </div>
+  <div class="carousel-title-container text-center fade-up">
+    <span class="section-tag">Best Sellers</span>
+    <h2 class="section-title">Featured Creations ⭐</h2>
+    <p class="section-sub">Explore our handpicked personalized designs. Click any slide to customize and order.</p>
+  </div>
 
-    <!-- Carousel Container -->
-    <div class="carousel-container fade-up" (mouseenter)="stopAutoplay()" (mouseleave)="startAutoplay()">
-      <div class="carousel-slides">
-        <div 
-          class="carousel-slide" 
-          *ngFor="let prod of featuredProducts; let idx = index" 
-          [class.active]="idx === activeSlideIndex"
-        >
-          <!-- Split Layout: Image on Left, Details on Right -->
-          <div class="slide-grid">
-            <div class="slide-media">
-              <img [src]="prod.images?.[0] || prod.image || ''" [alt]="prod.name" class="slide-img" />
-              <div class="slide-badge">Code: {{ prod.code }}</div>
-            </div>
-            <div class="slide-info">
-              <span class="slide-cat">{{ prod.category }}<span *ngIf="prod.subcategory"> / {{ prod.subcategory }}</span></span>
-              <h3 class="slide-title">{{ prod.name }}</h3>
-              <div class="slide-price">{{ prod.price }}</div>
-              <p class="slide-desc">{{ prod.desc || 'Handcrafted customized gift matching your requirements.' }}</p>
-              <div class="slide-meta">
-                <span>📏 Size: {{ prod.size }}</span>
-              </div>
-              <div class="slide-actions">
-                <a [routerLink]="['/products']" [queryParams]="{ code: prod.code }" class="btn-slide-primary">
-                  ✨ View & Customize
-                </a>
-              </div>
-            </div>
+  <!-- Full Width Stretchy Carousel Container -->
+  <div class="carousel-container full-width-carousel fade-up" (mouseenter)="stopAutoplay()" (mouseleave)="startAutoplay()">
+    <div class="carousel-slides">
+      <a 
+        class="carousel-slide-link" 
+        *ngFor="let prod of featuredProducts; let idx = index" 
+        [class.active]="idx === activeSlideIndex"
+        [routerLink]="['/products']" 
+        [queryParams]="{ code: prod.code }"
+        title="Click to view product details"
+      >
+        <div class="slide-bg-image" [style.background-image]="'url(' + (prod.images?.[0] || prod.image || '') + ')'"></div>
+        <div class="slide-content-overlay">
+          <div class="slide-info-box">
+            <span class="slide-cat">{{ prod.category }}<span *ngIf="prod.subcategory"> / {{ prod.subcategory }}</span></span>
+            <h3 class="slide-title">{{ prod.name }}</h3>
+            <p class="slide-desc">{{ prod.desc }}</p>
+            <div class="slide-price-tag">{{ prod.price }}</div>
+            <span class="btn-slide-action">✨ Click to Customize & Order</span>
           </div>
         </div>
-      </div>
+      </a>
+    </div>
 
-      <!-- Navigation Arrows -->
-      <button class="carousel-nav-btn prev" (click)="prevSlide()" aria-label="Previous Slide">‹</button>
-      <button class="carousel-nav-btn next" (click)="nextSlide()" aria-label="Next Slide">›</button>
+    <!-- Navigation Arrows -->
+    <button class="carousel-nav-btn prev" (click)="prevSlide(); $event.stopPropagation(); $event.preventDefault();" aria-label="Previous Slide">‹</button>
+    <button class="carousel-nav-btn next" (click)="nextSlide(); $event.stopPropagation(); $event.preventDefault();" aria-label="Next Slide">›</button>
 
-      <!-- Indicator Dots -->
-      <div class="carousel-indicators">
-        <button 
-          *ngFor="let prod of featuredProducts; let idx = index" 
-          class="indicator-dot" 
-          [class.active]="idx === activeSlideIndex"
-          (click)="setSlide(idx)"
-          aria-label="Go to slide">
-        </button>
-      </div>
+    <!-- Indicator Dots -->
+    <div class="carousel-indicators">
+      <button 
+        *ngFor="let prod of featuredProducts; let idx = index" 
+        class="indicator-dot" 
+        [class.active]="idx === activeSlideIndex"
+        (click)="setSlide(idx); $event.stopPropagation(); $event.preventDefault();"
+        aria-label="Go to slide">
+      </button>
     </div>
   </div>
 </section>

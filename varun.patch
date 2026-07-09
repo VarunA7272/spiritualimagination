@@ -1,0 +1,380 @@
+diff --git a/angular.json b/angular.json
+index 0d10aad..fc67c7e 100644
+--- a/angular.json
++++ b/angular.json
+@@ -45,7 +45,13 @@
+                   "maximumError": "50kB"
+                 }
+               ],
+-              "outputHashing": "all"
++              "outputHashing": "all",
++              "fileReplacements": [
++                {
++                  "replace": "src/environments/environment.ts",
++                  "with": "src/environments/environment.prod.ts"
++                }
++              ]
+             },
+             "development": {
+               "optimization": false,
+diff --git a/src/app/public-layout.component.ts b/src/app/public-layout.component.ts
+index 3da2aa9..d17c76c 100644
+--- a/src/app/public-layout.component.ts
++++ b/src/app/public-layout.component.ts
+@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
+ import { CartService, CartItem } from './core/services/cart.service';
+ import { AuthOtpService } from './core/services/auth-otp.service';
+ import { SupabaseService } from './core/services/supabase.service';
++import { environment } from '../environments/environment';
+ 
+ @Component({
+   selector: 'app-public-layout',
+@@ -165,19 +166,35 @@ import { SupabaseService } from './core/services/supabase.service';
+             ⚠️ {{ otpVerificationError }}
+           </div>
+ 
+-          <!-- Send OTP Action -->
++          <!-- Dev Mode Notice -->
++          <div class="dev-otp-hint" *ngIf="!otpEnabled">
++            🔧 <b>Dev Mode:</b> OTP verification is disabled. Orders place directly.
++          </div>
++
++          <!-- Send OTP Action (production / otpEnabled = true) -->
+           <button 
+             type="button" 
+             class="btn-send-otp" 
+-            *ngIf="!otpSent" 
++            *ngIf="!otpSent && otpEnabled" 
+             (click)="sendOtp()" 
+             [disabled]="otpRequestLoading || !customerName || !customerMobile"
+           >
+             {{ otpRequestLoading ? 'Requesting OTP...' : 'Send Verification OTP' }}
+           </button>
+ 
++          <!-- Place Order directly (dev mode / otpEnabled = false) -->
++          <button 
++            type="button" 
++            class="btn-send-otp" 
++            *ngIf="!otpEnabled" 
++            (click)="placeOrderWithoutOtp()" 
++            [disabled]="otpVerifyLoading || !customerName || !customerMobile"
++          >
++            {{ otpVerifyLoading ? 'Placing Order...' : 'Place Order' }}
++          </button>
++
+           <!-- OTP Verify Segment -->
+-          <div class="otp-verification-section" *ngIf="otpSent">
++          <div class="otp-verification-section" *ngIf="otpSent && otpEnabled">
+             <div class="otp-sent-banner">
+               📨 OTP verification code sent to <b>{{ customerMobile }}</b>
+             </div>
+@@ -876,6 +893,9 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
+   // Dev OTP code hint
+   devOtpHint = '';
+ 
++  // 🔧 Feature flag: when false, checkout skips OTP entirely (local dev only)
++  otpEnabled = environment.otpEnabled;
++
+   constructor(
+     private cartService: CartService,
+     private authOtpService: AuthOtpService,
+@@ -975,42 +995,67 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
+     const verified = await this.authOtpService.verifyOtp(this.customerMobile, this.otpCode);
+     
+     if (verified) {
+-      try {
+-        const itemsPayload = this.cartItems.map(item => ({
+-          code: item.product.code,
+-          name: item.product.name,
+-          price: item.product.price,
+-          qty: item.quantity,
+-          image: item.product.images?.[0] || item.product.image || ''
+-        }));
++      await this.placeOrder('OTP verified, but order logging failed: ');
++    } else {
++      this.otpVerifyLoading = false;
++      this.otpVerificationError = 'Invalid or expired OTP. Please try again.';
++    }
++  }
+ 
+-        const formattedTotal = '₹' + this.cartTotal.toLocaleString('en-IN');
++  /**
++   * 🔧 Dev-mode checkout path (otpEnabled = false): skips OTP entirely,
++   * still requires Full Name + Mobile so customer records stay consistent.
++   * Never reachable when environment.otpEnabled is true.
++   */
++  async placeOrderWithoutOtp() {
++    if (this.otpEnabled) return; // safety guard — dev path only
++    if (!this.customerName || !this.customerMobile) {
++      this.otpVerificationError = 'Please enter your name and mobile number.';
++      return;
++    }
++    this.otpVerifyLoading = true;
++    this.otpVerificationError = '';
++    console.warn('[SI] OTP verification is DISABLED (dev mode) — placing order without OTP.');
++    await this.placeOrder('Order logging failed: ');
++  }
+ 
+-        // Store customer details and order records
+-        await this.supabaseService.createCustomerAndOrder(
+-          { name: this.customerName, mobile: this.customerMobile },
+-          itemsPayload,
+-          formattedTotal
+-        );
++  /**
++   * Shared order-placement logic used by both the verified-OTP path
++   * and the dev-mode no-OTP path.
++   */
++  private async placeOrder(errorPrefix: string) {
++    try {
++      const itemsPayload = this.cartItems.map(item => ({
++        code: item.product.code,
++        name: item.product.name,
++        price: item.product.price,
++        qty: item.quantity,
++        image: item.product.images?.[0] || item.product.image || ''
++      }));
+ 
+-        // Clear local storage cart
+-        const savedItemsForLink = [...this.cartItems];
+-        this.cartService.clearCart();
+-        this.checkoutModalOpen = false;
++      const formattedTotal = '₹' + this.cartTotal.toLocaleString('en-IN');
+ 
+-        // Redirect to WhatsApp with order summary
+-        const waLink = this.buildWhatsAppCartLink(savedItemsForLink, formattedTotal);
+-        window.open(waLink, '_blank');
++      // Store customer details and order records
++      await this.supabaseService.createCustomerAndOrder(
++        { name: this.customerName, mobile: this.customerMobile },
++        itemsPayload,
++        formattedTotal
++      );
+ 
+-      } catch (err: any) {
+-        console.error('Order creation error:', err);
+-        this.otpVerificationError = 'OTP verified, but order logging failed: ' + (err.message || err);
+-      } finally {
+-        this.otpVerifyLoading = false;
+-      }
+-    } else {
++      // Clear local storage cart
++      const savedItemsForLink = [...this.cartItems];
++      this.cartService.clearCart();
++      this.checkoutModalOpen = false;
++
++      // Redirect to WhatsApp with order summary
++      const waLink = this.buildWhatsAppCartLink(savedItemsForLink, formattedTotal);
++      window.open(waLink, '_blank');
++
++    } catch (err: any) {
++      console.error('Order creation error:', err);
++      this.otpVerificationError = errorPrefix + (err.message || err);
++    } finally {
+       this.otpVerifyLoading = false;
+-      this.otpVerificationError = 'Invalid or expired OTP. Please try again.';
+     }
+   }
+ 
+diff --git a/src/environments/environment.prod.ts b/src/environments/environment.prod.ts
+new file mode 100644
+index 0000000..f81ee44
+--- /dev/null
++++ b/src/environments/environment.prod.ts
+@@ -0,0 +1,6 @@
++export const environment = {
++  production: true,
++  otpEnabled: true, // always true in production — never ship with this off
++  supabaseUrl: 'https://yuytnexcomuscsbmtugv.supabase.co',
++  supabaseKey: 'sb_publishable_sqYrrAblQGwDMw32kaUqyg_x887dtYl'
++};
+diff --git a/src/environments/environment.ts b/src/environments/environment.ts
+new file mode 100644
+index 0000000..6c3c5c0
+--- /dev/null
++++ b/src/environments/environment.ts
+@@ -0,0 +1,6 @@
++export const environment = {
++  production: false,
++  otpEnabled: false, // 🔧 dev mode: set true to test the real OTP flow locally
++  supabaseUrl: 'https://yuytnexcomuscsbmtugv.supabase.co',
++  supabaseKey: 'sb_publishable_sqYrrAblQGwDMw32kaUqyg_x887dtYl'
++};
+diff --git a/supabase/functions/request-otp/index.ts b/supabase/functions/request-otp/index.ts
+new file mode 100644
+index 0000000..67d103a
+--- /dev/null
++++ b/supabase/functions/request-otp/index.ts
+@@ -0,0 +1,89 @@
++// Production-ready OTP sender. Not wired into the frontend yet — this is
++// here so it's ready to drop in the moment you have Twilio/MSG91 credentials.
++//
++// To go live: change AuthOtpService.requestOtp() to call
++//   this.supabaseService's supabase.functions.invoke('request-otp', { body: { mobile_num } })
++// instead of the request_otp RPC, and remove the dev-mode `request_otp`
++// SQL function (or stop returning otp_code from it) so codes are never
++// sent back to the client.
++
++import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
++import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
++
++const corsHeaders = {
++  "Access-Control-Allow-Origin": "*",
++  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
++};
++
++serve(async (req) => {
++  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
++
++  try {
++    const { mobile_num } = await req.json();
++    if (!mobile_num) {
++      return new Response(JSON.stringify({ success: false, message: "Mobile number required" }),
++        { status: 400, headers: corsHeaders });
++    }
++
++    const supabase = createClient(
++      Deno.env.get("SUPABASE_URL")!,
++      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
++    );
++
++    const { count } = await supabase
++      .from("otp_verifications")
++      .select("*", { count: "exact", head: true })
++      .eq("mobile_num", mobile_num)
++      .gte("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
++
++    if ((count ?? 0) >= 3) {
++      return new Response(JSON.stringify({ success: false, message: "Too many attempts. Try again later." }),
++        { status: 429, headers: corsHeaders });
++    }
++
++    const otp = Math.floor(100000 + Math.random() * 900000).toString();
++
++    const { error: insertError } = await supabase.from("otp_verifications").insert({
++      mobile_num,
++      otp_code: otp,
++      expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
++    });
++    if (insertError) throw insertError;
++
++    // --- SMS provider call (Twilio example — swap for MSG91 if preferred) ---
++    const TWILIO_SID = Deno.env.get("TWILIO_ACCOUNT_SID")!;
++    const TWILIO_AUTH = Deno.env.get("TWILIO_AUTH_TOKEN")!;
++    const TWILIO_FROM = Deno.env.get("TWILIO_FROM_NUMBER")!;
++
++    const smsRes = await fetch(
++      `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
++      {
++        method: "POST",
++        headers: {
++          Authorization: "Basic " + btoa(`${TWILIO_SID}:${TWILIO_AUTH}`),
++          "Content-Type": "application/x-www-form-urlencoded",
++        },
++        body: new URLSearchParams({
++          To: `+91${mobile_num}`,
++          From: TWILIO_FROM,
++          Body: `Your Spiritual Imagination verification code is ${otp}. Valid for 5 minutes.`,
++        }),
++      }
++    );
++
++    if (!smsRes.ok) {
++      const errText = await smsRes.text();
++      console.error("SMS send failed:", errText);
++      return new Response(JSON.stringify({ success: false, message: "Failed to send OTP SMS" }),
++        { status: 502, headers: corsHeaders });
++    }
++
++    return new Response(JSON.stringify({ success: true, message: "OTP sent" }),
++      { headers: corsHeaders });
++
++  } catch (err) {
++    console.error(err);
++    return new Response(JSON.stringify({ success: false, message: "Server error" }),
++      { status: 500, headers: corsHeaders });
++  }
++});
+diff --git a/supabase/sql/otp_setup.sql b/supabase/sql/otp_setup.sql
+new file mode 100644
+index 0000000..1695fb5
+--- /dev/null
++++ b/supabase/sql/otp_setup.sql
+@@ -0,0 +1,77 @@
++-- Run this once in Supabase SQL Editor (Dashboard → SQL Editor → New query)
++-- Matches the RPC calls already in src/app/core/services/supabase.service.ts:
++--   .rpc('request_otp', { mobile_num })                       -> returns the OTP as text (dev/mock mode)
++--   .rpc('verify_otp',  { mobile_num, input_code })            -> returns boolean
++
++create table if not exists otp_verifications (
++  id uuid primary key default gen_random_uuid(),
++  mobile_num text not null,
++  otp_code text not null,
++  expires_at timestamptz not null,
++  verified boolean default false,
++  created_at timestamptz default now()
++);
++
++create index if not exists idx_otp_mobile on otp_verifications(mobile_num);
++
++-- request_otp: generates + stores a 6-digit code, returns it directly as text.
++-- ⚠️ DEV/MOCK MODE ONLY. AuthOtpService reads this returned string into
++-- `mockOtp` and shows it as a UI hint / console log so you can test the
++-- flow with zero SMS cost. Before going to production, either:
++--   (a) stop returning otp_code from this function and instead call the
++--       supabase/functions/request-otp Edge Function (which sends a real
++--       SMS and never leaks the code back to the client), or
++--   (b) keep this function only for local/staging Supabase projects.
++create or replace function public.request_otp(mobile_num text)
++returns text
++language plpgsql
++security definer
++as $$
++declare
++  new_otp text;
++begin
++  if (select count(*) from otp_verifications
++      where mobile_num = request_otp.mobile_num
++        and created_at > now() - interval '10 minutes') >= 3 then
++    raise exception 'Too many attempts. Try again later.';
++  end if;
++
++  new_otp := lpad(floor(random() * 1000000)::text, 6, '0');
++
++  insert into otp_verifications (mobile_num, otp_code, expires_at)
++  values (mobile_num, new_otp, now() + interval '5 minutes');
++
++  return new_otp;
++end;
++$$;
++
++-- verify_otp: checks the code the user entered, param name matches
++-- supabase.service.ts's rpc call: { mobile_num, input_code }
++create or replace function public.verify_otp(mobile_num text, input_code text)
++returns boolean
++language plpgsql
++security definer
++as $$
++declare
++  match_row otp_verifications;
++begin
++  select * into match_row from otp_verifications
++  where mobile_num = verify_otp.mobile_num
++    and otp_code = verify_otp.input_code
++    and expires_at > now()
++    and verified = false
++  order by created_at desc limit 1;
++
++  if match_row.id is null then
++    return false;
++  end if;
++
++  update otp_verifications set verified = true where id = match_row.id;
++  return true;
++end;
++$$;
++
++alter table otp_verifications enable row level security;
++-- No public policies added on purpose — only security-definer functions
++-- above (and the service-role key inside the Edge Function, once you add
++-- real SMS sending) can touch this table.
