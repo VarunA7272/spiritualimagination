@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } fro
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SupabaseService, Product, Category } from '../core/services/supabase.service';
 import { SeoService } from '../core/services/seo.service';
+import { CartService } from '../core/services/cart.service';
 
 @Component({
   selector: 'app-products',
@@ -28,6 +29,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   constructor(
     private supabaseService: SupabaseService,
     private seoService: SeoService,
+    private cartService: CartService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -149,10 +151,58 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Toast State
+  addedToCartCode: string | null = null;
+  private toastTimeout: any;
+
+  addToCart(product: Product, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.cartService.addToCart(product, 1);
+    
+    // Show toast message
+    this.addedToCartCode = product.code;
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
+    this.toastTimeout = setTimeout(() => {
+      this.addedToCartCode = null;
+    }, 2500);
+  }
+
   // Modal Handlers
   openProductModal(product: Product) {
     this.selectedProduct = product;
     this.activeImageIndex = 0;
+
+    // Update SEO dynamically for product sharing link rich unfurl
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://sidesigns.netlify.app';
+    const images = this.getProductImages();
+    const firstImg = images.length > 0 ? images[0] : 'https://sidesigns.netlify.app/assets/logo.png';
+
+    this.seoService.generateTags({
+      title: `${product.name} (Code: ${product.code})`,
+      description: `Buy ${product.name} online. Price: ${product.price} | Size: ${product.size}. ${product.desc || ''}`,
+      image: firstImg,
+      url: `${currentOrigin}/products?code=${product.code}`,
+      type: 'product',
+      schema: {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": product.name,
+        "image": firstImg,
+        "description": product.desc,
+        "sku": product.code,
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "INR",
+          "price": product.price.replace(/[^\d]/g, ''),
+          "availability": "https://schema.org/InStock",
+          "url": `${currentOrigin}/products?code=${product.code}`
+        }
+      }
+    });
   }
 
   closeProductModal(event?: Event) {
@@ -160,6 +210,24 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       event.stopPropagation();
     }
     this.selectedProduct = null;
+
+    // Restore Catalog default SEO tags
+    this.seoService.generateTags({
+      title: 'Creations Catalog & Custom Gifts',
+      description: 'Explore custom backlit LED name plates, wooden name boards, magic photo standees, magic mirrors, handmade sketches, customized metal rakhis, and glossy trophies in Jabalpur.',
+      keywords: 'name plates jabalpur, led name plates, photo standees, magic mirror jabalpur, customized gifts list',
+      schema: {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Custom Gift Creations Catalog - Spiritual Imagination",
+        "description": "Premium handcrafted name plates, LED photo standees, trophies, metal rakhis, and custom mugs in Jabalpur.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Spiritual Imagination",
+          "url": "https://sidesigns.netlify.app"
+        }
+      }
+    });
   }
 
   nextImage(event: Event) {

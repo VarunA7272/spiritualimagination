@@ -13,6 +13,9 @@
       <button class="tab-btn" [class.active]="activeTab === 'categories'" (click)="activeTab = 'categories'">
         🏷️ Manage Categories
       </button>
+      <button class="tab-btn" [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'; loadOrders()">
+        📋 View Orders
+      </button>
     </div>
   </div>
 
@@ -94,6 +97,13 @@
           <div class="form-group">
             <label for="p-desc">Description</label>
             <textarea id="p-desc" name="desc" [(ngModel)]="desc" placeholder="Describe materials, details, and personalization features..." rows="3"></textarea>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-container">
+              <input type="checkbox" [(ngModel)]="featured" name="featured" />
+              <span class="checkbox-label">Feature this product in the homepage carousel</span>
+            </label>
           </div>
 
           <!-- Messages -->
@@ -218,6 +228,14 @@
             </div>
           </div>
           <div class="item-actions">
+            <button 
+              class="btn-feature-item" 
+              [class.is-featured]="p.featured" 
+              (click)="toggleFeatured(p)" 
+              title="Toggle Featured on Home"
+            >
+              {{ p.featured ? '⭐' : '☆' }}
+            </button>
             <button class="btn-edit-item" (click)="editProduct(p)" title="Edit listing">✏️</button>
             <button class="btn-delete-item" (click)="deleteProduct(p.code)" title="Delete listing">🗑️</button>
           </div>
@@ -263,6 +281,75 @@
             <input type="text" [(ngModel)]="newSubcategoryNames[cat.name]" placeholder="New subcategory..." (keyup.enter)="addSubcategory(cat.name)" />
             <button class="btn-add-sub" (click)="addSubcategory(cat.name)">Add</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS TAB -->
+  <div class="orders-tab-content animate-fade" *ngIf="activeTab === 'orders'">
+    <div class="orders-header-row">
+      <h3>Customer Orders Dashboard ({{ orders.length }})</h3>
+      <button class="btn-refresh-orders" (click)="loadOrders()">🔄 Refresh Orders</button>
+    </div>
+
+    <!-- Status success message -->
+    <div class="success-message animate-fade" *ngIf="orderStatusMessage">
+      {{ orderStatusMessage }}
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-orders-state" *ngIf="orders.length === 0">
+      <div class="empty-orders-icon">📋</div>
+      <h4>No orders placed yet</h4>
+      <p>Customer orders will show up here in real-time as they verify their mobile OTP.</p>
+    </div>
+
+    <!-- Orders Cards List -->
+    <div class="orders-list-wrapper" *ngIf="orders.length > 0">
+      <div class="order-dashboard-card" *ngFor="let order of orders" [class.status-new]="order.status === 'new'">
+        <div class="order-card-header">
+          <div class="customer-info-meta">
+            <h4>👤 {{ order.customer_name }}</h4>
+            <a href="tel:{{ order.customer_mobile }}" class="customer-tel">📞 {{ order.customer_mobile }}</a>
+            <span class="order-date-badge">📅 {{ order.created_at | date:'medium' }}</span>
+          </div>
+          <div class="order-status-actions">
+            <label for="status-{{ order.id }}">Status:</label>
+            <select id="status-{{ order.id }}" [value]="order.status" (change)="updateStatus(order.id || '', $event)" class="select-order-status">
+              <option value="new">🆕 New</option>
+              <option value="contacted">📞 Contacted</option>
+              <option value="confirmed">✅ Confirmed</option>
+              <option value="completed">🎉 Completed</option>
+              <option value="cancelled">❌ Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="order-card-body">
+          <h5>Order Items:</h5>
+          <div class="order-items-grid">
+            <div class="order-item-detail-row" *ngFor="let item of order.items">
+              <div class="order-item-thumbnail">
+                <img *ngIf="item.image" [src]="item.image" alt="item cover" />
+                <span *ngIf="!item.image">🏷️</span>
+              </div>
+              <div class="order-item-desc">
+                <h6>{{ item.name }} <span class="badge-code">{{ item.code }}</span></h6>
+                <span class="order-item-math">{{ item.qty }} × {{ item.price }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-card-footer">
+          <div class="order-total-block">
+            <span>Total Amount Paid/Owed:</span>
+            <span class="order-total-amount">{{ order.total_amount }}</span>
+          </div>
+          <a href="https://wa.me/{{ order.customer_mobile }}" target="_blank" class="btn-contact-whatsapp">
+            💬 Contact Client on WhatsApp
+          </a>
         </div>
       </div>
     </div>

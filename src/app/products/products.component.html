@@ -55,9 +55,14 @@
           <div class="product-name">{{ p.name }}</div>
           <div class="product-desc">{{ p.desc }}</div>
           <div class="product-meta">Size: {{ p.size }}</div>
-          <a [href]="getWhatsAppLink(p)" class="btn-quote" target="_blank" (click)="$event.stopPropagation()">
-            💬 Order on WhatsApp
-          </a>
+          <div class="product-actions-row">
+            <button class="btn-add-to-cart" (click)="addToCart(p, $event)">
+              🛒 Add to Cart
+            </button>
+            <a [href]="getWhatsAppLink(p)" class="btn-quote" target="_blank" (click)="$event.stopPropagation()">
+              💬 Buy Now
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -135,11 +140,23 @@
             <p>{{ selectedProduct.desc || 'No description provided.' }}</p>
           </div>
 
-          <a [href]="getWhatsAppLink(selectedProduct)" class="modal-btn-order" target="_blank" (click)="closeProductModal($event)">
-            💬 Personalize & Order on WhatsApp
-          </a>
+          <div class="modal-actions-row">
+            <button class="modal-btn-cart" (click)="addToCart(selectedProduct); closeProductModal()">
+              🛒 Add to Cart
+            </button>
+            <a [href]="getWhatsAppLink(selectedProduct)" class="modal-btn-order" target="_blank" (click)="closeProductModal($event)">
+              💬 Personalize & Buy Now
+            </a>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Added to Cart Floating Toast Notification -->
+  <div class="cart-toast" [class.show]="addedToCartCode !== null">
+    <div class="toast-body">
+      <span>✨ Added to Cart successfully!</span>
     </div>
   </div>
 </section>

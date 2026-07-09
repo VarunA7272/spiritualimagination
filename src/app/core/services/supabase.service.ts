@@ -17,6 +17,18 @@ export interface Product {
   icon: string;
   image?: string;
   images?: string[];
+  featured?: boolean;
+}
+
+export interface Order {
+  id?: string;
+  customer_id?: string;
+  customer_name?: string;
+  customer_mobile?: string;
+  items: any[];
+  total_amount: string;
+  status: string;
+  created_at?: string;
 }
 
 export interface Review {
@@ -96,7 +108,8 @@ export class SupabaseService {
         price: product.price,
         desc: product.desc || null,
         icon: product.icon || '🏷️',
-        images: product.images || (product.image ? [product.image] : [])
+        images: product.images || (product.image ? [product.image] : []),
+        featured: product.featured || false
       }, { onConflict: 'code' });
 
     if (error) throw error;
@@ -228,5 +241,107 @@ export class SupabaseService {
     } catch (e) {
       return 'Recent';
     }
+  }
+
+  // --- FEATURED PRODUCTS ---
+  async getFeaturedProducts(): Promise<Product[]> {
+    const { data, error } = await this.supabase
+      .from('products')
+      .select('*')
+      .eq('featured', true)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async toggleProductFeatured(code: string, featured: boolean): Promise<void> {
+    const { error } = await this.supabase
+      .from('products')
+      .update({ featured })
+      .eq('code', code.toUpperCase());
+
+    if (error) throw error;
+  }
+
+  // --- OTP VERIFICATION RPCs ---
+  async requestOtpRpc(mobile: string): Promise<string> {
+    const { data, error } = await this.supabase
+      .rpc('request_otp', { mobile_num: mobile });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async verifyOtpRpc(mobile: string, code: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .rpc('verify_otp', { mobile_num: mobile, input_code: code });
+
+    if (error) throw error;
+    return !!data;
+  }
+
+  // --- CUSTOMER & ORDER PLACEMENT ---
+  async createCustomerAndOrder(customer: { name: string; mobile: string }, items: any[], totalAmount: string): Promise<void> {
+    // 1. Upsert customer
+    const { data: customerData, error: customerError } = await this.supabase
+      .from('customers')
+      .upsert({ full_name: customer.name, mobile: customer.mobile }, { onConflict: 'mobile' })
+      .select()
+      .single();
+
+    if (customerError) throw customerError;
+
+    // 2. Insert order
+    const { error: orderError } = await this.supabase
+      .from('orders')
+      .insert({
+        customer_id: customerData.id,
+        items,
+        total_amount: totalAmount,
+        status: 'new'
+      });
+
+    if (orderError) throw orderError;
+  }
+
+  // --- ADMIN ORDER MANAGEMENT ---
+  async getOrders(): Promise<Order[]> {
+    const { data, error } = await this.supabase
+      .from('orders')
+      .select(`
+        id,
+        items,
+        total_amount,
+        status,
+        created_at,
+        customer_id,
+        customers (
+          full_name,
+          mobile
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || []).map((o: any) => ({
+      id: o.id,
+      items: o.items,
+      total_amount: o.total_amount,
+      status: o.status,
+      created_at: o.created_at,
+      customer_name: o.customers?.full_name || 'Unknown Customer',
+      customer_mobile: o.customers?.mobile || 'No Mobile'
+    }));
+  }
+
+  async updateOrderStatus(orderId: string, status: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('orders')
+      .update({ status })
+      .eq('id', orderId);
+
+    if (error) throw error;
   }
 }

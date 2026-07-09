@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { SeoService } from '../core/services/seo.service';
+import { SupabaseService, Product } from '../core/services/supabase.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -24,8 +26,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { name: 'Metal Rakhis', icon: '📿', left: 88, delay: '0.9s', length: 250 }
   ];
 
+  // Featured Carousel State
+  featuredProducts: Product[] = [];
+  activeSlideIndex = 0;
+  private autoplayTimer: any;
+
   constructor(
     private seoService: SeoService,
+    private supabaseService: SupabaseService,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -73,6 +81,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
 
+    this.loadFeaturedProducts();
+
     if (isPlatformBrowser(this.platformId)) {
       this.startTyping();
     }
@@ -88,6 +98,18 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.typingTimer) {
       clearTimeout(this.typingTimer);
     }
+    this.stopAutoplay();
+  }
+
+  loadFeaturedProducts() {
+    this.supabaseService.getFeaturedProducts().then(data => {
+      this.featuredProducts = data;
+      if (this.featuredProducts.length > 0 && isPlatformBrowser(this.platformId)) {
+        this.startAutoplay();
+      }
+    }).catch(err => {
+      console.error('Error loading featured products', err);
+    });
   }
 
   startTyping() {
@@ -128,5 +150,37 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       el.style.transitionDelay = (i % 4) * 0.08 + 's';
       observer.observe(el);
     });
+  }
+
+  // Carousel Handlers
+  startAutoplay() {
+    this.stopAutoplay();
+    if (isPlatformBrowser(this.platformId) && this.featuredProducts.length > 1) {
+      this.autoplayTimer = setInterval(() => {
+        this.nextSlide();
+      }, 4500);
+    }
+  }
+
+  stopAutoplay() {
+    if (this.autoplayTimer) {
+      clearInterval(this.autoplayTimer);
+      this.autoplayTimer = null;
+    }
+  }
+
+  nextSlide() {
+    if (this.featuredProducts.length === 0) return;
+    this.activeSlideIndex = (this.activeSlideIndex + 1) % this.featuredProducts.length;
+  }
+
+  prevSlide() {
+    if (this.featuredProducts.length === 0) return;
+    this.activeSlideIndex = (this.activeSlideIndex - 1 + this.featuredProducts.length) % this.featuredProducts.length;
+  }
+
+  setSlide(idx: number) {
+    this.activeSlideIndex = idx;
+    this.startAutoplay();
   }
 }

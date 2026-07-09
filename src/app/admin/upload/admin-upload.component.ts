@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService, Product, Category } from '../../core/services/supabase.service';
+import { SupabaseService, Product, Category, Order } from '../../core/services/supabase.service';
 
 @Component({
   selector: 'app-admin-upload',
@@ -11,7 +11,7 @@ import { SupabaseService, Product, Category } from '../../core/services/supabase
   styleUrls: ['./admin-upload.component.css']
 })
 export class AdminUploadComponent implements OnInit {
-  activeTab: 'products' | 'categories' = 'products';
+  activeTab: 'products' | 'categories' | 'orders' = 'products';
 
   icons = [
     { label: 'Label/Tag', value: '🏷️' },
@@ -40,6 +40,7 @@ export class AdminUploadComponent implements OnInit {
   code = '';
   selectedIcon = '🏷️';
   imagePreviewUrls: string[] = [];
+  featured = false;
 
   // Edit State
   editingProductCode: string | null = null;
@@ -71,6 +72,7 @@ export class AdminUploadComponent implements OnInit {
   ngOnInit() {
     this.loadCategories();
     this.loadProducts();
+    this.loadOrders();
   }
 
   loadCategories() {
@@ -195,7 +197,8 @@ export class AdminUploadComponent implements OnInit {
       desc: this.desc.trim(),
       code: trimmedCode,
       icon: this.selectedIcon,
-      images: this.imagePreviewUrls.length > 0 ? this.imagePreviewUrls : undefined
+      images: this.imagePreviewUrls.length > 0 ? this.imagePreviewUrls : undefined,
+      featured: this.featured
     };
 
     const isEdit = !!this.editingProductCode;
@@ -228,6 +231,7 @@ export class AdminUploadComponent implements OnInit {
     this.desc = product.desc;
     this.code = product.code;
     this.selectedIcon = product.icon || '🏷️';
+    this.featured = product.featured || false;
     
     if (product.images && product.images.length > 0) {
       this.imagePreviewUrls = [...product.images];
@@ -252,6 +256,7 @@ export class AdminUploadComponent implements OnInit {
     this.selectedIcon = '🏷️';
     this.imagePreviewUrls = [];
     this.subcategory = '';
+    this.featured = false;
     const fileInput = document.getElementById('p-image') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
     
@@ -607,5 +612,44 @@ export class AdminUploadComponent implements OnInit {
       lines.push(row);
     }
     return lines;
+  }
+
+  // --- FEATURED TOGGLE ---
+  toggleFeatured(product: Product) {
+    const nextFeatured = !product.featured;
+    this.supabaseService.toggleProductFeatured(product.code, nextFeatured).then(() => {
+      product.featured = nextFeatured;
+      this.successMessage = `✓ Updated featured state for ${product.name}!`;
+      setTimeout(() => (this.successMessage = ''), 2500);
+      this.loadProducts();
+    }).catch(err => {
+      this.errorMessage = err.message || 'Error toggling featured state.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    });
+  }
+
+  // --- ORDERS MANAGEMENT ---
+  orders: Order[] = [];
+  orderStatusMessage = '';
+
+  loadOrders() {
+    this.supabaseService.getOrders().then(data => {
+      this.orders = data;
+    }).catch(err => {
+      console.error('Error loading orders from Supabase', err);
+    });
+  }
+
+  updateStatus(orderId: string, event: any) {
+    const status = event.target.value;
+    this.supabaseService.updateOrderStatus(orderId, status).then(() => {
+      this.orderStatusMessage = '✓ Order status updated successfully!';
+      setTimeout(() => (this.orderStatusMessage = ''), 2500);
+      this.loadOrders();
+    }).catch(err => {
+      console.error('Error updating order status', err);
+      this.errorMessage = err.message || 'Failed to update order status.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    });
   }
 }
