@@ -100,7 +100,7 @@
 
     <!-- Products Grid -->
     <div class="products-grid">
-      <div class="product-card fade-up" *ngFor="let p of filteredProducts" (click)="openProductModal(p)">
+      <div class="product-card fade-up" *ngFor="let p of displayedProducts" (click)="openProductModal(p)">
         <div class="product-img">
           <!-- Multi-image logic: show first index or single image -->
           <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0] | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
@@ -132,6 +132,14 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Load More Section -->
+    <div class="load-more-container text-center fade-up" *ngIf="displayedProducts.length < filteredProducts.length">
+      <p class="load-more-status">Showing {{ displayedProducts.length }} of {{ filteredProducts.length }} Creations</p>
+      <button class="btn-load-more" (click)="loadMore()">
+        ✨ Load More Creations
+      </button>
     </div>
 
     <!-- Empty State -->

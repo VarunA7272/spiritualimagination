@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef, HostListener } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SupabaseService, Product, Category } from '../core/services/supabase.service';
 import { SeoService } from '../core/services/seo.service';
@@ -22,6 +22,11 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
   products: Product[] = [];
   filteredProducts: Product[] = [];
+  displayedProducts: Product[] = [];
+
+  // Pagination / Infinite Scroll States
+  currentPage = 1;
+  pageSize = 24;
 
   // Expanded/Collapsed Category States
   isCategoriesExpanded = false;
@@ -129,12 +134,40 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     }
 
     this.filteredProducts = result;
+    this.currentPage = 1;
+    this.updateDisplayedProducts();
 
     setTimeout(() => {
       if (isPlatformBrowser(this.platformId)) {
         this.initScrollAnimations();
       }
     }, 50);
+  }
+
+  updateDisplayedProducts() {
+    this.displayedProducts = this.filteredProducts.slice(0, this.currentPage * this.pageSize);
+  }
+
+  loadMore() {
+    if (this.displayedProducts.length >= this.filteredProducts.length) return;
+    this.currentPage++;
+    this.updateDisplayedProducts();
+    setTimeout(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        this.initScrollAnimations();
+      }
+    }, 50);
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const threshold = 300;
+    const position = window.scrollY + window.innerHeight;
+    const height = document.documentElement.scrollHeight;
+    if (height - position < threshold) {
+      this.loadMore();
+    }
   }
 
   initScrollAnimations() {

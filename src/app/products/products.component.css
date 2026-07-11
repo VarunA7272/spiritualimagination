@@ -1005,6 +1005,45 @@
   }
 }
 
+/* Load More Pagination */
+.load-more-container {
+  margin: 3.5rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.load-more-status {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-light, #8d9297);
+}
+
+.btn-load-more {
+  background: var(--primary, #ff6b35);
+  color: #ffffff;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 12px 28px;
+  border-radius: 100px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.25);
+  transition: all var(--transition-fast, 0.2s);
+}
+
+.btn-load-more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.38);
+}
+
+.btn-load-more:active {
+  transform: translateY(0);
+}
+
 /* Fallback: Ensure elements are visible even if scroll animations don't trigger */
 .fade-up {
   opacity: 1 !important;
