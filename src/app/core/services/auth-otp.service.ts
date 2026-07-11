@@ -54,7 +54,7 @@ export class AuthOtpService {
   }
 
   /**
-   * Cleans mobile number input (e.g. +91 93005-45485 -> 919300545485)
+   * Cleans mobile number input (e.g. +91 93005-45485 -> 919209636699)
    */
   private formatMobile(mobile: string): string {
     if (!mobile) return '';

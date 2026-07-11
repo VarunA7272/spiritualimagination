@@ -283,6 +283,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     const detailLink = `\n🔗 *View Details:* ${currentOrigin}/products?code=${code}`;
 
     const message = `Hi! I'm interested in ordering:\n\n*Product:* ${name}\n*Code:* ${code}\n*Price:* ${price}${imagePart}${detailLink}\n\nPlease share personalization options and details.`;
-    return `https://wa.me/919300545485?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/919209636699?text=${encodeURIComponent(message)}`;
   }
 }

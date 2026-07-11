@@ -26,7 +26,7 @@ export class ContactComponent implements OnInit, AfterViewInit {
         "@type": "LocalBusiness",
         "name": "Spiritual Imagination",
         "image": "https://sidesigns.netlify.app/favicon.ico",
-        "telephone": "+919300545485",
+        "telephone": "+919209636699",
         "email": "varunrajore7272@gmail.com",
         "address": {
           "@type": "PostalAddress",

@@ -155,7 +155,7 @@ import { environment } from '../environments/environment';
               type="tel" 
               id="c-mobile" 
               [(ngModel)]="customerMobile" 
-              placeholder="e.g. 9300545485" 
+              placeholder="e.g. 9209636699" 
               [disabled]="otpSent" 
               required 
             />
@@ -1079,6 +1079,6 @@ export class PublicLayoutComponent implements OnInit, OnDestroy {
     });
 
     const message = `Hi! I want to order the following items from my cart:\n\n${itemsText}*Total Amount:* ${total}\n\n*Customer Details:*\nName: ${this.customerName}\nMobile: ${this.customerMobile}\n\nPlease confirm availability and details.`;
-    return `https://wa.me/919300545485?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/919209636699?text=${encodeURIComponent(message)}`;
   }
 }

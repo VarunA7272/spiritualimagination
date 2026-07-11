@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
             },
             "contactPoint": {
               "@type": "ContactPoint",
-              "telephone": "+919300545485",
+              "telephone": "+919209636699",
               "contactType": "sales",
               "areaServed": "IN",
               "availableLanguage": ["en", "hi"]
