@@ -2,11 +2,12 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Product, Category, Order, FeaturedSlide } from '../../core/services/supabase.service';
+import { AssetUrlPipe } from '../../core/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-admin-upload',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AssetUrlPipe],
   templateUrl: './admin-upload.component.html',
   styleUrls: ['./admin-upload.component.css']
 })

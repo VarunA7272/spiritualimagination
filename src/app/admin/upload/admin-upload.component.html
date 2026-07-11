@@ -217,8 +217,8 @@
       <div class="product-list-scroll">
         <div class="product-item-row" *ngFor="let p of products">
           <div class="item-img-preview">
-            <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0]" alt="Product thumbnail" />
-            <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image" alt="Product thumbnail" />
+            <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0] | assetUrl" alt="Product thumbnail" />
+            <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image | assetUrl" alt="Product thumbnail" />
             <span *ngIf="(!p.images || p.images.length === 0) && !p.image">{{ p.icon }}</span>
           </div>
           <div class="item-details">
@@ -324,8 +324,8 @@
             </td>
             <td class="col-img">
               <div class="manage-thumb">
-                <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0]" [alt]="p.name" />
-                <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image" [alt]="p.name" />
+                <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0] | assetUrl" [alt]="p.name" />
+                <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image | assetUrl" [alt]="p.name" />
                 <span *ngIf="(!p.images || p.images.length === 0) && !p.image" class="manage-thumb-icon">{{ p.icon }}</span>
                 <span class="img-count-badge" *ngIf="p.images && p.images.length > 1">{{ p.images.length }}</span>
               </div>

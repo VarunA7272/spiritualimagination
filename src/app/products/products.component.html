@@ -36,8 +36,8 @@
       <div class="product-card fade-up" *ngFor="let p of filteredProducts" (click)="openProductModal(p)">
         <div class="product-img">
           <!-- Multi-image logic: show first index or single image -->
-          <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0]" [alt]="p.name" class="product-actual-img" loading="lazy" />
-          <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image" [alt]="p.name" class="product-actual-img" loading="lazy" />
+          <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0] | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
+          <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
           <div *ngIf="(!p.images || p.images.length === 0) && !p.image" class="cam-icon">{{ p.icon }}</div>
           
           <div class="img-label">Code: {{ p.code }}</div>
@@ -93,7 +93,7 @@
             <div class="carousel-images-wrapper">
               <img 
                 *ngFor="let imgUrl of getProductImages(); let idx = index" 
-                [src]="imgUrl" 
+                [src]="imgUrl | assetUrl" 
                 [alt]="selectedProduct.name" 
                 class="carousel-image" 
                 [class.active]="idx === activeImageIndex" 

@@ -126,7 +126,7 @@
         [queryParams]="{ code: prod.product_code }"
         title="Click to view product details"
       >
-        <img [src]="prod.image_url" loading="lazy" class="slide-bg-image" [alt]="prod.title" />
+        <img [src]="prod.image_url | assetUrl" loading="lazy" class="slide-bg-image" [alt]="prod.title" />
         <div class="slide-content-overlay">
           <div class="slide-info-box">
             <span class="slide-cat">{{ prod.category }}</span>

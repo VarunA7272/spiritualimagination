@@ -3,11 +3,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SeoService } from '../core/services/seo.service';
 import { SupabaseService, Product, FeaturedSlide } from '../core/services/supabase.service';
+import { AssetUrlPipe } from '../core/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AssetUrlPipe],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

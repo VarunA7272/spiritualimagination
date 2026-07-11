@@ -3,11 +3,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SupabaseService, Product, Category } from '../core/services/supabase.service';
 import { SeoService } from '../core/services/seo.service';
 import { CartService } from '../core/services/cart.service';
+import { AssetUrlPipe } from '../core/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AssetUrlPipe],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
