@@ -1004,3 +1004,9 @@
     transform: translate(50%, 0) scale(1);
   }
 }
+
+/* Fallback: Ensure elements are visible even if scroll animations don't trigger */
+.fade-up {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
