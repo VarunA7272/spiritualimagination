@@ -6,14 +6,81 @@
       <p class="section-sub">From photo mugs to custom-cut name plates — click any item to view maximized pictures and details.</p>
     </div>
 
-    <!-- Main Category Filter Tabs -->
-    <div class="category-tabs fade-up">
-      <button 
-        *ngFor="let cat of categories" 
-        [class.active]="selectedCategory === cat" 
-        (click)="filterByCategory(cat)">
-        {{ cat }}
-      </button>
+    <!-- Expandable/Collapsible Categories Dashboard -->
+    <div class="category-control-panel fade-up">
+      <!-- Toolbar Header -->
+      <div class="category-toolbar">
+        <div class="current-selection-badge">
+          <span class="folder-icon">📂</span>
+          <span class="selection-label">Category:</span>
+          <span class="selection-value">{{ selectedCategory }}</span>
+        </div>
+        <button 
+          class="btn-toggle-layout" 
+          (click)="isCategoriesExpanded = !isCategoriesExpanded; isDropdownOpen = false"
+          [attr.aria-expanded]="isCategoriesExpanded"
+          title="Switch category view layout"
+        >
+          <span class="layout-icon">{{ isCategoriesExpanded ? '📖' : '🎛️' }}</span>
+          {{ isCategoriesExpanded ? 'Collapse to Dropdown' : 'Expand Category Grid' }}
+        </button>
+      </div>
+
+      <!-- COLLAPSED STATE: AESTHETIC CUSTOM DROPDOWN -->
+      <div class="categories-collapsed-view" *ngIf="!isCategoriesExpanded">
+        <div 
+          class="custom-dropdown-select" 
+          [class.dropdown-active]="isDropdownOpen" 
+          (click)="isDropdownOpen = !isDropdownOpen"
+        >
+          <div class="dropdown-trigger-content">
+            <span class="selected-text">{{ selectedCategory }}</span>
+            <span class="chevron-icon">▾</span>
+          </div>
+          
+          <!-- Dropdown Options List -->
+          <div class="dropdown-options-list animate-fade-in" *ngIf="isDropdownOpen">
+            <div 
+              class="dropdown-option-item" 
+              *ngFor="let cat of categories"
+              [class.option-selected]="selectedCategory === cat"
+              (click)="filterByCategory(cat); $event.stopPropagation(); isDropdownOpen = false"
+            >
+              <span class="option-check" *ngIf="selectedCategory === cat">✓</span>
+              <span class="option-name">{{ cat }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Backdrop to close dropdown on clicking outside -->
+        <div class="dropdown-backdrop" *ngIf="isDropdownOpen" (click)="isDropdownOpen = false"></div>
+      </div>
+
+      <!-- EXPANDED STATE: BEAUTIFUL CAPSULE GRID -->
+      <div class="categories-expanded-view animate-fade-in" *ngIf="isCategoriesExpanded">
+        <div class="category-grid-container">
+          <button 
+            *ngFor="let cat of categories" 
+            class="category-grid-card"
+            [class.card-active]="selectedCategory === cat" 
+            (click)="filterByCategory(cat)"
+          >
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <span class="card-icon" [ngSwitch]="cat">
+                <span *ngSwitchCase="'All'">🌟</span>
+                <span *ngSwitchCase="'Name Plates'">🪵</span>
+                <span *ngSwitchCase="'LED & Photo Frames'">💡</span>
+                <span *ngSwitchCase="'Sketches & Paintings'">🎨</span>
+                <span *ngSwitchCase="'Metal Rakhis'">📿</span>
+                <span *ngSwitchCase="'Mugs & Gifting'">☕</span>
+                <span *ngSwitchDefault>🏷️</span>
+              </span>
+              <span class="card-title">{{ cat }}</span>
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Subcategory Pills Row -->

@@ -23,6 +23,10 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
+  // Expanded/Collapsed Category States
+  isCategoriesExpanded = false;
+  isDropdownOpen = false;
+
   // Modal State
   selectedProduct: Product | null = null;
   activeImageIndex = 0;
