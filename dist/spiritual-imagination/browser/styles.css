@@ -1,0 +1,133 @@
+@import "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap";
+
+/* src/styles.css */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --primary-hue: 18;
+  --secondary-hue: 340;
+  --gold-hue: 45;
+  --primary: hsl(var(--primary-hue), 100%, 61%);
+  --primary-hover: hsl(var(--primary-hue), 100%, 55%);
+  --primary-light: rgba(255, 107, 53, 0.12);
+  --primary-glow: rgba(255, 107, 53, 0.28);
+  --secondary: hsl(var(--secondary-hue), 100%, 78%);
+  --gold: hsl(var(--gold-hue), 100%, 60%);
+  --cream: hsl(36, 100%, 98%);
+  --text-dark: hsl(30, 25%, 12%);
+  --text-mid: hsl(25, 20%, 32%);
+  --text-light: hsl(24, 15%, 52%);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 12px 40px -10px rgba(45, 27, 0, 0.08);
+  --shadow-sm: 0 4px 12px rgba(45, 27, 0, 0.04);
+  --shadow-md: 0 12px 32px -4px rgba(255, 107, 53, 0.08);
+  --shadow-lg: 0 24px 64px -12px rgba(255, 107, 53, 0.16);
+  --shadow-hover: 0 32px 80px -16px rgba(255, 107, 53, 0.28);
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 86px;
+}
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Outfit", sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary-hue), 80%, 80%);
+  border-radius: 10px;
+  border: 2px solid var(--cream);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+.section-padding {
+  padding: 6rem 1.5rem;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.text-center {
+  text-align: center;
+}
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  position: relative;
+}
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-mid);
+  max-width: 600px;
+  margin: 0 auto 3.5rem;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background:
+    linear-gradient(
+      135deg,
+      var(--primary) 0%,
+      hsl(14, 90%, 55%) 100%);
+  color: #ffffff;
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.25);
+  transition: all var(--transition-fast);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.38);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* angular:styles/global:styles */
+/*# sourceMappingURL=styles.css.map */

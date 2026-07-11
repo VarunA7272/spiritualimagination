@@ -11,7 +11,7 @@ import { SupabaseService, Product, Category, Order, FeaturedSlide } from '../../
   styleUrls: ['./admin-upload.component.css']
 })
 export class AdminUploadComponent implements OnInit {
-  activeTab: 'products' | 'categories' | 'orders' | 'slides' = 'products';
+  activeTab: 'products' | 'categories' | 'orders' | 'slides' | 'manage' = 'products';
 
   icons = [
     { label: 'Label/Tag', value: '🏷️' },
@@ -53,6 +53,88 @@ export class AdminUploadComponent implements OnInit {
 
   // Edit State
   editingProductCode: string | null = null;
+
+  // ---- MANAGE TAB STATE ----
+  manageSearch = '';
+  manageCategory = 'All';
+  selectedCodes = new Set<string>();
+  showEditModal = false;
+  // modal form fields (reuse main form fields when editing from manage tab)
+
+  get filteredManagedProducts(): Product[] {
+    const q = this.manageSearch.trim().toLowerCase();
+    return this.products.filter(p => {
+      const matchCat = this.manageCategory === 'All' || p.category === this.manageCategory;
+      const matchQ = !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.code.toLowerCase().includes(q) ||
+        (p.desc || '').toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+  }
+
+  get allSelected(): boolean {
+    const fp = this.filteredManagedProducts;
+    return fp.length > 0 && fp.every(p => this.selectedCodes.has(p.code));
+  }
+
+  toggleSelectAll() {
+    if (this.allSelected) {
+      this.filteredManagedProducts.forEach(p => this.selectedCodes.delete(p.code));
+    } else {
+      this.filteredManagedProducts.forEach(p => this.selectedCodes.add(p.code));
+    }
+  }
+
+  toggleSelectOne(code: string) {
+    if (this.selectedCodes.has(code)) {
+      this.selectedCodes.delete(code);
+    } else {
+      this.selectedCodes.add(code);
+    }
+  }
+
+  async bulkDelete() {
+    const count = this.selectedCodes.size;
+    if (count === 0) return;
+    if (!confirm(`Delete ${count} selected product(s)? This cannot be undone.`)) return;
+
+    const codes = [...this.selectedCodes];
+    try {
+      for (const code of codes) {
+        await this.supabaseService.deleteProduct(code);
+      }
+      this.selectedCodes.clear();
+      this.loadProducts();
+      this.successMessage = `✓ Deleted ${count} product(s) successfully!`;
+      setTimeout(() => (this.successMessage = ''), 3500);
+    } catch (err: any) {
+      this.errorMessage = err.message || 'Error during bulk delete.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    }
+  }
+
+  openEditModal(product: Product) {
+    this.editProduct(product);
+    this.showEditModal = true;
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.cancelEdit();
+  }
+
+  saveEditModal() {
+    this.onSubmit();
+    // onSubmit resets editingProductCode on success which we watch
+    // close modal after slight delay to allow success message
+    setTimeout(() => {
+      if (!this.editingProductCode) {
+        this.showEditModal = false;
+      }
+    }, 400);
+  }
 
   // Category Manage Form Model
   newCategoryName = '';

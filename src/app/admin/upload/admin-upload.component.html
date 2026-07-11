@@ -8,16 +8,19 @@
     <!-- Tab Controls -->
     <div class="tab-controls">
       <button class="tab-btn" [class.active]="activeTab === 'products'" (click)="activeTab = 'products'">
-        📦 Manage Products
+        ➕ Add / Import
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'manage'" (click)="activeTab = 'manage'; loadProducts()">
+        📋 Manage Products
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'categories'" (click)="activeTab = 'categories'">
-        🏷️ Manage Categories
+        🏷️ Categories
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'; loadOrders()">
-        📋 View Orders
+        🧾 View Orders
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'slides'" (click)="activeTab = 'slides'; loadFeaturedSlides()">
-        🖼️ Homepage Banners
+        🖼️ Banners
       </button>
     </div>
   </div>
@@ -243,6 +246,215 @@
             <button class="btn-delete-item" (click)="deleteProduct(p.code)" title="Delete listing">🗑️</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <!-- MANAGE PRODUCTS TAB -->
+  <div class="manage-tab-content" *ngIf="activeTab === 'manage'">
+
+    <!-- Toolbar Row -->
+    <div class="manage-toolbar">
+      <div class="manage-toolbar-left">
+        <div class="manage-search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search by name, code, category…"
+            [(ngModel)]="manageSearch"
+            (ngModelChange)="selectedCodes.clear()"
+          />
+          <button *ngIf="manageSearch" class="btn-clear-search" (click)="manageSearch = ''; selectedCodes.clear()">×</button>
+        </div>
+        <select class="manage-cat-filter" [(ngModel)]="manageCategory" (ngModelChange)="selectedCodes.clear()">
+          <option value="All">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+        </select>
+      </div>
+      <div class="manage-toolbar-right">
+        <span class="manage-count-badge">{{ filteredManagedProducts.length }} of {{ products.length }} Products</span>
+        <button
+          class="btn-bulk-delete"
+          [disabled]="selectedCodes.size === 0"
+          (click)="bulkDelete()"
+        >
+          🗑️ Delete Selected ({{ selectedCodes.size }})
+        </button>
+        <button class="btn-refresh-manage" (click)="loadProducts(); selectedCodes.clear()">🔄 Refresh</button>
+      </div>
+    </div>
+
+    <!-- Success / Error messages -->
+    <div class="manage-msg-row">
+      <div class="success-message animate-fade" *ngIf="successMessage">{{ successMessage }}</div>
+      <div class="error-message animate-fade" *ngIf="errorMessage">⚠️ {{ errorMessage }}</div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="manage-table-wrapper">
+      <table class="manage-products-table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <label class="custom-checkbox-label">
+                <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()" />
+                <span class="custom-checkbox-box"></span>
+              </label>
+            </th>
+            <th class="col-img">Photo</th>
+            <th class="col-name">Product Name</th>
+            <th class="col-code">Code</th>
+            <th class="col-cat">Category</th>
+            <th class="col-size">Size</th>
+            <th class="col-price">Price</th>
+            <th class="col-feat">⭐</th>
+            <th class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let p of filteredManagedProducts"
+            class="manage-product-row"
+            [class.selected]="selectedCodes.has(p.code)"
+          >
+            <td class="col-check">
+              <label class="custom-checkbox-label">
+                <input type="checkbox" [checked]="selectedCodes.has(p.code)" (change)="toggleSelectOne(p.code)" />
+                <span class="custom-checkbox-box"></span>
+              </label>
+            </td>
+            <td class="col-img">
+              <div class="manage-thumb">
+                <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0]" [alt]="p.name" />
+                <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image" [alt]="p.name" />
+                <span *ngIf="(!p.images || p.images.length === 0) && !p.image" class="manage-thumb-icon">{{ p.icon }}</span>
+                <span class="img-count-badge" *ngIf="p.images && p.images.length > 1">{{ p.images.length }}</span>
+              </div>
+            </td>
+            <td class="col-name">
+              <div class="manage-product-name">{{ p.name }}</div>
+              <div class="manage-product-desc" *ngIf="p.desc">{{ p.desc | slice:0:80 }}{{ p.desc.length > 80 ? '…' : '' }}</div>
+            </td>
+            <td class="col-code"><span class="code-chip">{{ p.code }}</span></td>
+            <td class="col-cat">
+              <span class="cat-chip">{{ p.category }}</span>
+              <span class="sub-chip" *ngIf="p.subcategory">{{ p.subcategory }}</span>
+            </td>
+            <td class="col-size">{{ p.size }}</td>
+            <td class="col-price"><strong>{{ p.price }}</strong></td>
+            <td class="col-feat">
+              <button
+                class="btn-toggle-feat"
+                [class.featured]="p.featured"
+                (click)="toggleFeatured(p)"
+                [title]="p.featured ? 'Remove from Featured' : 'Mark as Featured'"
+              >{{ p.featured ? '⭐' : '☆' }}</button>
+            </td>
+            <td class="col-actions">
+              <button class="btn-row-edit" (click)="openEditModal(p)" title="Edit Product">✏️ Edit</button>
+              <button class="btn-row-delete" (click)="deleteProduct(p.code)" title="Delete Product">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty state -->
+      <div class="manage-empty-state" *ngIf="filteredManagedProducts.length === 0">
+        <div class="empty-state-icon">📦</div>
+        <h4 *ngIf="products.length === 0">No products in the database yet</h4>
+        <h4 *ngIf="products.length > 0">No products match your search</h4>
+        <p *ngIf="products.length === 0">Go to ➕ Add / Import to upload your first product.</p>
+        <p *ngIf="products.length > 0">Try adjusting the search term or category filter.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PRODUCT MODAL (triggered from Manage tab) -->
+  <div class="edit-modal-backdrop animate-fade-in" *ngIf="showEditModal" (click)="closeEditModal()">
+    <div class="edit-modal-card animate-scale-up" (click)="$event.stopPropagation()">
+      <div class="edit-modal-header">
+        <h3>✏️ Edit Product <span class="highlight-code">{{ editingProductCode }}</span></h3>
+        <button class="btn-close-modal" (click)="closeEditModal()">×</button>
+      </div>
+
+      <div class="edit-modal-body">
+        <form (submit)="saveEditModal(); $event.preventDefault()" novalidate>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Product Name *</label>
+              <input type="text" [(ngModel)]="name" name="m-name" placeholder="Product name" required />
+            </div>
+            <div class="form-group">
+              <label>Product Code *</label>
+              <input type="text" [(ngModel)]="code" name="m-code" placeholder="e.g. NP-01" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price *</label>
+              <input type="text" [(ngModel)]="price" name="m-price" placeholder="e.g. 1800" required />
+            </div>
+            <div class="form-group">
+              <label>Size *</label>
+              <input type="text" [(ngModel)]="size" name="m-size" placeholder="e.g. 15x24 Inch" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category *</label>
+              <select [(ngModel)]="category" name="m-category" (change)="onCategoryChange()">
+                <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+              </select>
+            </div>
+            <div class="form-group" *ngIf="subcategories.length > 0">
+              <label>Subcategory</label>
+              <select [(ngModel)]="subcategory" name="m-subcategory">
+                <option value="">None / Main</option>
+                <option *ngFor="let sub of subcategories" [value]="sub">{{ sub }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea [(ngModel)]="desc" name="m-desc" rows="3" placeholder="Describe product details…"></textarea>
+          </div>
+
+          <!-- Images -->
+          <div class="form-group">
+            <label>Add More Photos</label>
+            <input type="file" id="m-image" (change)="onFileSelected($event)" accept="image/*" multiple />
+          </div>
+
+          <div class="modal-image-previews" *ngIf="imagePreviewUrls.length > 0">
+            <div class="modal-thumb-grid">
+              <div class="modal-thumb-box" *ngFor="let url of imagePreviewUrls; let i = index">
+                <img [src]="url" alt="preview" />
+                <button type="button" class="btn-remove-modal-img" (click)="removeUploadedImage(i)">×</button>
+                <span class="modal-thumb-badge" *ngIf="i === 0">Cover</span>
+              </div>
+            </div>
+            <button type="button" class="btn-clear-all" (click)="clearAllImages()">🗑️ Clear All</button>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-container">
+              <input type="checkbox" [(ngModel)]="featured" name="m-featured" />
+              <span class="checkbox-label">Feature on homepage carousel</span>
+            </label>
+          </div>
+
+          <!-- Messages -->
+          <div class="success-message animate-fade" *ngIf="successMessage">{{ successMessage }}</div>
+          <div class="error-message animate-fade" *ngIf="errorMessage">⚠️ {{ errorMessage }}</div>
+
+          <div class="edit-modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeEditModal()">Cancel</button>
+            <button type="submit" class="btn-submit">💾 Save Changes</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
