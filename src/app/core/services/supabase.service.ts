@@ -65,15 +65,56 @@ export class SupabaseService {
     this.checkAndSeedDatabase();
   }
 
+  // Helper to check if browser storage is available
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined';
+  }
+
+  // Helper to get cached item
+  private getCache<T>(key: string): T | null {
+    if (!this.isBrowser()) return null;
+    try {
+      const data = sessionStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Helper to set cached item
+  private setCache(key: string, data: any): void {
+    if (!this.isBrowser()) return;
+    try {
+      sessionStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+      console.warn('Failed to save data to sessionStorage cache', e);
+    }
+  }
+
+  // Helper to remove cached item
+  private clearCache(key: string): void {
+    if (!this.isBrowser()) return;
+    try {
+      sessionStorage.removeItem(key);
+    } catch (e) {}
+  }
+
   // --- CATEGORIES API ---
-  async getCategories(): Promise<Category[]> {
+  async getCategories(forceRefresh = false): Promise<Category[]> {
+    if (!forceRefresh) {
+      const cached = this.getCache<Category[]>('si_cache_categories');
+      if (cached) return cached;
+    }
+
     const { data, error } = await this.supabase
       .from('categories')
       .select('name, subcategories')
       .order('name', { ascending: true });
 
     if (error) throw error;
-    return data || [];
+    const result = data || [];
+    this.setCache('si_cache_categories', result);
+    return result;
   }
 
   async upsertCategory(category: Category): Promise<void> {
@@ -85,6 +126,7 @@ export class SupabaseService {
       );
 
     if (error) throw error;
+    this.clearCache('si_cache_categories');
   }
 
   async deleteCategory(name: string): Promise<void> {
@@ -94,17 +136,25 @@ export class SupabaseService {
       .eq('name', name);
 
     if (error) throw error;
+    this.clearCache('si_cache_categories');
   }
 
   // --- PRODUCTS API ---
-  async getProducts(): Promise<Product[]> {
+  async getProducts(forceRefresh = false): Promise<Product[]> {
+    if (!forceRefresh) {
+      const cached = this.getCache<Product[]>('si_cache_products');
+      if (cached) return cached;
+    }
+
     const { data, error } = await this.supabase
       .from('products')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    const result = data || [];
+    this.setCache('si_cache_products', result);
+    return result;
   }
 
   async saveProduct(product: Product): Promise<void> {
@@ -124,6 +174,8 @@ export class SupabaseService {
       }, { onConflict: 'code' });
 
     if (error) throw error;
+    this.clearCache('si_cache_products');
+    this.clearCache('si_cache_featured_products');
   }
 
   async deleteProduct(code: string): Promise<void> {
@@ -133,10 +185,17 @@ export class SupabaseService {
       .eq('code', code);
 
     if (error) throw error;
+    this.clearCache('si_cache_products');
+    this.clearCache('si_cache_featured_products');
   }
 
   // --- REVIEWS API ---
-  async getReviews(): Promise<Review[]> {
+  async getReviews(forceRefresh = false): Promise<Review[]> {
+    if (!forceRefresh) {
+      const cached = this.getCache<Review[]>('si_cache_reviews');
+      if (cached) return cached;
+    }
+
     const { data, error } = await this.supabase
       .from('reviews')
       .select('*')
@@ -145,7 +204,7 @@ export class SupabaseService {
     if (error) throw error;
 
     // Map database fields to UI Review fields
-    return (data || []).map(r => ({
+    const result = (data || []).map(r => ({
       stars: r.stars,
       ratingValue: r.rating_value,
       text: r.text,
@@ -153,6 +212,9 @@ export class SupabaseService {
       photos: r.photos || [],
       date: this.formatRelativeDate(r.created_at)
     }));
+
+    this.setCache('si_cache_reviews', result);
+    return result;
   }
 
   async insertReview(review: Review): Promise<void> {
@@ -167,6 +229,7 @@ export class SupabaseService {
       });
 
     if (error) throw error;
+    this.clearCache('si_cache_reviews');
   }
 
   // --- AUTO-SEEDER LOGIC ---
@@ -255,7 +318,12 @@ export class SupabaseService {
   }
 
   // --- FEATURED PRODUCTS ---
-  async getFeaturedProducts(): Promise<Product[]> {
+  async getFeaturedProducts(forceRefresh = false): Promise<Product[]> {
+    if (!forceRefresh) {
+      const cached = this.getCache<Product[]>('si_cache_featured_products');
+      if (cached) return cached;
+    }
+
     const { data, error } = await this.supabase
       .from('products')
       .select('*')
@@ -263,7 +331,9 @@ export class SupabaseService {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    const result = data || [];
+    this.setCache('si_cache_featured_products', result);
+    return result;
   }
 
   async toggleProductFeatured(code: string, featured: boolean): Promise<void> {
@@ -273,6 +343,8 @@ export class SupabaseService {
       .eq('code', code.toUpperCase());
 
     if (error) throw error;
+    this.clearCache('si_cache_products');
+    this.clearCache('si_cache_featured_products');
   }
 
   // --- OTP VERIFICATION RPCs ---
@@ -357,14 +429,21 @@ export class SupabaseService {
   }
 
   // --- HOMEPAGE FEATURED SLIDES MANAGEMENT ---
-  async getFeaturedSlides(): Promise<FeaturedSlide[]> {
+  async getFeaturedSlides(forceRefresh = false): Promise<FeaturedSlide[]> {
+    if (!forceRefresh) {
+      const cached = this.getCache<FeaturedSlide[]>('si_cache_featured_slides');
+      if (cached) return cached;
+    }
+
     const { data, error } = await this.supabase
       .from('featured_slides')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    const result = data || [];
+    this.setCache('si_cache_featured_slides', result);
+    return result;
   }
 
   async saveFeaturedSlide(slide: FeaturedSlide): Promise<void> {
@@ -381,6 +460,7 @@ export class SupabaseService {
       });
 
     if (error) throw error;
+    this.clearCache('si_cache_featured_slides');
   }
 
   async deleteFeaturedSlide(id: string): Promise<void> {
@@ -390,5 +470,6 @@ export class SupabaseService {
       .eq('id', id);
 
     if (error) throw error;
+    this.clearCache('si_cache_featured_slides');
   }
 }

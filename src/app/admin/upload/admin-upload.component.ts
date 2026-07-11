@@ -168,8 +168,8 @@ export class AdminUploadComponent implements OnInit {
     this.loadFeaturedSlides();
   }
 
-  loadCategories() {
-    this.supabaseService.getCategories().then(data => {
+  loadCategories(forceRefresh = false) {
+    this.supabaseService.getCategories(forceRefresh).then(data => {
       this.categories = data;
       if (this.categories.length > 0) {
         // Keep selection if still valid, otherwise default to first category
@@ -189,8 +189,8 @@ export class AdminUploadComponent implements OnInit {
     this.subcategory = this.subcategories.length > 0 ? this.subcategories[0] : '';
   }
 
-  loadProducts() {
-    this.supabaseService.getProducts().then(data => {
+  loadProducts(forceRefresh = false) {
+    this.supabaseService.getProducts(forceRefresh).then(data => {
       this.products = data;
     }).catch(err => {
       console.error('Error loading products from Supabase', err);

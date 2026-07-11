@@ -211,7 +211,7 @@
     <div class="list-card">
       <div class="list-card-header">
         <h3>Currently Listed Products ({{ products.length }})</h3>
-        <button class="btn-reset-list" (click)="loadProducts()">🔄 Refresh List</button>
+        <button class="btn-reset-list" (click)="loadProducts(true)">🔄 Refresh List</button>
       </div>
 
       <div class="product-list-scroll">
@@ -279,7 +279,7 @@
         >
           🗑️ Delete Selected ({{ selectedCodes.size }})
         </button>
-        <button class="btn-refresh-manage" (click)="loadProducts(); selectedCodes.clear()">🔄 Refresh</button>
+        <button class="btn-refresh-manage" (click)="loadProducts(true); selectedCodes.clear()">🔄 Refresh</button>
       </div>
     </div>
 
