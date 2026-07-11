@@ -7,11 +7,12 @@ import { CartService, CartItem } from './core/services/cart.service';
 import { AuthOtpService } from './core/services/auth-otp.service';
 import { SupabaseService } from './core/services/supabase.service';
 import { environment } from '../environments/environment';
+import { AssetUrlPipe } from './core/pipes/asset-url.pipe';
 
 @Component({
   selector: 'app-public-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule, FormsModule],
+  imports: [CommonModule, RouterOutlet, RouterModule, FormsModule, AssetUrlPipe],
   template: `
     <!-- PUBLIC HEADER -->
     <nav id="navbar">
@@ -95,8 +96,8 @@ import { environment } from '../environments/environment';
           <div class="cart-items-list" *ngIf="cartItems.length > 0">
             <div class="cart-item-row" *ngFor="let item of cartItems">
               <div class="cart-item-thumb">
-                <img *ngIf="item.product.images && item.product.images.length > 0" [src]="item.product.images[0]" alt="thumbnail" />
-                <img *ngIf="(!item.product.images || item.product.images.length === 0) && item.product.image" [src]="item.product.image" alt="thumbnail" />
+                <img *ngIf="item.product.images && item.product.images.length > 0" [src]="item.product.images[0] | assetUrl" alt="thumbnail" />
+                <img *ngIf="(!item.product.images || item.product.images.length === 0) && item.product.image" [src]="item.product.image | assetUrl" alt="thumbnail" />
                 <span *ngIf="(!item.product.images || item.product.images.length === 0) && !item.product.image">{{ item.product.icon }}</span>
               </div>
               <div class="cart-item-info">
