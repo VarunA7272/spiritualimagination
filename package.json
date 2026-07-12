@@ -7,6 +7,7 @@
     "build": "ng build",
     "build:github": "ng build --base-href /spiritualimagination/ && cp dist/spiritual-imagination/browser/index.html dist/spiritual-imagination/browser/404.html",
     "deploy": "npm run build:github && npx angular-cli-ghpages --dir=dist/spiritual-imagination/browser",
+    "deploy:sftp": "ng build && node scripts/deploy-sftp.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -27,6 +28,8 @@
     "@angular/build": "^19.0.0",
     "@angular/cli": "^19.0.0",
     "@angular/compiler-cli": "^19.0.0",
+    "dotenv": "^17.4.2",
+    "ssh2-sftp-client": "^12.1.1",
     "typescript": "~5.5.2"
   }
 }
