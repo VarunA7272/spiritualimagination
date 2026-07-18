@@ -734,6 +734,26 @@ export class AdminUploadComponent implements OnInit {
     });
   }
 
+  async toggleAllVisibility(active: boolean) {
+    const actionName = active ? 'ON (Visible)' : 'OFF (Hidden)';
+    if (!confirm(`Are you sure you want to turn ALL products ${actionName}?`)) {
+      return;
+    }
+
+    try {
+      this.successMessage = 'Updating visibility for all products...';
+      const { error } = await this.supabaseService.toggleAllProductsActive(active);
+      if (error) throw error;
+
+      this.successMessage = `✓ All products are now ${active ? 'LIVE 🟢' : 'HIDDEN 🔴'}!`;
+      setTimeout(() => (this.successMessage = ''), 2500);
+      this.loadProducts(true);
+    } catch (err: any) {
+      this.errorMessage = err.message || 'Error toggling products visibility.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    }
+  }
+
   // --- ORDERS MANAGEMENT ---
   orders: Order[] = [];
   orderStatusMessage = '';

@@ -155,6 +155,12 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   loadCategories() {
     this.supabaseService.getCategories().then(data => {
       this.categories = data;
+      // Re-run animations to observe newly rendered categories
+      setTimeout(() => {
+        if (isPlatformBrowser(this.platformId)) {
+          this.initScrollAnimations();
+        }
+      }, 100);
     }).catch(err => console.error('Error loading categories on home:', err));
   }
 

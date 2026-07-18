@@ -389,6 +389,17 @@ export class SupabaseService {
     this.clearCache('si_cache_products_admin');
   }
 
+  async toggleAllProductsActive(active: boolean): Promise<{ error: any }> {
+    const { error } = await this.supabase
+      .from('products')
+      .update({ active })
+      .neq('code', ''); // Updates all rows
+
+    this.clearCache('si_cache_products');
+    this.clearCache('si_cache_products_admin');
+    return { error };
+  }
+
   // --- OTP VERIFICATION RPCs ---
   async requestOtpRpc(mobile: string): Promise<string> {
     const { data, error } = await this.supabase

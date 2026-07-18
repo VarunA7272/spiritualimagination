@@ -306,7 +306,13 @@
             <th class="col-cat">Category</th>
             <th class="col-size">Size</th>
             <th class="col-price">Price</th>
-            <th class="col-visible">Visible</th>
+            <th class="col-visible">
+              <div class="visible-header-title">Visible</div>
+              <div class="bulk-visible-controls">
+                <button class="btn-bulk-vis on" (click)="toggleAllVisibility(true)" title="Turn ALL products ON">All ON</button>
+                <button class="btn-bulk-vis off" (click)="toggleAllVisibility(false)" title="Turn ALL products OFF">All OFF</button>
+              </div>
+            </th>
             <th class="col-feat">⭐</th>
             <th class="col-actions">Actions</th>
           </tr>

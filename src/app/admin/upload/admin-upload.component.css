@@ -2019,3 +2019,53 @@ input[type="text"]:focus, select:focus, textarea:focus {
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(20px);
 }
+
+/* Bulk Visibility Header Controls */
+.col-visible {
+  min-width: 100px;
+}
+
+.visible-header-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-light, #8d9297);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.bulk-visible-controls {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-bulk-vis {
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #fff;
+}
+
+.btn-bulk-vis.on {
+  background: #22c55e;
+}
+
+.btn-bulk-vis.on:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+.btn-bulk-vis.off {
+  background: #ef4444;
+}
+
+.btn-bulk-vis.off:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
