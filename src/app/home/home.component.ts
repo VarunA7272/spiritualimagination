@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, Eleme
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SeoService } from '../core/services/seo.service';
-import { SupabaseService, Product, FeaturedSlide } from '../core/services/supabase.service';
+import { SupabaseService, Product, FeaturedSlide, Category } from '../core/services/supabase.service';
 import { AssetUrlPipe } from '../core/pipes/asset-url.pipe';
 
 @Component({
@@ -31,6 +31,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   featuredProducts: FeaturedSlide[] = [];
   activeSlideIndex = 0;
   private autoplayTimer: any;
+
+  // Categories
+  categories: Category[] = [];
 
   constructor(
     private seoService: SeoService,
@@ -83,6 +86,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.loadFeaturedProducts();
+    this.loadCategories();
 
     if (isPlatformBrowser(this.platformId)) {
       this.startTyping();
@@ -146,6 +150,12 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.startAutoplay();
       }
     });
+  }
+
+  loadCategories() {
+    this.supabaseService.getCategories().then(data => {
+      this.categories = data;
+    }).catch(err => console.error('Error loading categories on home:', err));
   }
 
   loadFallbackProducts() {

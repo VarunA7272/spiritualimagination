@@ -6,157 +6,114 @@
       <p class="section-sub">From photo mugs to custom-cut name plates — click any item to view maximized pictures and details.</p>
     </div>
 
-    <!-- Expandable/Collapsible Categories Dashboard -->
-    <div class="category-control-panel fade-up" [class.panel-dropdown-open]="isDropdownOpen">
-      <!-- Toolbar Header -->
-      <div class="category-toolbar">
-        <div class="current-selection-badge">
-          <span class="folder-icon">📂</span>
-          <span class="selection-label">Category:</span>
-          <span class="selection-value">{{ selectedCategory }}</span>
-        </div>
-        <button 
-          class="btn-toggle-layout" 
-          (click)="isCategoriesExpanded = !isCategoriesExpanded; isDropdownOpen = false"
-          [attr.aria-expanded]="isCategoriesExpanded"
-          title="Switch category view layout"
-        >
-          <span class="layout-icon">{{ isCategoriesExpanded ? '📖' : '🎛️' }}</span>
-          {{ isCategoriesExpanded ? 'Collapse to Dropdown' : 'Expand Category Grid' }}
-        </button>
-      </div>
+    <!-- Products Layout: Sidebar + Main -->
+    <div class="products-layout">
 
-      <!-- COLLAPSED STATE: AESTHETIC CUSTOM DROPDOWN -->
-      <div class="categories-collapsed-view" *ngIf="!isCategoriesExpanded">
-        <div 
-          class="custom-dropdown-select" 
-          [class.dropdown-active]="isDropdownOpen" 
-          (click)="isDropdownOpen = !isDropdownOpen"
-        >
-          <div class="dropdown-trigger-content">
-            <span class="selected-text">{{ selectedCategory }}</span>
-            <span class="chevron-icon">▾</span>
-          </div>
-          
-          <!-- Dropdown Options List -->
-          <div class="dropdown-options-list animate-fade-in" *ngIf="isDropdownOpen">
-            <div 
-              class="dropdown-option-item" 
-              *ngFor="let cat of categories"
-              [class.option-selected]="selectedCategory === cat"
-              (click)="filterByCategory(cat); $event.stopPropagation(); isDropdownOpen = false"
-            >
-              <span class="option-check" *ngIf="selectedCategory === cat">✓</span>
-              <span class="option-name">{{ cat }}</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Backdrop to close dropdown on clicking outside -->
-        <div class="dropdown-backdrop" *ngIf="isDropdownOpen" (click)="isDropdownOpen = false"></div>
-      </div>
-
-      <!-- EXPANDED STATE: BEAUTIFUL CAPSULE GRID -->
-      <div class="categories-expanded-view animate-fade-in" *ngIf="isCategoriesExpanded">
-        <div class="category-grid-container">
-          <button 
-            *ngFor="let cat of categories" 
-            class="category-grid-card"
-            [class.card-active]="selectedCategory === cat" 
+      <!-- LEFT SIDEBAR: Category Navigation -->
+      <aside class="products-sidebar">
+        <div class="sidebar-heading">Categories</div>
+        <nav class="sidebar-nav">
+          <button
+            *ngFor="let cat of categories"
+            class="sidebar-cat-btn"
+            [class.active]="selectedCategory === cat"
             (click)="filterByCategory(cat)"
           >
-            <div class="card-glow"></div>
-            <div class="card-content">
-              <span class="card-icon" [ngSwitch]="cat">
-                <span *ngSwitchCase="'All'">🌟</span>
-                <span *ngSwitchCase="'Name Plates'">🪵</span>
-                <span *ngSwitchCase="'LED & Photo Frames'">💡</span>
-                <span *ngSwitchCase="'Sketches & Paintings'">🎨</span>
-                <span *ngSwitchCase="'Metal Rakhis'">📿</span>
-                <span *ngSwitchCase="'Mugs & Gifting'">☕</span>
-                <span *ngSwitchDefault>🏷️</span>
-              </span>
-              <span class="card-title">{{ cat }}</span>
-            </div>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Subcategory Pills Row -->
-    <div class="subcategory-tabs fade-up" *ngIf="subcategories.length > 0">
-      <button 
-        [class.active]="selectedSubcategory === 'All'" 
-        (click)="filterBySubcategory('All')">
-        All {{ selectedCategory }}
-      </button>
-      <button 
-        *ngFor="let sub of subcategories" 
-        [class.active]="selectedSubcategory === sub" 
-        (click)="filterBySubcategory(sub)">
-        {{ sub }}
-      </button>
-    </div>
-
-    <!-- Products Grid -->
-    <div class="products-grid">
-      <div class="product-card fade-up" *ngFor="let p of displayedProducts" (click)="openProductModal(p)">
-        <div class="product-img">
-          <!-- Multi-image logic: show first index or single image -->
-          <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0] | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
-          <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
-          <div *ngIf="(!p.images || p.images.length === 0) && !p.image" class="cam-icon">{{ p.icon }}</div>
-          
-          <div class="img-label">Code: {{ p.code }}</div>
-          <span class="multi-photos-indicator" *ngIf="p.images && p.images.length > 1" title="Multiple photos available">
-            📸 {{ p.images.length }}
-          </span>
-        </div>
-        <div class="product-info">
-          <div class="product-header-row">
-            <span class="product-category-tag">
-              {{ p.category }}<span *ngIf="p.subcategory" class="subcat-connector"> / {{ p.subcategory }}</span>
+            <span class="sidebar-cat-icon" [ngSwitch]="cat">
+              <span *ngSwitchCase="'All'">🌟</span>
+              <span *ngSwitchCase="'Name Plates'">🪵</span>
+              <span *ngSwitchCase="'LED & Photo Frames'">💡</span>
+              <span *ngSwitchCase="'Sketches & Paintings'">🎨</span>
+              <span *ngSwitchCase="'Metal Rakhis'">📿</span>
+              <span *ngSwitchCase="'Mugs & Gifting'">☕</span>
+              <span *ngSwitchCase="'Rakhi'">🎀</span>
+              <span *ngSwitchDefault>🏷️</span>
             </span>
-            <span class="product-price">{{ p.price }}</span>
-          </div>
-          <div class="product-name">{{ p.name }}</div>
-          <div class="product-desc">{{ p.desc }}</div>
-          <div class="product-meta">Size: {{ p.size }}</div>
-          <div class="product-actions-row">
-            <button class="btn-add-to-cart" (click)="addToCart(p, $event)">
-              🛒 Add to Cart
-            </button>
-            <a [href]="getWhatsAppLink(p)" class="btn-quote" target="_blank" (click)="$event.stopPropagation()">
-              💬 Buy Now
-            </a>
+            <span class="sidebar-cat-label">{{ cat }}</span>
+          </button>
+        </nav>
+
+        <!-- Subcategory pills inside sidebar -->
+        <div class="sidebar-subcats" *ngIf="subcategories.length > 0">
+          <div class="sidebar-sub-heading">Filter by</div>
+          <button
+            class="sidebar-sub-btn"
+            [class.active]="selectedSubcategory === 'All'"
+            (click)="filterBySubcategory('All')"
+          >All</button>
+          <button
+            *ngFor="let sub of subcategories"
+            class="sidebar-sub-btn"
+            [class.active]="selectedSubcategory === sub"
+            (click)="filterBySubcategory(sub)"
+          >{{ sub }}</button>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN: Grid + Pagination -->
+      <div class="products-main">
+
+        <!-- Products Grid -->
+        <div class="products-grid">
+          <div class="product-card fade-up" *ngFor="let p of displayedProducts" (click)="openProductModal(p)">
+            <div class="product-img">
+              <!-- Multi-image logic: show first index or single image -->
+              <img *ngIf="p.images && p.images.length > 0" [src]="p.images[0] | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
+              <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
+              <div *ngIf="(!p.images || p.images.length === 0) && !p.image" class="cam-icon">{{ p.icon }}</div>
+
+              <div class="img-label">Code: {{ p.code }}</div>
+              <span class="multi-photos-indicator" *ngIf="p.images && p.images.length > 1" title="Multiple photos available">
+                📸 {{ p.images.length }}
+              </span>
+            </div>
+            <div class="product-info">
+              <div class="product-header-row">
+                <span class="product-category-tag">
+                  {{ p.category }}<span *ngIf="p.subcategory" class="subcat-connector"> / {{ p.subcategory }}</span>
+                </span>
+                <span class="product-price">{{ p.price }}</span>
+              </div>
+              <div class="product-name">{{ p.name }}</div>
+              <div class="product-desc">{{ p.desc }}</div>
+              <div class="product-meta">Size: {{ p.size }}</div>
+              <div class="product-actions-row">
+                <button class="btn-add-to-cart" (click)="addToCart(p, $event)">
+                  🛒 Add to Cart
+                </button>
+                <button class="btn-quote" (click)="openBuyNow(p, $event)">
+                  💬 Buy Now
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Pagination -->
-    <div class="pagination-container" *ngIf="totalPages > 1">
-      <span class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredProducts.length) }} of {{ filteredProducts.length }}</span>
-      <div class="pagination-controls">
-        <button class="page-btn page-arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Previous page">‹</button>
-        <ng-container *ngFor="let p of pageNumbers">
-          <span *ngIf="p === 0" class="page-ellipsis">…</span>
-          <button
-            *ngIf="p !== 0"
-            class="page-btn"
-            [class.active]="p === currentPage"
-            (click)="goToPage(p)"
-          >{{ p }}</button>
-        </ng-container>
-        <button class="page-btn page-arrow" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" aria-label="Next page">›</button>
-      </div>
-    </div>
+        <!-- Pagination -->
+        <div class="pagination-container" *ngIf="totalPages > 1">
+          <span class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredProducts.length) }} of {{ filteredProducts.length }}</span>
+          <div class="pagination-controls">
+            <button class="page-btn page-arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Previous page">‹</button>
+            <ng-container *ngFor="let p of pageNumbers">
+              <span *ngIf="p === 0" class="page-ellipsis">…</span>
+              <button
+                *ngIf="p !== 0"
+                class="page-btn"
+                [class.active]="p === currentPage"
+                (click)="goToPage(p)"
+              >{{ p }}</button>
+            </ng-container>
+            <button class="page-btn page-arrow" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" aria-label="Next page">›</button>
+          </div>
+        </div>
 
-    <!-- Empty State -->
-    <div class="empty-products-state fade-up" *ngIf="filteredProducts.length === 0">
-      <div class="empty-icon">🎨</div>
-      <h4>No Creations listed here yet</h4>
-      <p>Please check back soon, or check another category!</p>
+        <!-- Empty State -->
+        <div class="empty-products-state fade-up" *ngIf="filteredProducts.length === 0">
+          <div class="empty-icon">🎨</div>
+          <h4>No Creations listed here yet</h4>
+          <p>Please check back soon, or check another category!</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -164,7 +121,7 @@
   <div class="product-modal-backdrop animate-fade-in" *ngIf="selectedProduct" (click)="closeProductModal()">
     <div class="product-modal-card animate-scale-up" (click)="$event.stopPropagation()">
       <button class="btn-close-modal" (click)="closeProductModal($event)" title="Close modal">×</button>
-      
+
       <div class="modal-grid">
         <!-- Carousel Gallery Section -->
         <div class="modal-gallery">
@@ -176,12 +133,12 @@
           <!-- Single or Multiple Images Carousel -->
           <div class="modal-carousel" *ngIf="getProductImages().length > 0">
             <div class="carousel-images-wrapper">
-              <img 
-                *ngFor="let imgUrl of getProductImages(); let idx = index" 
-                [src]="imgUrl | assetUrl" 
-                [alt]="selectedProduct.name" 
-                class="carousel-image" 
-                [class.active]="idx === activeImageIndex" 
+              <img
+                *ngFor="let imgUrl of getProductImages(); let idx = index"
+                [src]="imgUrl | assetUrl"
+                [alt]="selectedProduct.name"
+                class="carousel-image"
+                [class.active]="idx === activeImageIndex"
                 loading="lazy"
               />
             </div>
@@ -190,12 +147,12 @@
             <ng-container *ngIf="getProductImages().length > 1">
               <button class="carousel-control prev" (click)="prevImage($event)" aria-label="Previous image">‹</button>
               <button class="carousel-control next" (click)="nextImage($event)" aria-label="Next image">›</button>
-              
+
               <!-- Indicator Dots -->
               <div class="carousel-indicators">
-                <button 
-                  *ngFor="let imgUrl of getProductImages(); let idx = index" 
-                  class="indicator-dot" 
+                <button
+                  *ngFor="let imgUrl of getProductImages(); let idx = index"
+                  class="indicator-dot"
                   [class.active]="idx === activeImageIndex"
                   (click)="setCurrentImage(idx, $event)"
                   aria-label="View slide">
@@ -213,14 +170,14 @@
             </span>
             <span class="modal-code">Code: <b>{{ selectedProduct.code }}</b></span>
           </div>
-          
+
           <h3 class="modal-title">{{ selectedProduct.name }}</h3>
           <div class="modal-price">{{ selectedProduct.price }}</div>
-          
+
           <div class="modal-meta-row">
             <span class="meta-badge">📏 Size: {{ selectedProduct.size }}</span>
           </div>
-          
+
           <div class="modal-desc-section">
             <h5>Product Description</h5>
             <p>{{ selectedProduct.desc || 'No description provided.' }}</p>
@@ -230,11 +187,44 @@
             <button class="modal-btn-cart" (click)="addToCart(selectedProduct); closeProductModal()">
               🛒 Add to Cart
             </button>
-            <a [href]="getWhatsAppLink(selectedProduct)" class="modal-btn-order" target="_blank" (click)="closeProductModal($event)">
+            <button class="modal-btn-order" (click)="openBuyNow(selectedProduct); closeProductModal()">
               💬 Personalize & Buy Now
-            </a>
+            </button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUY NOW MINI POPUP -->
+  <div class="buynow-backdrop animate-fade-in" *ngIf="buyNowProduct" (click)="closeBuyNow()">
+    <div class="buynow-card animate-scale-up" (click)="$event.stopPropagation()">
+      <button class="btn-close-modal" (click)="closeBuyNow()" title="Close">×</button>
+      <div class="buynow-header">
+        <div class="buynow-icon">💬</div>
+        <h3>Quick Order via WhatsApp</h3>
+        <p>Enter your details and we'll open WhatsApp with your order info ready!</p>
+      </div>
+      <div class="buynow-product-info" *ngIf="buyNowProduct">
+        <img *ngIf="buyNowProduct.images && buyNowProduct.images.length > 0" [src]="buyNowProduct.images[0] | assetUrl" [alt]="buyNowProduct.name" />
+        <div>
+          <div class="buynow-product-name">{{ buyNowProduct.name }}</div>
+          <div class="buynow-product-price">{{ buyNowProduct.price }}</div>
+        </div>
+      </div>
+      <div class="buynow-form">
+        <div class="buynow-field">
+          <label>Your Name *</label>
+          <input type="text" [(ngModel)]="buyNowName" placeholder="e.g. Rahul Sharma" (keyup.enter)="submitBuyNow()" />
+        </div>
+        <div class="buynow-field">
+          <label>Mobile Number *</label>
+          <input type="tel" [(ngModel)]="buyNowMobile" placeholder="10-digit mobile number" maxlength="10" (keyup.enter)="submitBuyNow()" />
+        </div>
+        <div class="buynow-error" *ngIf="buyNowError">⚠️ {{ buyNowError }}</div>
+        <button class="buynow-submit" (click)="submitBuyNow()" [disabled]="buyNowLoading">
+          {{ buyNowLoading ? 'Saving...' : '💬 Open WhatsApp & Order' }}
+        </button>
       </div>
     </div>
   </div>

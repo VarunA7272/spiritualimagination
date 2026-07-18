@@ -156,6 +156,38 @@
   </div>
 </section>
 
+<!-- BROWSE CATEGORIES -->
+<section id="categories" class="categories-section" *ngIf="categories.length > 0">
+  <div class="container">
+    <div class="text-center fade-up">
+      <span class="section-tag">Explore</span>
+      <h2 class="section-title">Shop by Category 🎁</h2>
+      <p class="section-sub">Choose a category to browse our full collection of personalized creations.</p>
+    </div>
+    <div class="home-categories-grid fade-up">
+      <a
+        *ngFor="let cat of categories"
+        class="home-cat-card"
+        [routerLink]="['/products']"
+        [queryParams]="{ category: cat.name }"
+      >
+        <div class="home-cat-icon" [ngSwitch]="cat.name">
+          <span *ngSwitchCase="'Name Plates'">🪵</span>
+          <span *ngSwitchCase="'LED & Photo Frames'">💡</span>
+          <span *ngSwitchCase="'Sketches & Paintings'">🎨</span>
+          <span *ngSwitchCase="'Metal Rakhis'">📿</span>
+          <span *ngSwitchCase="'Mugs & Gifting'">☕</span>
+          <span *ngSwitchCase="'Rakhi'">🎀</span>
+          <span *ngSwitchDefault>🏷️</span>
+        </div>
+        <div class="home-cat-name">{{ cat.name }}</div>
+        <div class="home-cat-count" *ngIf="cat.subcategories && cat.subcategories.length > 0">{{ cat.subcategories.length }} styles</div>
+        <div class="home-cat-arrow">→</div>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- WHY US -->
 <section id="why">
   <div class="container">

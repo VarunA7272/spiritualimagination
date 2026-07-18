@@ -5,10 +5,12 @@ import { SeoService } from '../core/services/seo.service';
 import { CartService } from '../core/services/cart.service';
 import { AssetUrlPipe } from '../core/pipes/asset-url.pipe';
 
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, AssetUrlPipe],
+  imports: [CommonModule, AssetUrlPipe, FormsModule],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
@@ -88,9 +90,24 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   loadProducts() {
     this.supabaseService.getProducts().then(data => {
       this.products = data;
+
+      // Check ?category= param and pre-select before applying filters
+      if (isPlatformBrowser(this.platformId)) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+          const match = this.categories.find(c => c.toLowerCase() === categoryParam.toLowerCase());
+          if (match) {
+            this.selectedCategory = match;
+            const catObj = this.categoriesData.find(c => c.name === match);
+            this.subcategories = catObj ? catObj.subcategories : [];
+          }
+        }
+      }
+
       this.applyFilters();
-      
-      // Auto-open modal if code param is present
+
+      // Auto-open modal if ?code= param is present
       if (isPlatformBrowser(this.platformId)) {
         const urlParams = new URLSearchParams(window.location.search);
         const codeParam = urlParams.get('code');
@@ -335,5 +352,64 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
     const message = `Hi! I'm interested in ordering:\n\n*Product:* ${name}\n*Code:* ${code}\n*Price:* ${price}${imagePart}${detailLink}\n\nPlease share personalization options and details.`;
     return `https://wa.me/919209636699?text=${encodeURIComponent(message)}`;
+  }
+
+  // --- BUY NOW POPUP ---
+  buyNowProduct: Product | null = null;
+  buyNowName = '';
+  buyNowMobile = '';
+  buyNowLoading = false;
+  buyNowError = '';
+
+  openBuyNow(product: Product, event?: Event) {
+    if (event) event.stopPropagation();
+    this.buyNowProduct = product;
+    this.buyNowName = '';
+    this.buyNowMobile = '';
+    this.buyNowError = '';
+    this.buyNowLoading = false;
+  }
+
+  closeBuyNow() {
+    this.buyNowProduct = null;
+  }
+
+  async submitBuyNow() {
+    if (!this.buyNowName.trim() || !this.buyNowMobile.trim()) {
+      this.buyNowError = 'Please enter your name and mobile number.';
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(this.buyNowMobile.trim())) {
+      this.buyNowError = 'Please enter a valid 10-digit mobile number.';
+      return;
+    }
+    if (!this.buyNowProduct) return;
+
+    this.buyNowLoading = true;
+    this.buyNowError = '';
+
+    try {
+      const p = this.buyNowProduct;
+      const items = [{
+        code: p.code,
+        name: p.name,
+        price: p.price,
+        qty: 1,
+        image: p.images?.[0] || p.image || ''
+      }];
+      await this.supabaseService.createCustomerAndOrder(
+        { name: this.buyNowName.trim(), mobile: this.buyNowMobile.trim() },
+        items,
+        p.price
+      );
+      // Open WhatsApp
+      const waLink = this.getWhatsAppLink(p);
+      window.open(waLink, '_blank');
+      this.closeBuyNow();
+    } catch (err: any) {
+      this.buyNowError = err.message || 'Something went wrong. Please try again.';
+    } finally {
+      this.buyNowLoading = false;
+    }
   }
 }
