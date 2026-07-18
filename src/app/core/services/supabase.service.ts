@@ -61,6 +61,16 @@ export class SupabaseService {
   private supabaseKey = 'sb_publishable_sqYrrAblQGwDMw32kaUqyg_x887dtYl';
   private supabase: SupabaseClient;
 
+  private getFallbackCategories(): Category[] {
+    return [
+      { name: 'Name Plates', subcategories: ['Acrylic', 'LED Backlit', 'Wooden', 'MDF Board'] },
+      { name: 'LED & Photo Frames', subcategories: ['Magic Mirrors', 'Couple Standees', 'Collage Frames', 'Canvas Frames'] },
+      { name: 'Sketches & Paintings', subcategories: ['Pencil Sketches', 'Oil Paintings', 'Acrylic Canvas'] },
+      { name: 'Metal Rakhis', subcategories: ['Name Rakhis', 'Photo Rakhis'] },
+      { name: 'Mugs & Gifting', subcategories: ['Custom Mugs', 'Photo Cushions'] }
+    ];
+  }
+
   constructor() {
     this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
     this.checkAndSeedDatabase();
@@ -107,15 +117,23 @@ export class SupabaseService {
       if (cached) return cached;
     }
 
-    const { data, error } = await this.supabase
-      .from('categories')
-      .select('name, subcategories')
-      .order('name', { ascending: true });
+    try {
+      const { data, error } = await this.supabase
+        .from('categories')
+        .select('name, subcategories')
+        .order('name', { ascending: true });
 
-    if (error) throw error;
-    const result = data || [];
-    this.setCache('si_cache_categories', result);
-    return result;
+      if (error) throw error;
+
+      const result = (data && data.length > 0) ? data as Category[] : this.getFallbackCategories();
+      this.setCache('si_cache_categories', result);
+      return result;
+    } catch (error) {
+      console.warn('Categories unavailable from Supabase, using fallback categories.', error);
+      const fallback = this.getFallbackCategories();
+      this.setCache('si_cache_categories', fallback);
+      return fallback;
+    }
   }
 
   async upsertCategory(category: Category): Promise<void> {
