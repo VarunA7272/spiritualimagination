@@ -1005,43 +1005,77 @@
   }
 }
 
-/* Load More Pagination */
-.load-more-container {
-  margin: 3.5rem 0 2rem;
+/* Pagination */
+.pagination-container {
+  margin: 3rem 0 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.9rem;
 }
 
-.load-more-status {
+.pagination-info {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: var(--text-light, #8d9297);
+  letter-spacing: 0.02em;
 }
 
-.btn-load-more {
-  background: var(--primary, #ff6b35);
-  color: #ffffff;
-  border: none;
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.page-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 0.6rem;
+  border: 1.5px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  background: var(--card-bg, #fff);
+  color: var(--text, #1a1a2e);
   font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 800;
-  padding: 12px 28px;
-  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.25);
-  transition: all var(--transition-fast, 0.2s);
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-load-more:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.38);
+.page-btn:hover:not(:disabled):not(.active) {
+  border-color: var(--primary, #ff6b35);
+  color: var(--primary, #ff6b35);
+  background: rgba(255, 107, 53, 0.06);
 }
 
-.btn-load-more:active {
-  transform: translateY(0);
+.page-btn.active {
+  background: var(--primary, #ff6b35);
+  border-color: var(--primary, #ff6b35);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.3);
+  cursor: default;
+}
+
+.page-btn.page-arrow {
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.page-ellipsis {
+  font-size: 1rem;
+  color: var(--text-light, #8d9297);
+  padding: 0 0.2rem;
+  user-select: none;
 }
 
 /* Fallback: Ensure elements are visible even if scroll animations don't trigger */

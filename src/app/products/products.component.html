@@ -134,12 +134,22 @@
       </div>
     </div>
 
-    <!-- Load More Section -->
-    <div class="load-more-container text-center fade-up" *ngIf="displayedProducts.length < filteredProducts.length">
-      <p class="load-more-status">Showing {{ displayedProducts.length }} of {{ filteredProducts.length }} Creations</p>
-      <button class="btn-load-more" (click)="loadMore()">
-        ✨ Load More Creations
-      </button>
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <span class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredProducts.length) }} of {{ filteredProducts.length }}</span>
+      <div class="pagination-controls">
+        <button class="page-btn page-arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Previous page">‹</button>
+        <ng-container *ngFor="let p of pageNumbers">
+          <span *ngIf="p === 0" class="page-ellipsis">…</span>
+          <button
+            *ngIf="p !== 0"
+            class="page-btn"
+            [class.active]="p === currentPage"
+            (click)="goToPage(p)"
+          >{{ p }}</button>
+        </ng-container>
+        <button class="page-btn page-arrow" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" aria-label="Next page">›</button>
+      </div>
     </div>
 
     <!-- Empty State -->

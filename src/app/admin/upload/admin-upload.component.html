@@ -306,6 +306,7 @@
             <th class="col-cat">Category</th>
             <th class="col-size">Size</th>
             <th class="col-price">Price</th>
+            <th class="col-visible">Visible</th>
             <th class="col-feat">⭐</th>
             <th class="col-actions">Actions</th>
           </tr>
@@ -341,6 +342,12 @@
             </td>
             <td class="col-size">{{ p.size }}</td>
             <td class="col-price"><strong>{{ p.price }}</strong></td>
+            <td class="col-visible">
+              <label class="toggle-switch" [title]="(p.active !== false) ? 'Click to hide product' : 'Click to show product'">
+                <input type="checkbox" [checked]="p.active !== false" (change)="toggleActive(p)" />
+                <span class="toggle-slider"></span>
+              </label>
+            </td>
             <td class="col-feat">
               <button
                 class="btn-toggle-feat"

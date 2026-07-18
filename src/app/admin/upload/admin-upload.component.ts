@@ -190,7 +190,7 @@ export class AdminUploadComponent implements OnInit {
   }
 
   loadProducts(forceRefresh = false) {
-    this.supabaseService.getProducts(forceRefresh).then(data => {
+    this.supabaseService.getProducts(forceRefresh, true).then(data => {
       this.products = data;
     }).catch(err => {
       console.error('Error loading products from Supabase', err);
@@ -717,6 +717,19 @@ export class AdminUploadComponent implements OnInit {
       this.loadProducts();
     }).catch(err => {
       this.errorMessage = err.message || 'Error toggling featured state.';
+      setTimeout(() => (this.errorMessage = ''), 3500);
+    });
+  }
+
+  // --- ACTIVE / VISIBILITY TOGGLE ---
+  toggleActive(product: Product) {
+    const nextActive = !(product.active !== false);
+    this.supabaseService.toggleProductActive(product.code, nextActive).then(() => {
+      product.active = nextActive;
+      this.successMessage = `✓ ${product.name} is now ${nextActive ? 'LIVE 🟢' : 'HIDDEN 🔴'}!`;
+      setTimeout(() => (this.successMessage = ''), 2500);
+    }).catch(err => {
+      this.errorMessage = err.message || 'Error toggling visibility.';
       setTimeout(() => (this.errorMessage = ''), 3500);
     });
   }

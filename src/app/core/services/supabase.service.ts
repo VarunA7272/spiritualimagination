@@ -18,6 +18,7 @@ export interface Product {
   image?: string;
   images?: string[];
   featured?: boolean;
+  active?: boolean;
 }
 
 export interface Order {
@@ -140,20 +141,29 @@ export class SupabaseService {
   }
 
   // --- PRODUCTS API ---
-  async getProducts(forceRefresh = false): Promise<Product[]> {
+  async getProducts(forceRefresh = false, adminMode = false): Promise<Product[]> {
     if (!forceRefresh) {
-      const cached = this.getCache<Product[]>('si_cache_products');
+      const cacheKey = adminMode ? 'si_cache_products_admin' : 'si_cache_products';
+      const cached = this.getCache<Product[]>(cacheKey);
       if (cached) return cached;
     }
 
-    const { data, error } = await this.supabase
+    let query = this.supabase
       .from('products')
       .select('*')
       .order('created_at', { ascending: false });
 
+    // Public view: only show active products
+    if (!adminMode) {
+      query = query.eq('active', true);
+    }
+
+    const { data, error } = await query;
+
     if (error) throw error;
     const result = data || [];
-    this.setCache('si_cache_products', result);
+    const cacheKey = adminMode ? 'si_cache_products_admin' : 'si_cache_products';
+    this.setCache(cacheKey, result);
     return result;
   }
 
@@ -170,11 +180,13 @@ export class SupabaseService {
         desc: product.desc || null,
         icon: product.icon || '🏷️',
         images: product.images || (product.image ? [product.image] : []),
-        featured: product.featured || false
+        featured: product.featured || false,
+        active: product.active !== false
       }, { onConflict: 'code' });
 
     if (error) throw error;
     this.clearCache('si_cache_products');
+    this.clearCache('si_cache_products_admin');
     this.clearCache('si_cache_featured_products');
   }
 
@@ -344,7 +356,19 @@ export class SupabaseService {
 
     if (error) throw error;
     this.clearCache('si_cache_products');
+    this.clearCache('si_cache_products_admin');
     this.clearCache('si_cache_featured_products');
+  }
+
+  async toggleProductActive(code: string, active: boolean): Promise<void> {
+    const { error } = await this.supabase
+      .from('products')
+      .update({ active })
+      .eq('code', code.toUpperCase());
+
+    if (error) throw error;
+    this.clearCache('si_cache_products');
+    this.clearCache('si_cache_products_admin');
   }
 
   // --- OTP VERIFICATION RPCs ---

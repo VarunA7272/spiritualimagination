@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SupabaseService, Product, Category } from '../core/services/supabase.service';
 import { SeoService } from '../core/services/seo.service';
@@ -24,9 +24,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   filteredProducts: Product[] = [];
   displayedProducts: Product[] = [];
 
-  // Pagination / Infinite Scroll States
+  // Pagination
   currentPage = 1;
-  pageSize = 24;
+  pageSize = 12;
 
   // Expanded/Collapsed Category States
   isCategoriesExpanded = false;
@@ -35,6 +35,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   // Modal State
   selectedProduct: Product | null = null;
   activeImageIndex = 0;
+
+  // Expose Math to template
+  Math = Math;
 
   constructor(
     private supabaseService: SupabaseService,
@@ -144,29 +147,39 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     }, 50);
   }
 
+  get totalPages(): number {
+    return Math.ceil(this.filteredProducts.length / this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    // Show first, last, current ±2, with ellipsis represented as 0
+    const pages: number[] = [1];
+    if (this.currentPage > 4) pages.push(0); // ellipsis
+    for (let i = Math.max(2, this.currentPage - 2); i <= Math.min(total - 1, this.currentPage + 2); i++) {
+      pages.push(i);
+    }
+    if (this.currentPage < total - 3) pages.push(0); // ellipsis
+    pages.push(total);
+    return pages;
+  }
+
   updateDisplayedProducts() {
-    this.displayedProducts = this.filteredProducts.slice(0, this.currentPage * this.pageSize);
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.displayedProducts = this.filteredProducts.slice(start, end);
   }
 
-  loadMore() {
-    if (this.displayedProducts.length >= this.filteredProducts.length) return;
-    this.currentPage++;
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
     this.updateDisplayedProducts();
-    setTimeout(() => {
-      if (isPlatformBrowser(this.platformId)) {
-        this.initScrollAnimations();
-      }
-    }, 50);
-  }
-
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    if (!isPlatformBrowser(this.platformId)) return;
-    const threshold = 300;
-    const position = window.scrollY + window.innerHeight;
-    const height = document.documentElement.scrollHeight;
-    if (height - position < threshold) {
-      this.loadMore();
+    // Scroll to top of products grid smoothly
+    if (isPlatformBrowser(this.platformId)) {
+      const grid = this.elRef.nativeElement.querySelector('.products-grid');
+      if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => this.initScrollAnimations(), 50);
     }
   }
 
