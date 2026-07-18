@@ -69,6 +69,12 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
   loadReviews() {
     this.supabaseService.getReviews().then(data => {
       this.reviews = data;
+      // Re-run animations to observe newly rendered reviews
+      setTimeout(() => {
+        if (isPlatformBrowser(this.platformId)) {
+          this.initScrollAnimations();
+        }
+      }, 100);
     }).catch(err => {
       console.error('Error loading reviews from Supabase', err);
     });
