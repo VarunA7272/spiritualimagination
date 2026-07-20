@@ -403,6 +403,31 @@ export class AdminUploadComponent implements OnInit {
     }
   }
 
+  moveCategoryUp(index: number) {
+    if (index <= 0) return;
+    const temp = this.categories[index];
+    this.categories[index] = this.categories[index - 1];
+    this.categories[index - 1] = temp;
+    this.saveCategoryOrder();
+  }
+
+  moveCategoryDown(index: number) {
+    if (index >= this.categories.length - 1) return;
+    const temp = this.categories[index];
+    this.categories[index] = this.categories[index + 1];
+    this.categories[index + 1] = temp;
+    this.saveCategoryOrder();
+  }
+
+  saveCategoryOrder() {
+    this.supabaseService.updateCategoryOrder(this.categories).then(() => {
+      this.successMessage = '✓ Category display order updated!';
+      setTimeout(() => (this.successMessage = ''), 2000);
+    }).catch(err => {
+      console.error('Failed to update category order', err);
+    });
+  }
+
   addSubcategory(categoryName: string) {
     const subName = (this.newSubcategoryNames[categoryName] || '').trim();
     if (!subName) return;

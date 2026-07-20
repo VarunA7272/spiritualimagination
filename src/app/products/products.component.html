@@ -53,8 +53,14 @@
       <!-- RIGHT MAIN: Grid + Pagination -->
       <div class="products-main">
 
+        <!-- Loading Spinner State -->
+        <div class="loading-state-container" *ngIf="isLoading">
+          <div class="spinner-ring"></div>
+          <p class="loading-label">Loading Creations...</p>
+        </div>
+
         <!-- Products Grid -->
-        <div class="products-grid">
+        <div class="products-grid" *ngIf="!isLoading">
           <div class="product-card fade-up" *ngFor="let p of displayedProducts" (click)="openProductModal(p)">
             <div class="product-img">
               <!-- Multi-image logic: show first index or single image -->
@@ -108,7 +114,7 @@
         </div>
 
         <!-- Empty State -->
-        <div class="empty-products-state fade-up" *ngIf="filteredProducts.length === 0">
+        <div class="empty-products-state fade-up" *ngIf="!isLoading && filteredProducts.length === 0">
           <div class="empty-icon">🎨</div>
           <h4>No Creations listed here yet</h4>
           <p>Please check back soon, or check another category!</p>

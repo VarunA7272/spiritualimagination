@@ -4,6 +4,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 export interface Category {
   name: string;
   subcategories: string[];
+  display_order?: number;
 }
 
 export interface Product {
@@ -135,10 +136,22 @@ export class SupabaseService {
     try {
       const { data, error } = await this.supabase
         .from('categories')
-        .select('name, subcategories')
+        .select('name, subcategories, display_order')
+        .order('display_order', { ascending: true, nullsFirst: false })
         .order('name', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        // Fallback query if display_order column isn't created yet in SQL editor
+        const { data: fallbackData, error: fbError } = await this.supabase
+          .from('categories')
+          .select('name, subcategories')
+          .order('name', { ascending: true });
+
+        if (fbError) throw fbError;
+        const result = (fallbackData && fallbackData.length > 0) ? fallbackData as Category[] : this.getFallbackCategories();
+        this.setCache('si_cache_categories', result);
+        return result;
+      }
 
       const result = (data && data.length > 0) ? data as Category[] : this.getFallbackCategories();
       this.setCache('si_cache_categories', result);
@@ -152,14 +165,31 @@ export class SupabaseService {
   }
 
   async upsertCategory(category: Category): Promise<void> {
+    const payload: any = { name: category.name, subcategories: category.subcategories };
+    if (category.display_order !== undefined) {
+      payload.display_order = category.display_order;
+    }
     const { error } = await this.supabase
       .from('categories')
-      .upsert(
-        { name: category.name, subcategories: category.subcategories },
-        { onConflict: 'name' }
-      );
+      .upsert(payload, { onConflict: 'name' });
 
     if (error) throw error;
+    this.clearCache('si_cache_categories');
+  }
+
+  async updateCategoryOrder(categories: Category[]): Promise<void> {
+    try {
+      for (let i = 0; i < categories.length; i++) {
+        const cat = categories[i];
+        cat.display_order = i + 1;
+        await this.supabase
+          .from('categories')
+          .update({ display_order: i + 1 })
+          .eq('name', cat.name);
+      }
+    } catch (e) {
+      console.error('Error updating category positions:', e);
+    }
     this.clearCache('si_cache_categories');
   }
 

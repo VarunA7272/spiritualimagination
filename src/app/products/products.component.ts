@@ -41,6 +41,8 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   // Expose Math to template
   Math = Math;
 
+  isLoading = true;
+
   constructor(
     private supabaseService: SupabaseService,
     private seoService: SeoService,
@@ -67,8 +69,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.loadCategories();
-    this.loadProducts();
+    this.loadData();
   }
 
   ngAfterViewInit() {
@@ -77,19 +78,15 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  loadCategories() {
-    this.supabaseService.getCategories().then(data => {
-      this.categoriesData = data;
+  loadData() {
+    this.isLoading = true;
+    Promise.all([
+      this.supabaseService.getCategories(),
+      this.supabaseService.getProducts()
+    ]).then(([catData, prodData]) => {
+      this.categoriesData = catData;
       this.categories = ['All', ...this.categoriesData.map(c => c.name)];
-      this.filterByCategory(this.selectedCategory);
-    }).catch(err => {
-      console.error('Error parsing categories from Supabase', err);
-    });
-  }
-
-  loadProducts() {
-    this.supabaseService.getProducts().then(data => {
-      this.products = data;
+      this.products = prodData;
 
       // Check ?category= param and pre-select before applying filters
       if (isPlatformBrowser(this.platformId)) {
@@ -119,7 +116,14 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         }
       }
     }).catch(err => {
-      console.error('Error parsing products from Supabase', err);
+      console.error('Error loading catalog data from Supabase', err);
+    }).finally(() => {
+      this.isLoading = false;
+      setTimeout(() => {
+        if (isPlatformBrowser(this.platformId)) {
+          this.initScrollAnimations();
+        }
+      }, 50);
     });
   }
 

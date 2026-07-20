@@ -485,9 +485,15 @@
 
     <!-- Categories Grid -->
     <div class="categories-list-grid">
-      <div class="category-manage-box animate-fade" *ngFor="let cat of categories">
+      <div class="category-manage-box animate-fade" *ngFor="let cat of categories; let idx = index">
         <div class="cat-box-header">
-          <h4>{{ cat.name }}</h4>
+          <div class="cat-title-group">
+            <div class="reorder-btns">
+              <button class="btn-move-cat" [disabled]="idx === 0" (click)="moveCategoryUp(idx)" title="Move Up in List">▲</button>
+              <button class="btn-move-cat" [disabled]="idx === categories.length - 1" (click)="moveCategoryDown(idx)" title="Move Down in List">▼</button>
+            </div>
+            <h4>{{ cat.name }}</h4>
+          </div>
           <button class="btn-delete-cat" (click)="deleteCategory(cat.name)" title="Delete Category">🗑️ Delete</button>
         </div>
 

@@ -810,6 +810,46 @@ input[type="text"]:focus, select:focus, textarea:focus {
   padding-bottom: 0.75rem;
 }
 
+.cat-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.reorder-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.btn-move-cat {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--text-dark, #1e1e1e);
+  font-size: 0.65rem;
+  font-weight: 900;
+  width: 24px;
+  height: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.15s;
+}
+
+.btn-move-cat:hover:not(:disabled) {
+  background: var(--primary, #ff6b35);
+  border-color: var(--primary, #ff6b35);
+  color: #ffffff;
+}
+
+.btn-move-cat:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
 .cat-box-header h4 {
   font-family: 'Outfit', sans-serif;
   font-size: 1.15rem;
