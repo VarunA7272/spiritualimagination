@@ -227,10 +227,11 @@ export class SupabaseService {
     const { error } = await this.supabase
       .from('products')
       .delete()
-      .eq('code', code);
+      .eq('code', code.toUpperCase());
 
     if (error) throw error;
     this.clearCache('si_cache_products');
+    this.clearCache('si_cache_products_admin');
     this.clearCache('si_cache_featured_products');
   }
 

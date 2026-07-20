@@ -365,7 +365,7 @@ export class AdminUploadComponent implements OnInit {
   deleteProduct(code: string) {
     if (confirm(`Are you sure you want to delete product "${code}"?`)) {
       this.supabaseService.deleteProduct(code).then(() => {
-        this.loadProducts();
+        this.loadProducts(true);
         if (this.editingProductCode === code) {
           this.cancelEdit();
         }
