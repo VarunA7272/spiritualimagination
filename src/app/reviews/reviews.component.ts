@@ -129,7 +129,7 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 400;
+          const maxDim = 1200;
           let width = img.width;
           let height = img.height;
 
@@ -150,7 +150,7 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', 0.65));
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
           } else {
             reject(new Error('Canvas context could not be created'));
           }

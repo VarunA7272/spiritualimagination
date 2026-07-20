@@ -222,7 +222,7 @@ export class AdminUploadComponent implements OnInit {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 500;
+          const maxDim = 1600; // Increased from 500 for crisp high-resolution product photos
           let width = img.width;
           let height = img.height;
 
@@ -243,7 +243,7 @@ export class AdminUploadComponent implements OnInit {
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', 0.7));
+            resolve(canvas.toDataURL('image/jpeg', 0.90)); // Increased quality from 0.7 to 0.90
           } else {
             reject(new Error('Canvas context could not be created'));
           }
