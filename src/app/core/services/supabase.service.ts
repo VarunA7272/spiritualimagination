@@ -81,22 +81,37 @@ export class SupabaseService {
     return typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined';
   }
 
-  // Helper to get cached item
-  private getCache<T>(key: string): T | null {
+  // Helper to get cached item with automatic 2-minute TTL expiration
+  private getCache<T>(key: string, maxAgeMs: number = 2 * 60 * 1000): T | null {
     if (!this.isBrowser()) return null;
     try {
-      const data = sessionStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
+      const raw = sessionStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      // Check if cache has timestamp structure
+      if (parsed && typeof parsed === 'object' && 'timestamp' in parsed && 'data' in parsed) {
+        if (Date.now() - parsed.timestamp > maxAgeMs) {
+          sessionStorage.removeItem(key);
+          return null;
+        }
+        return parsed.data as T;
+      }
+      // Fallback for old un-timestamped cache
+      return parsed as T;
     } catch (e) {
       return null;
     }
   }
 
-  // Helper to set cached item
+  // Helper to set cached item with timestamp
   private setCache(key: string, data: any): void {
     if (!this.isBrowser()) return;
     try {
-      sessionStorage.setItem(key, JSON.stringify(data));
+      const payload = {
+        data: data,
+        timestamp: Date.now()
+      };
+      sessionStorage.setItem(key, JSON.stringify(payload));
     } catch (e) {
       console.warn('Failed to save data to sessionStorage cache', e);
     }

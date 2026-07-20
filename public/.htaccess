@@ -10,3 +10,13 @@
   # Rewrite everything else to index.html so Angular handles routing
   RewriteRule ^ index.html [L]
 </IfModule>
+
+# Ensure browsers never cache index.html so code updates are instant
+<IfModule mod_headers.c>
+  <FilesMatch "index\.html">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
+
