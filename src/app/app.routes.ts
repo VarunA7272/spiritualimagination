@@ -9,6 +9,7 @@ import { ContactComponent } from './contact/contact.component';
 import { AdminLayoutComponent } from './admin/admin-layout.component';
 import { AdminUploadComponent } from './admin/upload/admin-upload.component';
 import { authGuard } from './core/guards/auth.guard';
+import { DynamicGeneratorComponent } from './components/dynamic-generator/dynamic-generator';
 
 export const routes: Routes = [
   // Authentication Route
@@ -23,6 +24,7 @@ export const routes: Routes = [
     component: PublicLayoutComponent,
     children: [
       { path: 'home', component: HomeComponent },
+      { path: 'idcard/demo', component: DynamicGeneratorComponent, data: { mode: 'generator' } },
       { path: 'products', component: ProductsComponent },
       { path: 'about', component: AboutComponent },
       { path: 'reviews', component: ReviewsComponent },

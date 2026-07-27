@@ -1,0 +1,1072 @@
+/* ── Layout & Core Variables ──────────────── */
+:root {
+  --teal: #00b8a9;
+  --black: #111111;
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(226, 232, 240, 0.8);
+  --rx: 16px;
+  --r: 12px;
+  --ink-soft: #4a5568;
+  --ink-faint: #718096;
+}
+
+.app {
+  padding: 0 24px 48px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 22px 0 0;
+  margin-bottom: 24px;
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.05);
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(239, 68, 68, 0.12);
+  transform: translateY(-1px);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.layout-dashboard {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── Form Side ─────────────────────────── */
+.form-side {
+  background: var(--glass);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--rx);
+  padding: 30px 28px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 40px rgba(0, 184, 169, 0.05), 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.form-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.form-heading.light {
+  color: var(--ink-soft);
+}
+
+.num {
+  background: var(--teal);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0;
+}
+
+.num.teal {
+  background: var(--teal);
+}
+
+.live-badge {
+  margin-left: auto;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.06em;
+  animation: livePulse 2s infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Guidelines banner */
+.guidelines-card {
+  background: rgba(0, 184, 169, 0.04);
+  border: 1px solid rgba(0, 184, 169, 0.15);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.guidelines-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #007d72;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.guidelines-list {
+  padding-left: 18px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guidelines-list li {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+/* Photo upload zone */
+.photo-field {
+  margin-bottom: 20px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+}
+
+.photo-drop {
+  border: 2px dashed rgba(0, 184, 169, 0.35);
+  border-radius: var(--r);
+  background: rgba(0, 184, 169, 0.03);
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  text-align: center;
+}
+
+.photo-drop:hover, .photo-drop.dragover {
+  border-color: var(--teal);
+  background: rgba(0, 184, 169, 0.07);
+  transform: translateY(-2px);
+}
+
+.drop-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.drop-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.drop-content p {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.drop-content small {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+}
+
+.photo-drop.loaded {
+  border-style: solid;
+  border-color: var(--teal);
+  padding: 8px;
+}
+
+.photo-drop.loaded img {
+  width: 100%;
+  max-height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Form inputs styling */
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-group.full {
+  grid-column: 1 / -1;
+}
+
+.input-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-box input, .input-box select {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a202c;
+  background: #f7fafc;
+  border: 1.5px solid #edf2f7;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.input-box input:focus, .input-box select:focus {
+  background: white;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0, 184, 169, 0.15);
+}
+
+.field-error {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #e53e3e;
+  margin-top: 1px;
+}
+
+/* Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-reset, .btn-download {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-reset {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+.btn-reset:hover {
+  background: #e2e8f0;
+}
+
+.btn-download {
+  background: black;
+  color: white;
+}
+
+.btn-download:hover:not(:disabled) {
+  background: #2d3748;
+  transform: translateY(-1px);
+}
+
+.btn-download:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+/* ── Live Preview Side ───────────────────── */
+.preview-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-stage {
+  background: #edf2f7;
+  border-radius: var(--rx);
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 380px;
+}
+
+.card-float {
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-hint {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  margin: 0;
+}
+
+/* Toast Message */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #2d3748;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ──────────────────────────────────────────
+   LAYOUT 1: SIDE GRID (Raiwada / GHS Palasundar)
+   ────────────────────────────────────────── */
+.dn-card-2 {
+  width: 450px;
+  height: 308px;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box;
+}
+
+.dn-card-bg-2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Photo Overlay Box */
+.dn-photo-box-2 {
+  position: absolute;
+  left: 18.5px;
+  top: 92px;
+  width: 112.5px;
+  height: 135px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.dn-photo-box-2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Details Overlay Box */
+.dn-details-box-2 {
+  position: absolute;
+  left: 143px;
+  top: 92px;
+  right: 18px;
+  bottom: 37px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.dn-name-row-2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.dn-student-name {
+  font-family: 'Arial', sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  color: #0d1e3d;
+  line-height: 1.1;
+  text-transform: uppercase;
+  max-width: 70%;
+  word-break: break-word;
+}
+
+.dn-id-box-2 {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #1a202c;
+  background: #edf2f7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.dn-student-course {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #4a5568;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.dn-student-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+}
+
+.dn-grid-row-2 {
+  display: flex;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.65rem;
+  line-height: 1.35;
+}
+
+.dn-grid-label-2 {
+  width: 75px;
+  font-weight: bold;
+  color: #718096;
+  text-transform: uppercase;
+}
+
+.dn-grid-sep-2 {
+  width: 10px;
+  font-weight: bold;
+  color: #4a5568;
+}
+
+.dn-grid-val-2 {
+  flex: 1;
+  font-weight: bold;
+  color: #1a202c;
+  text-transform: uppercase;
+  white-space: pre-line;
+}
+
+/* ──────────────────────────────────────────
+   LAYOUT 2: CLASSIC CENTERED (Nursing College)
+   ────────────────────────────────────────── */
+.dn-card {
+  width: 300px;
+  min-height: 420px;
+  background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 35%);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(0, 184, 169, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 12px 32px rgba(0, 184, 169, 0.04);
+}
+
+.dn-card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dn-header-banner {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, var(--teal) 0%, #008f83 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.dn-banner-logo {
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 12px;
+}
+
+.dn-photo-wrap {
+  position: relative;
+  z-index: 3;
+  margin: 78px 0 10px;
+}
+
+.dn-photo-ring {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  border: 4px solid var(--teal);
+  padding: 3px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 184, 169, 0.22);
+  box-sizing: border-box;
+}
+
+.dn-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #f7fafc;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dn-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ph-placeholder {
+  width: 48px;
+  height: 48px;
+}
+
+.dn-name {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 850;
+  color: #1a202c;
+  letter-spacing: -0.01em;
+  text-align: center;
+  padding: 0 16px;
+  line-height: 1.25;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 3;
+}
+
+.dn-role {
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--teal);
+  background: rgba(0, 184, 169, 0.06);
+  border: 1px solid rgba(0, 184, 169, 0.15);
+  padding: 3px 12px;
+  border-radius: 100px;
+  text-align: center;
+  margin-top: 5px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 3;
+  display: inline-block;
+}
+
+.dn-details {
+  width: 100%;
+  padding: 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 3;
+}
+
+.dn-row {
+  display: grid;
+  grid-template-columns: 88px 10px 1fr;
+  align-items: center;
+  gap: 4px;
+}
+
+.dn-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #718096;
+}
+
+.dn-sep {
+  font-weight: 800;
+  color: var(--teal);
+  font-size: 0.72rem;
+}
+
+.dn-val {
+  font-size: 0.7rem;
+  font-weight: 750;
+  color: #2d3748;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.dn-footer {
+  width: 100%;
+  padding: 10px 18px;
+  text-align: center;
+  margin-top: auto;
+  background: linear-gradient(135deg, #008f83 0%, var(--teal) 100%);
+  position: relative;
+  z-index: 3;
+}
+
+.dn-footer-address {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* ── Export Modes (Locks layout for html2canvas capture) ── */
+.dn-card-2.export-mode {
+  transform: scale(1.0) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.dn-card.export-mode {
+  transform: scale(1.0) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ── Submissions Lookup Listing ── */
+.submissions-lookup {
+  background: var(--glass);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--rx);
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.02);
+}
+
+.lookup-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #f7fafc;
+  border: 1.5px solid #edf2f7;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.search-box input:focus {
+  background: white;
+  border-color: var(--teal);
+}
+
+.submissions-list {
+  margin-top: 12px;
+  max-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.submission-item {
+  display: flex;
+  justify-content: space-between;
+  background: #f7fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  border: 1px solid #edf2f7;
+}
+
+.sub-name {
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.sub-course {
+  font-weight: 600;
+  color: #718096;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  padding: 12px;
+}
+
+/* ──────────────────────────────────────────
+   LAYOUT 3: PORTRAIT SCHOOL GRID (Moral Public School)
+   ────────────────────────────────────────── */
+.dn-card-3 {
+  width: 300px;
+  height: 463px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #edf2f7;
+  box-sizing: border-box;
+}
+
+.dn-card-bg-3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Photo Overlay Box */
+.dn-photo-box-3 {
+  position: absolute;
+  left: 22px;
+  top: 195px;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.dn-photo-box-3 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ph-placeholder-3 {
+  width: 44px;
+  height: 44px;
+}
+
+/* Details Overlay Box */
+.dn-details-box-3 {
+  position: absolute;
+  left: 138px;
+  top: 210px;
+  right: 22px;
+  height: auto;
+  background: transparent;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+  align-items: flex-start;
+  text-align: left;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.dn-student-name-3 {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #111111;
+  text-transform: uppercase;
+  margin-bottom: 0;
+  width: 100%;
+  word-break: break-word;
+  line-height: 1.1;
+}
+
+.dn-student-details-grid-3 {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.dn-grid-row-3 {
+  display: flex;
+  font-family: 'Arial', sans-serif;
+  font-size: 10px;
+  line-height: 1.25;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.dn-grid-label-3 {
+  width: 68px;
+  font-weight: bold;
+  color: #111111;
+}
+
+.dn-grid-val-3 {
+  flex: 1;
+  font-weight: bold;
+  color: #111111;
+  text-transform: uppercase;
+  white-space: pre-line;
+}
+
+/* Address Section below photo */
+.dn-address-box-3 {
+  position: absolute;
+  left: 22px;
+  top: 298px;
+  right: 22px;
+  display: flex;
+  align-items: flex-start;
+  font-family: 'Arial', sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  color: #111111;
+  line-height: 1.3;
+  z-index: 2;
+  text-align: left;
+}
+
+.dn-card-3.export-mode {
+  transform: scale(1.0) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.dn-card-3.export-mode .dn-photo-box-3 {
+  border: none !important;
+}
+
+/* ──────────────────────────────────────────
+   LAYOUT 4: PORTRAIT IGS (Integrated Govt. High School Atariya)
+   ────────────────────────────────────────── */
+.dn-card-4 {
+  width: 300px;
+  height: 463px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #edf2f7;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.dn-card-bg-4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Student Photo (Round in the center, white border, covers baby photo) */
+.dn-photo-box-4 {
+  position: absolute;
+  left: 79px;
+    top: 100px;
+    width: 138px;
+    height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  box-sizing: border-box;
+  z-index: 2;
+  border: 4px solid #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.dn-photo-box-4 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ph-placeholder-4 {
+  width: 40px;
+  height: 40px;
+}
+
+/* Name Box: covers "Student's Name" placeholder */
+.dn-name-box-4 {
+  position: absolute;
+  left: 0;
+  top: 254px;
+  width: 100%;
+  text-align: center;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.dn-name-box-4 span {
+  background-color: #ffffff;
+  display: inline-block;
+  padding: 2px 10px;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #581c1c; /* Dark red/brown */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Details Box Container: white rounded container */
+.dn-details-box-4 {
+  position: absolute;
+  left: 27px; /* Center horizontally: (300px - 270px) / 2 = 15px */
+  top: 273px;
+  width: 270px;
+  z-index: 2;
+  box-sizing: border-box;
+  margin-top: 4px;
+}
+
+/* Class Row */
+.dn-class-row-4 {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #162a5b; /* Dark blue */
+  text-align: left;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* Details Grid */
+.dn-student-details-grid-4 {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dn-grid-row-4 {
+  display: grid;
+  grid-template-columns: 88px 10px 1fr;
+  align-items: flex-start;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+
+.dn-grid-label-4 {
+  color: #475569; /* Slate gray */
+  font-weight: 600;
+  text-align: left;
+  font-size: 10px;
+}
+
+.dn-grid-sep-4 {
+  color: #475569;
+  font-weight: 600;
+  text-align: center;
+}
+
+.dn-grid-val-4 {
+  color: #0f172a; /* Slate 900 */
+  font-weight: 600;
+  font-size: 10px;
+  text-align: left;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+/* Export override */
+.dn-card-4.export-mode {
+  transform: scale(1.0) !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+

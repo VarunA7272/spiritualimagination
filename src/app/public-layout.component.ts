@@ -21,6 +21,12 @@ import { AssetUrlPipe } from './core/pipes/asset-url.pipe';
         <ul class="nav-links" id="navLinks">
           <li><a routerLink="/home" routerLinkActive="active">Home</a></li>
           <li><a routerLink="/products" routerLinkActive="active">Products</a></li>
+          <li class="nav-dropdown">
+            <span class="dropdown-trigger">Our Services <span class="arrow-indicator">▼</span></span>
+            <ul class="dropdown-submenu">
+              <li><a routerLink="/idcard/demo" routerLinkActive="active">ID Cards</a></li>
+            </ul>
+          </li>
           <li><a routerLink="/about" routerLinkActive="active">About</a></li>
           <li><a routerLink="/reviews" routerLinkActive="active">Reviews</a></li>
           <li><a routerLink="/contact" routerLinkActive="active">Contact</a></li>
@@ -43,6 +49,10 @@ import { AssetUrlPipe } from './core/pipes/asset-url.pipe';
     <div class="mobile-menu" id="mobileMenu" [class.open]="mobileMenuOpen">
       <a routerLink="/home" routerLinkActive="active" (click)="closeMobileMenu()">Home</a>
       <a routerLink="/products" routerLinkActive="active" (click)="closeMobileMenu()">Products</a>
+      <div class="mobile-sub-section">
+        <span class="mobile-sub-title">Our Services</span>
+        <a routerLink="/idcard/demo" routerLinkActive="active" (click)="closeMobileMenu()" class="mobile-sub-link">└─ ID Cards</a>
+      </div>
       <a routerLink="/about" routerLinkActive="active" (click)="closeMobileMenu()">About</a>
       <a routerLink="/reviews" routerLinkActive="active" (click)="closeMobileMenu()">Reviews</a>
       <a routerLink="/contact" routerLinkActive="active" (click)="closeMobileMenu()">Contact</a>
@@ -289,6 +299,82 @@ import { AssetUrlPipe } from './core/pipes/asset-url.pipe';
     .nav-links a:hover, .nav-links a.active {
       color: var(--primary);
     }
+    /* Services Dropdown Menu */
+    .nav-dropdown {
+      position: relative;
+    }
+    .dropdown-trigger {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      text-decoration: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color var(--transition-fast);
+      padding: 4px 0;
+    }
+    .dropdown-trigger:hover, .nav-dropdown:hover .dropdown-trigger {
+      color: var(--primary);
+    }
+    .arrow-indicator {
+      font-size: 0.6rem;
+      transition: transform var(--transition-fast);
+      display: inline-block;
+    }
+    .nav-dropdown:hover .arrow-indicator {
+      transform: rotate(180deg);
+    }
+    .dropdown-submenu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: #ffffff;
+      border: 1px solid rgba(255, 107, 53, 0.12);
+      border-radius: 14px;
+      padding: 0.45rem;
+      min-width: 140px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      opacity: 0;
+      visibility: hidden;
+      list-style: none;
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      z-index: 1001;
+    }
+    .dropdown-submenu::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 10px;
+      height: 10px;
+      background: #ffffff;
+      border-left: 1px solid rgba(255, 107, 53, 0.12);
+      border-top: 1px solid rgba(255, 107, 53, 0.12);
+    }
+    .nav-dropdown:hover .dropdown-submenu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-submenu a {
+      display: block;
+      padding: 0.55rem 0.95rem;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+    .dropdown-submenu a:hover, .dropdown-submenu a.active {
+      background: var(--primary-light, #ffeee5);
+      color: var(--primary);
+    }
     .nav-cart-btn {
       background: var(--primary);
       color: #ffffff;
@@ -370,6 +456,26 @@ import { AssetUrlPipe } from './core/pipes/asset-url.pipe';
     }
     .mobile-menu a.active {
       color: var(--primary);
+    }
+    .mobile-sub-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-left: 0.5rem;
+      border-bottom: 1.5px solid rgba(255, 107, 53, 0.06);
+      padding-bottom: 0.75rem;
+    }
+    .mobile-sub-title {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-light, #8d9297);
+      letter-spacing: 0.05em;
+    }
+    .mobile-sub-link {
+      padding-left: 0.5rem;
+      font-size: 0.94rem !important;
+      font-weight: 700;
     }
 
     /* FOOTER */

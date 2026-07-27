@@ -1,0 +1,364 @@
+<div class="app">
+  <!-- Header -->
+  <header class="app-header" *ngIf="enableDbUpload" style="justify-content: flex-end; padding-right: 24px; display: flex; align-items: center; gap: 16px;">
+    <div class="header-actions" style="display: flex; align-items: center; gap: 16px;">
+      <!-- Admin Link -->
+      <a [routerLink]="config.id === 'generator' ? '/admin' : '/admin/' + config.id" 
+         class="btn-admin" 
+         style="color: #000000; text-decoration: none; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s;" 
+         onmouseover="this.style.opacity='0.7'" 
+         onmouseout="this.style.opacity='1'">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor"><path d="m370-80-16-128q-19-8-37-18.5t-32-22.5l-119 50L76-350l101-78q-2-14-2-27t2-27l-101-78 90-151 119 50q14-12 32-22.5t37-18.5l16-128h180l16 128q19 8 37 18.5t32 22.5l119-50 90 151-101 78q2 14 2 27t-2 27l101 78-90 151-119-50q-14 12-32 22.5t-37 18.5L590-80H370Zm112-280q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/></svg>
+        Admin Panel
+      </a>
+
+      <button class="btn-logout" (click)="logout()" *ngIf="isLoggedIn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </header>
+
+  <div class="layout-dashboard">
+    <!-- ── LEFT: FORM ── -->
+    <aside class="form-side glass">
+      <form [formGroup]="studentForm" novalidate>
+        <h2 class="form-heading">
+          <span class="num">01</span> {{ config.title }} Details
+        </h2>
+
+        <!-- Guidelines Banner -->
+        <div class="guidelines-card">
+          <div class="guidelines-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Submission Guidelines</span>
+          </div>
+          <ul class="guidelines-list">
+            <li>📸 Photo must be **under 3MB** (Compress/resize if on mobile).</li>
+            <li>🔍 Check the **Search List** below before submitting to avoid duplicate entries.</li>
+            <li>✍️ Double check your details before exporting.</li>
+          </ul>
+        </div>
+
+        <!-- Photo Upload -->
+        <div class="photo-field">
+          <label class="field-label">Card Photo</label>
+          <div
+            class="photo-drop"
+            [class.loaded]="photoDataURL"
+            [class.dragover]="isDragOver"
+            (click)="triggerFileInput()"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave()"
+            (drop)="onDrop($event)"
+          >
+            <input
+              type="file"
+              #photoFile
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              hidden
+            />
+            <div class="drop-content" *ngIf="!photoDataURL">
+              <div class="drop-icon">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+              </div>
+              <p>Click or drag photo here</p>
+              <small>JPG · PNG · WEBP (Max 3MB)</small>
+            </div>
+            <img *ngIf="photoDataURL" [src]="photoDataURL" alt="Preview" />
+          </div>
+          <div class="field-error" *ngIf="photoFileInput && !photoDataURL && studentForm.touched">
+            Photo is required.
+          </div>
+        </div>
+
+        <!-- Dynamic Input Fields -->
+        <div class="fields">
+          <div *ngFor="let field of config.fields" 
+               class="field-group"
+               [class.full]="field.name === 'address' || field.name === 'officeContact' || field.name === 'phone' || field.name === 'name' || field.name === 'studentName'">
+            
+            <label class="field-label" [for]="'f_' + field.name">{{ field.label }}</label>
+            
+            <div class="input-box">
+              <!-- Field Type Selector -->
+              <input *ngIf="field.type !== 'select'" 
+                     [type]="field.type" 
+                     [id]="'f_' + field.name" 
+                     [formControlName]="field.name" 
+                     (blur)="uppercaseField(field.name)"
+                     [placeholder]="field.placeholder || ''" 
+                     [max]="field.type === 'date' ? today : null"
+                     [attr.maxlength]="field.maxLength || null"
+                     [readonly]="field.readonly || null" />
+
+              <select *ngIf="field.type === 'select'" 
+                      [id]="'f_' + field.name" 
+                      [formControlName]="field.name">
+                <option *ngFor="let opt of field.options" [value]="opt">{{ opt }}</option>
+              </select>
+            </div>
+
+            <div class="field-error" *ngIf="getField(field.name).invalid && (getField(field.name).dirty || getField(field.name).touched)">
+              {{ getFieldErrorMessage(field.name) }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-reset" type="button" (click)="resetForm()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 2v6h6M21 12A9 9 0 116 5.3L3 8"/></svg>
+            Reset
+          </button>
+          <button class="btn-download" type="button" (click)="downloadPNG()" [disabled]="isGenerating" [attr.title]="studentForm.invalid ? 'Complete all fields and fix validation errors before downloading.' : null">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" *ngIf="!isGenerating"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" *ngIf="isGenerating"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="8"/></svg>
+            {{ isGenerating ? 'Saving...' : 'Submit' }}
+          </button>
+        </div>
+      </form>
+    </aside>
+
+    <!-- ── CENTER: CARD PREVIEW & LOOKUP ── -->
+    <div class="preview-side">
+      <h2 class="form-heading light">
+        <span class="num teal">02</span> Live Preview
+        <span class="live-badge">● LIVE</span>
+      </h2>
+
+      <div class="card-stage">
+        <div class="card-float" [ngClass]="config.orientation">
+          
+          <!-- ── LAYOUT 1: SIDE GRID (Raiwada / GHS Palasundar) ── -->
+          <div *ngIf="config.layoutType === 'grid-side'" 
+               #cardElement
+               class="dn-card-2">
+            
+            <!-- Card Background -->
+            <img class="dn-card-bg-2" [src]="layoutDataURL || config.theme.cardBgSvg" alt="Card Background" />
+            
+            <!-- Student Photo -->
+            <div class="dn-photo-box-2">
+              <img *ngIf="photoDataURL" [src]="photoDataURL" alt="Student Photo"/>
+            </div>
+
+            <!-- Details Overlay -->
+            <div class="dn-details-box-2">
+              <div class="dn-name-row-2">
+                <div class="dn-student-name"> {{ fmt(getValue('studentName'), 'NAME') }}</div>
+                <div *ngIf="getValue('idNo')" class="dn-id-box-2">
+                  Id No.: {{ fmt(getValue('idNo'), '') }}
+                </div>
+              </div>
+              <div class="dn-student-course">CLASS : {{ fmt(getValue('class'), '') }}<span *ngIf="getValue('section')"> - {{ fmt(getValue('section'), '') }}</span></div>
+
+              <div class="dn-student-details-grid">
+                <div class="dn-grid-row-2">
+                  <span class="dn-grid-label-2">Father's Name</span>
+                  <span class="dn-grid-sep-2">:</span>
+                  <span class="dn-grid-val-2">{{ fmt(getValue('fhName'), '') }}</span>
+                </div>
+                <div class="dn-grid-row-2">
+                  <span class="dn-grid-label-2">D.O.B.</span>
+                  <span class="dn-grid-sep-2">:</span>
+                  <span class="dn-grid-val-2">{{ fmtDob(getValue('dob')) || '' }}</span>
+                </div>
+                <div class="dn-grid-row-2">
+                  <span class="dn-grid-label-2">Phone No.</span>
+                  <span class="dn-grid-sep-2">:</span>
+                  <span class="dn-grid-val-2">{{ fmt(getValue('phone'), '') }}</span>
+                </div>
+                <div class="dn-grid-row-2">
+                  <span class="dn-grid-label-2">Address</span>
+                  <span class="dn-grid-sep-2">:</span>
+                  <span class="dn-grid-val-2">{{ fmt(fmtAddress(getValue('address')), '') }}</span>
+                </div>
+                <div class="dn-grid-row-2">
+                  <span class="dn-grid-label-2">Session</span>
+                  <span class="dn-grid-sep-2">:</span>
+                  <span class="dn-grid-val-2">{{ fmt(getValue('session'), '') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── LAYOUT 3: PORTRAIT SCHOOL GRID (Moral Public School) ── -->
+          <div *ngIf="config.layoutType === 'portrait-school-grid'" 
+               #cardElement
+               class="dn-card-3">
+            
+            <!-- Card Background -->
+            <img class="dn-card-bg-3" [src]="layoutDataURL || config.theme.cardBgSvg" alt="Card Background" />
+            
+            <!-- Student Photo -->
+            <div class="dn-photo-box-3">
+              <img *ngIf="photoDataURL" [src]="photoDataURL" alt="Student Photo"/>
+              <svg *ngIf="!photoDataURL" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1" class="ph-placeholder-3"><circle cx="12" cy="9" r="4.5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+            </div>
+
+            <!-- Details Overlay -->
+            <div class="dn-details-box-3">
+              <div class="dn-student-name-3">{{ fmt(getValue('studentName'), 'Student\'s Name') }}</div>
+              
+              <div class="dn-student-details-grid-3">
+                <div class="dn-grid-row-3">
+                  <span class="dn-grid-label-3">Father<br>Name:</span>
+                  <span class="dn-grid-val-3">{{ fmt(getValue('fhName'), '') }}</span>
+                </div>
+                
+                <div class="dn-grid-row-3">
+                  <span class="dn-grid-label-3">Ph No:</span>
+                  <span class="dn-grid-val-3">{{ fmt(getValue('phone'), '') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address Section below photo -->
+            <div class="dn-address-box-3">
+              <span style="margin-right: 6px;">Address:</span>
+              <span>{{ fmt(getValue('address'), '') }}</span>
+            </div>
+          </div>
+
+          <!-- ── LAYOUT 4: PORTRAIT IGS (Integrated Govt. High School Atariya) ── -->
+          <div *ngIf="config.layoutType === 'portrait-igs'" 
+               #cardElement
+               class="dn-card-4">
+            
+            <!-- Card Background (contains logo, titles, blank labels & footer) -->
+            <img class="dn-card-bg-4" [src]="layoutDataURL || config.theme.cardBgSvg" alt="Card Background" />
+            
+            <!-- Student Photo (White circle border, centered in the dark blue diagonal, overlays the baby photo) -->
+            <div class="dn-photo-box-4">
+              <img *ngIf="photoDataURL" [src]="photoDataURL" alt="Student Photo"/>
+              <svg *ngIf="!photoDataURL" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1" class="ph-placeholder-4"><circle cx="12" cy="9" r="4.5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+            </div>
+
+            <!-- Student Name Box (Centered, white block to cover "Student's Name" placeholder) -->
+            <div class="dn-name-box-4">
+              <span>{{ fmt(getValue('studentName'), "Student's Name") }}</span>
+            </div>
+
+            <!-- Student Details Container Card Box (White container with rounded corners) -->
+            <div class="dn-details-box-4">
+              <div class="dn-class-row-4">
+                CLASS : {{ fmt(getValue('class'), '') }}<span *ngIf="getValue('section')"> - {{ fmt(getValue('section'), '') }}</span>
+              </div>
+              
+              <div class="dn-student-details-grid-4">
+                <div class="dn-grid-row-4">
+                  <span class="dn-grid-label-4">Father's Name</span>
+                  <span class="dn-grid-sep-4">:</span>
+                  <span class="dn-grid-val-4">{{ fmt(getValue('fhName'), '') }}</span>
+                </div>
+                <div class="dn-grid-row-4">
+                  <span class="dn-grid-label-4">D.O.B.</span>
+                  <span class="dn-grid-sep-4">:</span>
+                  <span class="dn-grid-val-4">{{ fmtDob(getValue('dob')) || '' }}</span>
+                </div>
+                <div class="dn-grid-row-4" *ngIf="getValue('idNo')">
+                  <span class="dn-grid-label-4">Id No.</span>
+                  <span class="dn-grid-sep-4">:</span>
+                  <span class="dn-grid-val-4">{{ fmt(getValue('idNo'), '') }}</span>
+                </div>
+                <div class="dn-grid-row-4">
+                  <span class="dn-grid-label-4">Phone No.</span>
+                  <span class="dn-grid-sep-4">:</span>
+                  <span class="dn-grid-val-4">{{ fmt(getValue('phone'), '') }}</span>
+                </div>
+                <div class="dn-grid-row-4">
+                  <span class="dn-grid-label-4">Address</span>
+                  <span class="dn-grid-sep-4">:</span>
+                  <span class="dn-grid-val-4">{{ fmt(getValue('address'), '') }}</span>
+                </div>
+                <div class="dn-grid-row-4">
+                  <span class="dn-grid-label-4">Session</span>
+                  <span class="dn-grid-sep-4">:</span>
+                  <span class="dn-grid-val-4">{{ fmt(getValue('session'), '') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── LAYOUT 2: CLASSIC CENTERED (Nursing College) ── -->
+          <div *ngIf="config.layoutType === 'classic-center'" 
+               #cardElement
+               class="dn-card">
+            
+            <!-- Card Background -->
+            <img class="dn-card-bg" *ngIf="layoutDataURL || config.theme.cardBgSvg" [src]="layoutDataURL || config.theme.cardBgSvg" alt="Card Background" />
+            
+            <!-- Header Banner -->
+            <div class="dn-header-banner" *ngIf="!layoutDataURL && !config.theme.cardBgSvg">
+              <div class="dn-banner-logo">{{ config.title }}</div>
+            </div>
+            
+            <!-- Photo Ring -->
+            <div class="dn-photo-wrap">
+              <div class="dn-photo-ring">
+                <div class="dn-photo">
+                  <img *ngIf="photoDataURL" [src]="photoDataURL" alt="Employee"/>
+                  <svg *ngIf="!photoDataURL" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1" class="ph-placeholder"><circle cx="12" cy="9" r="4.5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Name and Role -->
+            <div class="dn-name">{{ fmt(getValue('name'), 'Your Name') }}</div>
+            <div class="dn-role">{{ fmt(getValue('role'), 'Designation') }}</div>
+
+            <!-- Details -->
+            <div class="dn-details" style="place-items: center;">
+              <div class="dn-row">
+                <span class="dn-label">CONTACT NO.</span>
+                <span class="dn-sep">:</span>
+                <span class="dn-val">{{ fmt(getValue('contact')) }}</span>
+              </div>
+              <div class="dn-row">
+                <span class="dn-label">DOB</span>
+                <span class="dn-sep">:</span>
+                <span class="dn-val">{{ fmtDob(getValue('dob')) }}</span>
+              </div>
+              <div class="dn-row" *ngIf="getValue('employeeId')">
+                <span class="dn-label">EMP ID</span>
+                <span class="dn-sep">:</span>
+                <span class="dn-val">{{ fmt(getValue('employeeId')) }}</span>
+              </div>
+            </div>
+
+            <!-- Footer Strip -->
+            <div class="dn-footer" [style.background]="(layoutDataURL || config.theme.cardBgSvg) ? 'transparent' : null">
+              <div class="dn-footer-address" [style.color]="(layoutDataURL || config.theme.cardBgSvg) ? '#2d3748' : '#ffffff'">{{ getValue('address') }}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <p class="preview-hint">Card updates live as you type ↑</p>
+
+      <!-- Submissions Lookup Tool -->
+      <div class="submissions-lookup" *ngIf="enableDbUpload">
+        <div class="lookup-header">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Search Submitted Cards</span>
+        </div>
+        <div class="search-box">
+          <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, role, class..." />
+        </div>
+        <div class="submissions-list">
+          <div *ngFor="let sub of filteredSubmissions" class="submission-item">
+            <span class="sub-name">{{ sub.student_name }}</span>
+            <span class="sub-course">{{ sub.fh_name }}</span>
+          </div>
+          <div *ngIf="filteredSubmissions.length === 0" class="no-results">
+            No submissions found matching query.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" [class.show]="toastMessage !== null">{{ toastMessage }}</div>
+</div>
