@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /login
 
-Sitemap: https://sidesigns.netlify.app/sitemap.xml
+Sitemap: https://www.spiritualimagination.shop/sitemap.xml
