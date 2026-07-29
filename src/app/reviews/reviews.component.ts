@@ -41,7 +41,7 @@ export class ReviewsComponent implements OnInit, AfterViewInit {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": "Custom Gift Creations & Personalization Services",
-        "image": "https://sidesigns.netlify.app/favicon.ico",
+        "image": "https://www.spiritualimagination.shop/favicon.ico",
         "description": "Customized gift crafting services: LED backlit name plates, trophies, pencil sketches, and photo gifts.",
         "brand": {
           "@type": "Brand",

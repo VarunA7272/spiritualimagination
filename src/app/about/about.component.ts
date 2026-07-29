@@ -26,11 +26,11 @@ export class AboutComponent implements OnInit, AfterViewInit {
         "@type": "AboutPage",
         "name": "About Spiritual Imagination",
         "description": "Information about our custom gift crafting services, name plates, and trophies design in Jabalpur.",
-        "url": "https://sidesigns.netlify.app/about",
+        "url": "https://www.spiritualimagination.shop/about",
         "mainEntity": {
           "@type": "Organization",
           "name": "Spiritual Imagination",
-          "url": "https://sidesigns.netlify.app"
+          "url": "https://www.spiritualimagination.shop"
         }
       }
     });

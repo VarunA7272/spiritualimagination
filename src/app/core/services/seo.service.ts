@@ -19,7 +19,7 @@ export interface SeoConfig {
 export class SeoService {
   private defaultTitle = 'Spiritual Imagination 🎁 — Custom Gifts Jabalpur';
   private defaultDesc = 'Premium personalized gifts, custom name plates, magic mirrors, handmade sketches, metal rakhis, and corporate trophies in Jabalpur, Madhya Pradesh.';
-  private defaultImage = 'https://sidesigns.netlify.app/assets/logo.png'; // Fallback social share logo
+  private defaultImage = 'https://www.spiritualimagination.shop/assets/logo.png'; // Fallback social share logo
 
   constructor(
     private titleService: Title,
@@ -31,7 +31,7 @@ export class SeoService {
     const title = config.title ? `${config.title} | Spiritual Imagination` : this.defaultTitle;
     const description = config.description || this.defaultDesc;
     const image = config.image || this.defaultImage;
-    const url = config.url || (typeof window !== 'undefined' ? window.location.href : 'https://sidesigns.netlify.app');
+    const url = config.url || (typeof window !== 'undefined' ? window.location.href : 'https://www.spiritualimagination.shop');
     const robots = config.robots || 'index, follow';
     const type = config.type || 'website';
 

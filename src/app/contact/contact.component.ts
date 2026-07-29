@@ -25,7 +25,7 @@ export class ContactComponent implements OnInit, AfterViewInit {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": "Spiritual Imagination",
-        "image": "https://sidesigns.netlify.app/favicon.ico",
+        "image": "https://www.spiritualimagination.shop/favicon.ico",
         "telephone": "+919209636699",
         "email": "varunrajore7272@gmail.com",
         "address": {
@@ -41,7 +41,7 @@ export class ContactComponent implements OnInit, AfterViewInit {
           "latitude": 23.165216123419018,
           "longitude": 79.91560607675933
         },
-        "url": "https://sidesigns.netlify.app/contact",
+        "url": "https://www.spiritualimagination.shop/contact",
         "openingHoursSpecification": {
           "@type": "OpeningHoursSpecification",
           "dayOfWeek": [

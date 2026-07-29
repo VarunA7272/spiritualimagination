@@ -64,7 +64,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         "publisher": {
           "@type": "Organization",
           "name": "Spiritual Imagination",
-          "url": "https://sidesigns.netlify.app"
+          "url": "https://www.spiritualimagination.shop"
         }
       }
     });
@@ -249,9 +249,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     this.activeImageIndex = 0;
 
     // Update SEO dynamically for product sharing link rich unfurl
-    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://sidesigns.netlify.app';
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.spiritualimagination.shop';
     const images = this.getProductImages();
-    const firstImg = images.length > 0 ? images[0] : 'https://sidesigns.netlify.app/assets/logo.png';
+    const firstImg = images.length > 0 ? images[0] : 'https://www.spiritualimagination.shop/assets/logo.png';
 
     this.seoService.generateTags({
       title: `${product.name} (Code: ${product.code})`,
@@ -296,7 +296,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         "publisher": {
           "@type": "Organization",
           "name": "Spiritual Imagination",
-          "url": "https://sidesigns.netlify.app"
+          "url": "https://www.spiritualimagination.shop"
         }
       }
     });
@@ -351,7 +351,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       imagePart = `\n🖼️ *Image Link:* ${product.image}`;
     }
 
-    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://sidesigns.netlify.app';
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://www.spiritualimagination.shop';
     const detailLink = `\n🔗 *View Details:* ${currentOrigin}/products?code=${code}`;
 
     const message = `Hi! I'm interested in ordering:\n\n*Product:* ${name}\n*Code:* ${code}\n*Price:* ${price}${imagePart}${detailLink}\n\nPlease share personalization options and details.`;

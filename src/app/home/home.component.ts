@@ -52,10 +52,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         "@graph": [
           {
             "@type": "Organization",
-            "@id": "https://sidesigns.netlify.app/#organization",
+            "@id": "https://www.spiritualimagination.shop/#organization",
             "name": "Spiritual Imagination",
-            "url": "https://sidesigns.netlify.app",
-            "logo": "https://sidesigns.netlify.app/favicon.ico",
+            "url": "https://www.spiritualimagination.shop",
+            "logo": "https://www.spiritualimagination.shop/favicon.ico",
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "805, Wright Town",
@@ -74,11 +74,11 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
           },
           {
             "@type": "WebSite",
-            "@id": "https://sidesigns.netlify.app/#website",
-            "url": "https://sidesigns.netlify.app/",
+            "@id": "https://www.spiritualimagination.shop/#website",
+            "url": "https://www.spiritualimagination.shop/",
             "name": "Spiritual Imagination",
             "publisher": {
-              "@id": "https://sidesigns.netlify.app/#organization"
+              "@id": "https://www.spiritualimagination.shop/#organization"
             }
           }
         ]
