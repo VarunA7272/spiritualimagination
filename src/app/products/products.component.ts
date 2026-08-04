@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, ElementRef, HostListener } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { SupabaseService, Product, Category } from '../core/services/supabase.service';
 import { SeoService } from '../core/services/seo.service';
@@ -29,6 +29,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   // Pagination
   currentPage = 1;
   pageSize = 12;
+  itemsToShow = 15;
 
   // Expanded/Collapsed Category States
   isCategoriesExpanded = false;
@@ -159,6 +160,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
     this.filteredProducts = result;
     this.currentPage = 1;
+    this.itemsToShow = 15;
     this.updateDisplayedProducts();
 
     setTimeout(() => {
@@ -187,9 +189,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   }
 
   updateDisplayedProducts() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    this.displayedProducts = this.filteredProducts.slice(start, end);
+    this.displayedProducts = this.filteredProducts.slice(0, this.itemsToShow);
   }
 
   goToPage(page: number) {
@@ -202,6 +202,28 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setTimeout(() => this.initScrollAnimations(), 50);
     }
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const threshold = 300;
+    const position = window.scrollY + window.innerHeight;
+    const height = document.documentElement.scrollHeight;
+    if (position >= height - threshold) {
+      this.loadMore();
+    }
+  }
+
+  loadMore() {
+    if (this.isLoading || this.itemsToShow >= this.filteredProducts.length) return;
+    this.itemsToShow += 15;
+    this.updateDisplayedProducts();
+    setTimeout(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        this.initScrollAnimations();
+      }
+    }, 50);
   }
 
   initScrollAnimations() {

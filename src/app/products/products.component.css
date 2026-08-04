@@ -316,8 +316,8 @@
 /* Products grid and cards */
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
 }
 
 .product-card {
@@ -425,6 +425,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .product-category-tag {
@@ -837,6 +839,13 @@
 @keyframes modalScaleUp {
   from { opacity: 0; transform: scale(0.92); }
   to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 1200px) and (min-width: 901px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1462,4 +1471,45 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Desktop 5-Card Layout Enhancements (prevent stretching) */
+@media (min-width: 1201px) {
+  .product-img {
+    height: 145px;
+  }
+  .product-info {
+    padding: 1.15rem;
+  }
+  .product-name {
+    font-size: 0.95rem;
+    margin-bottom: 0.35rem;
+  }
+  .product-desc {
+    font-size: 0.78rem;
+    -webkit-line-clamp: 2;
+    margin-bottom: 0.85rem;
+  }
+  .product-meta {
+    font-size: 0.72rem;
+    margin-bottom: 0.85rem;
+  }
+  .product-price {
+    font-size: 1.05rem;
+  }
+  .product-category-tag {
+    font-size: 0.68rem;
+    padding: 3.5px 8px;
+  }
+  .btn-quote {
+    padding: 8px 5px;
+    font-size: 0.74rem;
+    border-radius: 100px;
+  }
+  .btn-add-to-cart {
+    padding: 8px 5px;
+    font-size: 0.74rem;
+    border-radius: 100px;
+    border-width: 1.5px;
+  }
 }

@@ -85,18 +85,18 @@
               <div class="product-meta">Size: {{ p.size }}</div>
               <div class="product-actions-row">
                 <button class="btn-add-to-cart" (click)="addToCart(p, $event)">
-                  🛒 Add to Cart
+                  🛒 Cart
                 </button>
                 <button class="btn-quote" (click)="openBuyNow(p, $event)">
-                  💬 Buy Now
+                  💬 Buy
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Pagination -->
-        <div class="pagination-container" *ngIf="totalPages > 1">
+        <!-- Pagination (Hidden/Preserved) -->
+        <div class="pagination-container" *ngIf="false">
           <span class="pagination-info">Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredProducts.length) }} of {{ filteredProducts.length }}</span>
           <div class="pagination-controls">
             <button class="page-btn page-arrow" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" aria-label="Previous page">‹</button>
