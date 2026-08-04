@@ -68,7 +68,6 @@
               <img *ngIf="(!p.images || p.images.length === 0) && p.image" [src]="p.image | assetUrl" [alt]="p.name" class="product-actual-img" loading="lazy" />
               <div *ngIf="(!p.images || p.images.length === 0) && !p.image" class="cam-icon">{{ p.icon }}</div>
 
-              <div class="img-label">Code: {{ p.code }}</div>
               <span class="multi-photos-indicator" *ngIf="p.images && p.images.length > 1" title="Multiple photos available">
                 📸 {{ p.images.length }}
               </span>
@@ -176,7 +175,6 @@
             <span class="modal-category">
               {{ selectedProduct.category }}<span *ngIf="selectedProduct.subcategory"> / {{ selectedProduct.subcategory }}</span>
             </span>
-            <span class="modal-code">Code: <b>{{ selectedProduct.code }}</b></span>
           </div>
 
           <h3 class="modal-title">{{ selectedProduct.name }}</h3>
