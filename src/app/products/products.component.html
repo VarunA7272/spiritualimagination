@@ -85,10 +85,12 @@
               <div class="product-meta">Size: {{ p.size }}</div>
               <div class="product-actions-row">
                 <button class="btn-add-to-cart" (click)="addToCart(p, $event)">
-                  🛒 Cart
+                  <span class="btn-text-desktop">🛒 Cart</span>
+                  <span class="btn-text-mobile">🛒</span>
                 </button>
                 <button class="btn-quote" (click)="openBuyNow(p, $event)">
-                  💬 Buy
+                  <span class="btn-text-desktop">💬 Buy</span>
+                  <span class="btn-text-mobile">💬</span>
                 </button>
               </div>
             </div>
