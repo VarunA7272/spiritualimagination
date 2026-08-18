@@ -100,6 +100,23 @@
         📞 Call Us Now
       </a>
     </div>
+
+    <!-- Hero Search Box -->
+    <form class="hero-search-box" (ngSubmit)="goSearch()" role="search">
+      <span class="hero-search-icon">🔍</span>
+      <input
+        id="hero-search-input"
+        type="search"
+        class="hero-search-input"
+        placeholder="Search mugs, name plates, rakhis..."
+        [(ngModel)]="searchQuery"
+        name="heroSearch"
+        autocomplete="off"
+        aria-label="Search products"
+      />
+      <button type="submit" class="hero-search-btn">Search</button>
+    </form>
+
     <div class="rating-badge">
       <span class="stars">⭐⭐⭐⭐⭐</span>
       <span>4.9 Rating | 22 Google Reviews</span>

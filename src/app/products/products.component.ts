@@ -35,6 +35,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   isCategoriesExpanded = false;
   isDropdownOpen = false;
 
+  // Search
+  searchQuery = '';
+
   // Modal State
   selectedProduct: Product | null = null;
   activeImageIndex = 0;
@@ -101,6 +104,11 @@ export class ProductsComponent implements OnInit, AfterViewInit {
             this.subcategories = catObj ? catObj.subcategories : [];
           }
         }
+        // Check ?search= param
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+          this.searchQuery = searchParam;
+        }
       }
 
       this.applyFilters();
@@ -156,6 +164,17 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       if (this.selectedSubcategory !== 'All') {
         result = result.filter(p => p.subcategory === this.selectedSubcategory);
       }
+    }
+
+    // Search filter
+    const q = this.searchQuery.trim().toLowerCase();
+    if (q) {
+      result = result.filter(p =>
+        p.name?.toLowerCase().includes(q) ||
+        p.desc?.toLowerCase().includes(q) ||
+        p.category?.toLowerCase().includes(q) ||
+        p.subcategory?.toLowerCase().includes(q)
+      );
     }
 
     this.filteredProducts = result;

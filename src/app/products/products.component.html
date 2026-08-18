@@ -53,6 +53,23 @@
       <!-- RIGHT MAIN: Grid + Pagination -->
       <div class="products-main">
 
+        <!-- Search Bar -->
+        <div class="products-search-bar">
+          <span class="products-search-icon">🔍</span>
+          <input
+            id="products-search-input"
+            type="search"
+            class="products-search-input"
+            placeholder="Search creations..."
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="applyFilters()"
+            name="productSearch"
+            autocomplete="off"
+            aria-label="Search creations"
+          />
+          <button *ngIf="searchQuery" class="products-search-clear" (click)="searchQuery=''; applyFilters()" aria-label="Clear search">✕</button>
+        </div>
+
         <!-- Loading Spinner State -->
         <div class="loading-state-container" *ngIf="isLoading">
           <div class="spinner-ring"></div>

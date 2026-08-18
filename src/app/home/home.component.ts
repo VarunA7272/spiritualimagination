@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Inject, PLATFORM_ID, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { SeoService } from '../core/services/seo.service';
 import { SupabaseService, Product, FeaturedSlide, Category } from '../core/services/supabase.service';
 import { AssetUrlPipe } from '../core/pipes/asset-url.pipe';
@@ -8,7 +9,7 @@ import { AssetUrlPipe } from '../core/pipes/asset-url.pipe';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, AssetUrlPipe],
+  imports: [CommonModule, RouterModule, FormsModule, AssetUrlPipe],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -35,12 +36,25 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   // Categories
   categories: Category[] = [];
 
+  // Search
+  searchQuery = '';
+
   constructor(
     private seoService: SeoService,
     private supabaseService: SupabaseService,
+    private router: Router,
     private elRef: ElementRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
+
+  goSearch() {
+    const q = this.searchQuery.trim();
+    if (q) {
+      this.router.navigate(['/products'], { queryParams: { search: q } });
+    } else {
+      this.router.navigate(['/products']);
+    }
+  }
 
   ngOnInit() {
     this.seoService.generateTags({

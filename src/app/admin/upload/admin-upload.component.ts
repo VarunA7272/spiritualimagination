@@ -42,6 +42,7 @@ export class AdminUploadComponent implements OnInit {
   selectedIcon = '🏷️';
   imagePreviewUrls: string[] = [];
   featured = false;
+  isUploadingImages = false;   // tracks Cloudinary upload in progress
 
   // Banner Slide Model
   slideTitle = '';
@@ -201,18 +202,45 @@ export class AdminUploadComponent implements OnInit {
     const files: FileList = event.target.files;
     if (!files || files.length === 0) return;
 
+    this.isUploadingImages = true;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       try {
-        const compressedDataUrl = await this.compressImage(file);
-        this.imagePreviewUrls.push(compressedDataUrl);
+        const cdnUrl = await this.uploadFileToCloudinary(file, `product_${Date.now()}_${i}`);
+        this.imagePreviewUrls.push(cdnUrl);
       } catch (err) {
-        console.error('Error compressing file', file.name, err);
+        console.error('Error uploading file to Cloudinary', file.name, err);
+        this.errorMessage = `Failed to upload ${file.name}. Please try again.`;
+        setTimeout(() => (this.errorMessage = ''), 4000);
       }
     }
-    
+    this.isUploadingImages = false;
+
     // Reset file input
     event.target.value = '';
+  }
+
+  /**
+   * Uploads a File directly to Cloudinary via unsigned upload preset.
+   * Returns the secure CDN URL. No API secret needed in browser.
+   */
+  uploadFileToCloudinary(file: File, publicId?: string): Promise<string> {
+    const CLOUD_NAME = 'fqgrv4j6';
+    const UPLOAD_PRESET = 'si_unsigned'; // unsigned preset created in Cloudinary dashboard
+    const url = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('folder', 'si-products');
+    if (publicId) formData.append('public_id', publicId);
+
+    return fetch(url, { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) throw new Error(data.error.message);
+        return data.secure_url as string;
+      });
   }
 
   compressImage(file: File): Promise<string> {
@@ -817,18 +845,21 @@ export class AdminUploadComponent implements OnInit {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      this.errorMessage = 'Banner image exceeds 3MB limit.';
+    if (file.size > 5 * 1024 * 1024) {
+      this.errorMessage = 'Banner image exceeds 5MB limit.';
       setTimeout(() => (this.errorMessage = ''), 3500);
       return;
     }
 
-    this.compressBannerImage(file).then(base64 => {
-      this.slideImagePreviewUrl = base64;
+    this.isUploadingImages = true;
+    this.uploadFileToCloudinary(file, `slide_${Date.now()}`).then(cdnUrl => {
+      this.slideImagePreviewUrl = cdnUrl;
+      this.isUploadingImages = false;
     }).catch(err => {
-      console.error('Error compressing banner image', err);
-      this.errorMessage = 'Failed to process banner image.';
+      console.error('Error uploading banner to Cloudinary', err);
+      this.errorMessage = 'Failed to upload banner image. Please try again.';
       setTimeout(() => (this.errorMessage = ''), 3500);
+      this.isUploadingImages = false;
     });
   }
 
